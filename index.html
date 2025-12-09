@@ -8,7 +8,7 @@
     <style>
         /* CSS: 크리스마스 테마 디자인 및 폰트 적용 */
         body { 
-            font-family: 'Noto Sans KR', sans-serif; /* 촌스러움 탈출! */
+            font-family: 'Noto Sans KR', sans-serif;
             text-align: center; 
             padding: 20px; 
             background-color: #f0f8ff; 
@@ -28,15 +28,12 @@
             font-size: 2.5em;
             text-shadow: 1px 1px 2px #006400; 
         }
-        /* 정보 텍스트 (초록색) */
         p, .info-panel p { 
             color: #006400; 
             font-weight: bold;
             font-size: 1.1em;
             margin: 5px 0;
         }
-
-        /* 타자 제시 텍스트 */
         #target-text { 
             font-size: 1.3em; 
             border: 3px solid #006400; 
@@ -47,7 +44,6 @@
             line-height: 1.8; 
             border-radius: 8px; 
         }
-        /* 입력창 */
         #typing-input { 
             width: 90%; 
             padding: 15px; 
@@ -56,19 +52,9 @@
             border-radius: 8px; 
             margin-bottom: 20px; 
         }
-        
-        /* 정확/오타 색상 */
-        .correct { 
-            background-color: #d4edda; 
-            color: #155724; 
-        }
-        .incorrect { 
-            background-color: #f8d7da; 
-            color: #721c24; 
-        }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
         .highlight-current { background-color: gold; } 
-
-        /* 최종 결과 패널 */
         #result { 
             margin-top: 30px; 
             padding: 15px;
@@ -79,7 +65,6 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
-        /* 버튼 스타일 */
         button {
             background-color: #006400; 
             color: white;
@@ -92,9 +77,30 @@
             transition: background-color 0.3s;
             margin-top: 15px;
         }
-        button:hover {
-            background-color: #a00000; 
+        button:hover { background-color: #a00000; }
+
+        /* 랭킹 테이블 스타일 */
+        #ranking-table {
+            width: 90%;
+            margin: 30px auto 0;
+            border-collapse: collapse;
+            font-size: 1em;
         }
+        #ranking-table th, #ranking-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        #ranking-table th {
+            background-color: #a00000;
+            color: white;
+        }
+        #ranking-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .rank-1 { background-color: gold !important; color: black; font-weight: bold; }
+        .rank-2 { background-color: silver !important; color: black; font-weight: bold; }
+        .rank-3 { background-color: #cd7f32 !important; color: white; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -109,21 +115,42 @@
             <p>경과 시간: <span id="timer">0.00</span>초</p>
             <p>현재 타수 (CPM): <span id="current-cpm">0</span>타</p> 
             <p>정확도: <span id="accuracy">100</span>%</p>
-            <p>오타 수: <span id="error-count">0</span>개</p> </div>
+            <p>오타 수: <span id="error-count">0</span>개</p> 
+        </div>
         
         <div id="result"></div>
         <button onclick="resetTest()">다시 시작</button>
+
+        <hr style="margin-top: 30px; border-color: #ccc;">
+
+        <h2>👑 현재 랭킹 순위표 👑</h2>
+        <table id="ranking-table">
+            <thead>
+                <tr>
+                    <th>순위</th>
+                    <th>닉네임</th>
+                    <th>타수 (CPM)</th>
+                    <th>정확도 (%)</th>
+                    <th>시간 (초)</th>
+                    <th>오타 수</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body">
+                </tbody>
+        </table>
+
     </div>
 
     <script>
-        // JavaScript: 타자 측정 로직
+        // JavaScript: 타자 측정 및 랭킹 로직
         const targetTextElement = document.getElementById('target-text');
         const typingInput = document.getElementById('typing-input');
         const timerElement = document.getElementById('timer');
         const accuracyElement = document.getElementById('accuracy');
         const currentCpmElement = document.getElementById('current-cpm');
-        const errorCountElement = document.getElementById('error-count'); // 오타 요소
+        const errorCountElement = document.getElementById('error-count');
         const resultElement = document.getElementById('result');
+        const rankingBody = document.getElementById('ranking-body');
 
         // 대회에 사용할 문장
         const targetSentences = [
@@ -139,7 +166,6 @@
 
         // 텍스트 초기화 함수
         function initText() {
-            // 랜덤 텍스트 선택!
             const randomIndex = Math.floor(Math.random() * targetSentences.length);
             targetText = targetSentences[randomIndex];
 
@@ -148,7 +174,7 @@
             timerElement.textContent = '0.00';
             accuracyElement.textContent = '100';
             currentCpmElement.textContent = '0';
-            errorCountElement.textContent = '0'; // 오타 초기화
+            errorCountElement.textContent = '0';
             resultElement.textContent = '';
             typingInput.disabled = false;
             isTypingStarted = false;
@@ -159,9 +185,10 @@
                  targetTextElement.children[0].classList.add('highlight-current');
             }
             typingInput.focus();
+            loadRanking(); // 랭킹 로드
         }
 
-        // 타이머 시작 함수
+        // 타이머 시작 및 실시간 CPM 업데이트
         function startTimer() {
             startTime = new Date().getTime();
             timerInterval = setInterval(() => {
@@ -194,46 +221,43 @@
                 isTypingStarted = true;
             }
 
-            // 2. 입력값 비교 및 스타일 적용
+            // 2. 입력값 비교 및 스타일, 오타 카운트 적용
             let correctChars = 0;
-            let currentErrors = 0; // 오타 카운트 초기화
+            let currentErrors = 0;
             const targetChars = targetTextElement.children;
             
             for (let i = 0; i < targetChars.length; i++) {
                 const targetCharSpan = targetChars[i];
                 
-                // 현재 글자 하이라이트 업데이트
                 targetCharSpan.classList.remove('highlight-current');
                 if (i === currentInput.length && i < targetChars.length) {
                      targetCharSpan.classList.add('highlight-current');
                 }
                 
-                // 오타 체크
                 if (i < currentInput.length) {
                     if (currentInput[i] === targetText[i]) {
                         targetCharSpan.className = 'correct';
                         correctChars++;
                     } else {
                         targetCharSpan.className = 'incorrect';
-                        currentErrors++; // 오타 발견 시 카운트 증가
+                        currentErrors++;
                     }
                 } else {
-                    targetCharSpan.className = ''; // 아직 입력 안 된 부분
+                    targetCharSpan.className = '';
                 }
             }
 
             // 3. 정확도 및 오타 카운트 표시
             const accuracy = ((correctChars / currentInput.length) * 100) || 100;
             accuracyElement.textContent = accuracy.toFixed(0);
-            errorCountElement.textContent = currentErrors; // 오타 수 업데이트
+            errorCountElement.textContent = currentErrors;
 
-            // 4. 테스트 완료 체크
+            // 4. 테스트 완료 체크 및 랭킹 저장
             if (currentInput.length === targetText.length) {
                 clearInterval(timerInterval);
                 const finalTime = parseFloat(timerElement.textContent);
                 const totalChars = targetText.length;
-                
-                const cpm = (totalChars / (finalTime / 60)).toFixed(0);
+                const cpm = Math.floor(totalChars / (finalTime / 60)); // 타수는 정수로
 
                 resultElement.innerHTML = `
                     🎉 **타자왕 등극!** 🎉<br>
@@ -242,18 +266,29 @@
                 `;
                 
                 typingInput.disabled = true;
+                
+                // 닉네임 입력 및 랭킹 저장!
+                saveRanking(cpm, accuracy, finalTime, currentErrors);
             }
         });
 
-        // 다시 시작 버튼
-        function resetTest() {
-            clearInterval(timerInterval);
-            initText();
-        }
+        // ===================================
+        // 랭킹 저장 및 로드 로직 (Local Storage)
+        // ===================================
 
-        // 페이지 로드 시 초기화
-        window.onload = initText;
+        // 랭킹 저장 함수
+        function saveRanking(cpm, accuracy, time, errors) {
+            const nickname = prompt("타자 기록이 저장됩니다! 닉네임을 입력해주세요:");
+            
+            if (nickname && nickname.trim() !== '') {
+                const score = {
+                    nickname: nickname.substring(0, 10), // 닉네임 10글자 제한
+                    cpm: cpm,
+                    accuracy: accuracy.toFixed(0),
+                    time: time.toFixed(2),
+                    errors: errors,
+                    date: new Date().toLocaleString()
+                };
 
-    </script>
-</body>
-</html>
+                let ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
+                ranking.push(score);
