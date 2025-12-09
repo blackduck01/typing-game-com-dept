@@ -4,33 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 방통대 컴과 타자왕 선발전 🎄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"> 
     <style>
-        /* CSS: 크리스마스 테마 디자인 */
+        /* CSS: 크리스마스 테마 디자인 및 폰트 적용 */
         body { 
-            font-family: 'Arial', sans-serif; 
+            font-family: 'Noto Sans KR', sans-serif; /* 촌스러움 탈출! */
             text-align: center; 
             padding: 20px; 
-            /* 배경색: 은은한 눈 내린 듯한 느낌 */
             background-color: #f0f8ff; 
         }
         .container { 
             max-width: 850px; 
             margin: 20px auto; 
-            /* 컨테이너 배경색: 밝은 흰색 */
             background: #ffffff; 
             padding: 30px; 
             border-radius: 15px; 
-            /* 그림자: 입체감 */
             box-shadow: 0 8px 16px rgba(0,0,0,0.2); 
-            /* 크리스마스 테두리 느낌 (빨강/초록 점선) */
             border: 5px dashed #a00000; 
             border-image: repeating-linear-gradient(45deg, #a00000, #a00000 10px, #006400 10px, #006400 20px) 5;
         }
         h1 { 
-            /* 메인 제목 색상: 진한 빨강 */
             color: #a00000; 
             font-size: 2.5em;
-            text-shadow: 1px 1px 2px #006400; /* 초록색 그림자 */
+            text-shadow: 1px 1px 2px #006400; 
         }
         /* 정보 텍스트 (초록색) */
         p, .info-panel p { 
@@ -43,11 +39,10 @@
         /* 타자 제시 텍스트 */
         #target-text { 
             font-size: 1.3em; 
-            border: 3px solid #006400; /* 진한 초록색 테두리 */
+            border: 3px solid #006400; 
             padding: 25px; 
             margin-bottom: 20px; 
             text-align: left; 
-            /* 배경: 아주 연한 빨강/핑크 */
             background-color: #ffeaea; 
             line-height: 1.8; 
             border-radius: 8px; 
@@ -57,21 +52,21 @@
             width: 90%; 
             padding: 15px; 
             font-size: 1.2em; 
-            border: 3px solid #a00000; /* 빨간색 테두리 */
+            border: 3px solid #a00000; 
             border-radius: 8px; 
             margin-bottom: 20px; 
         }
         
         /* 정확/오타 색상 */
         .correct { 
-            background-color: #d4edda; /* 밝은 초록 */
+            background-color: #d4edda; 
             color: #155724; 
         }
         .incorrect { 
-            background-color: #f8d7da; /* 밝은 빨강 */
+            background-color: #f8d7da; 
             color: #721c24; 
         }
-        .highlight-current { background-color: gold; } /* 현재 입력 위치 */
+        .highlight-current { background-color: gold; } 
 
         /* 최종 결과 패널 */
         #result { 
@@ -86,7 +81,7 @@
         }
         /* 버튼 스타일 */
         button {
-            background-color: #006400; /* 초록색 버튼 */
+            background-color: #006400; 
             color: white;
             border: none;
             padding: 10px 20px;
@@ -95,16 +90,17 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-top: 15px;
         }
         button:hover {
-            background-color: #a00000; /* 호버 시 빨강색 */
+            background-color: #a00000; 
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎄 방통대 컴과 타자왕 선발전 🎁</h1>
-        <p>아래 크리스마스 문장을 정확하고 빠르게 입력해보세요!</p>
+        <p>아래 문장을 정확하고 빠르게 입력해보세요! (다시 시작하면 문장이 바뀝니다)</p>
 
         <div id="target-text"></div>
         <textarea id="typing-input" rows="5" placeholder="여기에 입력을 시작하세요..."></textarea>
@@ -113,7 +109,7 @@
             <p>경과 시간: <span id="timer">0.00</span>초</p>
             <p>현재 타수 (CPM): <span id="current-cpm">0</span>타</p> 
             <p>정확도: <span id="accuracy">100</span>%</p>
-        </div>
+            <p>오타 수: <span id="error-count">0</span>개</p> </div>
         
         <div id="result"></div>
         <button onclick="resetTest()">다시 시작</button>
@@ -126,32 +122,38 @@
         const timerElement = document.getElementById('timer');
         const accuracyElement = document.getElementById('accuracy');
         const currentCpmElement = document.getElementById('current-cpm');
+        const errorCountElement = document.getElementById('error-count'); // 오타 요소
         const resultElement = document.getElementById('result');
 
-        // 대회에 사용할 문장 (크리스마스/연말 모임 분위기로 바꿨어!)
+        // 대회에 사용할 문장
         const targetSentences = [
             "메리 크리스마스! 방통대 컴과 연말 모임에 오신 것을 환영합니다. 붉은색과 초록색 조명처럼 우리의 앞날도 빛나기를 바랍니다. 타자왕 상품은 따뜻한 커피 쿠폰입니다!",
             "올 한 해 컴퓨터과학과에서 열심히 코딩하고 공부하느라 수고 많았습니다. 이제 맛있는 음식과 함께 즐거운 휴식 시간을 가집시다. 산타가 코드를 버그 없이 주길 바라며!",
-            "알고리즘과 자료구조는 개발자에게 필수입니다. 끊임없는 복습과 실습만이 실력 향상의 지름길입니다. 오늘 다 같이 화이팅!"
+            "프론트엔드, 백엔드, 데이터베이스의 조화가 완벽한 애플리케이션을 만듭니다. 우리는 융합 지식을 갖춘 자랑스러운 방통대 컴과 학생들입니다. 오늘 최고의 기록에 도전하세요!"
         ];
         
-        let targetText = targetSentences[0];
+        let targetText;
         let startTime;
         let timerInterval;
         let isTypingStarted = false;
 
         // 텍스트 초기화 함수
         function initText() {
+            // 랜덤 텍스트 선택!
+            const randomIndex = Math.floor(Math.random() * targetSentences.length);
+            targetText = targetSentences[randomIndex];
+
             targetTextElement.innerHTML = targetText.split('').map(char => `<span>${char}</span>`).join('');
             typingInput.value = '';
             timerElement.textContent = '0.00';
             accuracyElement.textContent = '100';
             currentCpmElement.textContent = '0';
+            errorCountElement.textContent = '0'; // 오타 초기화
             resultElement.textContent = '';
             typingInput.disabled = false;
             isTypingStarted = false;
             
-            clearInterval(timerInterval); // 타이머 안전하게 종료
+            clearInterval(timerInterval);
             
             if (targetTextElement.children.length > 0) {
                  targetTextElement.children[0].classList.add('highlight-current');
@@ -166,11 +168,8 @@
                 const currentTime = new Date().getTime();
                 const elapsedTime = (currentTime - startTime) / 1000;
                 timerElement.textContent = elapsedTime.toFixed(2);
-                
-                // 타이머가 돌 때마다 실시간 타수 업데이트
                 updateRealtimeCpm(elapsedTime); 
-                
-            }, 100); // 0.1초 단위로 업데이트 (너무 빠르면 브라우저에 부담될 수 있어서 조금 늘렸어)
+            }, 100); 
         }
         
         // 실시간 CPM 업데이트 함수
@@ -178,7 +177,6 @@
              const currentInput = typingInput.value;
              
              if (elapsedTimeInSeconds > 0 && currentInput.length > 0) {
-                // 분당 글자 수 (CPM) 계산
                 const currentCpm = (currentInput.length / (elapsedTimeInSeconds / 60)).toFixed(0);
                 currentCpmElement.textContent = currentCpm;
             } else {
@@ -198,6 +196,7 @@
 
             // 2. 입력값 비교 및 스타일 적용
             let correctChars = 0;
+            let currentErrors = 0; // 오타 카운트 초기화
             const targetChars = targetTextElement.children;
             
             for (let i = 0; i < targetChars.length; i++) {
@@ -216,15 +215,17 @@
                         correctChars++;
                     } else {
                         targetCharSpan.className = 'incorrect';
+                        currentErrors++; // 오타 발견 시 카운트 증가
                     }
                 } else {
                     targetCharSpan.className = ''; // 아직 입력 안 된 부분
                 }
             }
 
-            // 3. 정확도 계산
+            // 3. 정확도 및 오타 카운트 표시
             const accuracy = ((correctChars / currentInput.length) * 100) || 100;
             accuracyElement.textContent = accuracy.toFixed(0);
+            errorCountElement.textContent = currentErrors; // 오타 수 업데이트
 
             // 4. 테스트 완료 체크
             if (currentInput.length === targetText.length) {
@@ -232,16 +233,15 @@
                 const finalTime = parseFloat(timerElement.textContent);
                 const totalChars = targetText.length;
                 
-                // 최종 타수 계산 (CPM: 분당 글자수)
                 const cpm = (totalChars / (finalTime / 60)).toFixed(0);
 
                 resultElement.innerHTML = `
                     🎉 **타자왕 등극!** 🎉<br>
                     최종 타수 (CPM): **${cpm}타**<br>
-                    정확도: **${accuracy.toFixed(0)}%**
+                    정확도: **${accuracy.toFixed(0)}%** (${currentErrors}개 오타)
                 `;
                 
-                typingInput.disabled = true; // 입력 잠금
+                typingInput.disabled = true;
             }
         });
 
