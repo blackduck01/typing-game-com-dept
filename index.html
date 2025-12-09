@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>방통대 컴과 타자왕 선발전 🏆</title>
+    <style>
+        /* CSS: 디자인을 위한 스타일 (간단하게만 넣어볼게!) */
+        body { font-family: 'Arial', sans-serif; text-align: center; padding: 20px; background-color: #f4f7f6; }
+        .container { max-width: 800px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        #target-text { font-size: 1.2em; border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; text-align: left; background-color: #e8f5e9; line-height: 1.6; border-radius: 5px; }
+        #typing-input { width: 90%; padding: 15px; font-size: 1.1em; border: 2px solid #007bff; border-radius: 5px; margin-bottom: 20px; }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
+        #result { margin-top: 20px; font-size: 1.3em; font-weight: bold; color: #28a745; }
+        .highlight-current { background-color: yellow; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 방통대 컴과 타자왕 선발전 🚀</h1>
+        <p>아래 문장을 정확하고 빠르게 입력해보세요!</p>
+
+        <div id="target-text"></div>
+        <textarea id="typing-input" rows="5" placeholder="여기에 입력을 시작하세요..."></textarea>
+        
+        <p>경과 시간: <span id="timer">0.00</span>초</p>
+        <p>정확도: <span id="accuracy">100</span>%</p>
+        
+        <div id="result"></div>
+        <button onclick="resetTest()">다시 시작</button>
+    </div>
+
+    <script>
+        // JavaScript: 타자 측정 로직
+        const targetTextElement = document.getElementById('target-text');
+        const typingInput = document.getElementById('typing-input');
+        const timerElement = document.getElementById('timer');
+        const accuracyElement = document.getElementById('accuracy');
+        const resultElement = document.getElementById('result');
+
+        // 대회에 사용할 문장 (연말 모임 분위기에 맞게 하나 넣어봤어!)
+        const targetSentences = [
+            "컴퓨터과학과 연말 모임에 오신 것을 환영합니다. 다들 일 년 동안 고생 많았고, 맛있는 음식 먹으면서 즐거운 시간 보냅시다. 타자 대회에서 우승해서 상품을 꼭 타가세요!",
+            "알고리즘과 자료구조는 개발자에게 필수입니다. 끊임없는 복습과 실습만이 실력 향상의 지름길입니다. 오늘 다 같이 화이팅!",
+            "프론트엔드와 백엔드의 조화가 중요합니다. 좋은 사용자 경험은 코드의 품질에서 나옵니다. 모두 열공합시다."
+        ];
+        
+        let targetText = targetSentences[0]; // 첫 번째 문장 선택
+        let startTime;
+        let timerInterval;
+        let isTypingStarted = false;
+
+        // 텍스트 초기화 함수
+        function initText() {
+            targetTextElement.innerHTML = targetText.split('').map(char => `<span>${char}</span>`).join('');
+            typingInput.value = '';
+            timerElement.textContent = '0.00';
+            accuracyElement.textContent = '100';
+            resultElement.textContent = '';
+            typingInput.disabled = false;
+            isTypingStarted = false;
+            // 항상 첫 글자를 노란색으로 하이라이트
+            targetTextElement.children[0].classList.add('highlight-current');
+            typingInput.focus();
+        }
+
+        // 타이머 시작 함수
+        function startTimer() {
+            startTime = new Date().getTime();
+            timerInterval = setInterval(() => {
+                const currentTime = new Date().getTime();
+                const elapsedTime = (currentTime - startTime) / 1000;
+                timerElement.textContent = elapsedTime.toFixed(2);
+            }, 10); // 0.01초 단위로 업데이트
+        }
+
+        // 입력 이벤트 처리
+        typingInput.addEventListener('input', (e) => {
+            const currentInput = e.target.value;
+
+            // 1. 타이머 시작
+            if (!isTypingStarted) {
+                startTimer();
+                isTypingStarted = true;
+            }
+
+            // 2. 입력값 비교 및 스타일 적용
+            let correctChars = 0;
+            const targetChars = targetTextElement.children;
+            
+            for (let i = 0; i < targetChars.length; i++) {
+                const targetCharSpan = targetChars[i];
+                
+                // 현재 글자 하이라이트 업데이트
+                targetCharSpan.classList.remove('highlight-current');
+                if (i === currentInput.length) {
+                     targetCharSpan.classList.add('highlight-current');
+                }
+                
+                // 오타 체크
+                if (i < currentInput.length) {
+                    if (currentInput[i] === targetText[i]) {
+                        targetCharSpan.className = 'correct';
+                        correctChars++;
+                    } else {
+                        targetCharSpan.className = 'incorrect';
+                    }
+                } else {
+                    targetCharSpan.className = ''; // 아직 입력 안 된 부분
+                }
+            }
+
+            // 3. 정확도 계산
+            const accuracy = ((correctChars / currentInput.length) * 100) || 100;
+            accuracyElement.textContent = accuracy.toFixed(0);
+
+
+            // 4. 테스트 완료 체크
+            if (currentInput.length === targetText.length) {
+                clearInterval(timerInterval);
+                const finalTime = parseFloat(timerElement.textContent);
+                const totalChars = targetText.length;
+                
+                // 한글 타수 계산 (CPM: 분당 글자수)
+                const cpm = (totalChars / (finalTime / 60)).toFixed(0);
+
+                resultElement.innerHTML = `
+                    🎉 **완료!** 🎉<br>
+                    총 타수 (CPM): **${cpm}타**<br>
+                    정확도: **${accuracy.toFixed(0)}%**
+                `;
+                
+                typingInput.disabled = true; // 입력 잠금
+                // TODO: 여기에 랭킹 기록을 로컬 스토리지에 저장하는 코드를 추가할 수 있어!
+            }
+        });
+
+        // 다시 시작 버튼
+        function resetTest() {
+            clearInterval(timerInterval);
+            initText();
+        }
+
+        // 페이지 로드 시 초기화
+        window.onload = initText;
+
+    </script>
+</body>
+</html>
