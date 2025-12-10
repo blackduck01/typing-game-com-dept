@@ -3,166 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏆 최후의 1인 서바이벌 🏆</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <title>🎄 크리스마스 서바이벌 핀볼 🎅</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet"> 
     <style>
-        /* 서바이벌 핀볼 전용 스타일 */
-        canvas {
-            background-color: #222;
-            border: 5px solid #a00000;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(160, 0, 0, 0.5);
-            margin-top: 10px;
-            max-width: 100%;
-            touch-action: none;
-            display: block; /* 캔버스 블록 처리 */
-            margin: 0 auto;
-        }
-        .input-area {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        textarea {
-            width: 80%;
-            height: 80px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid #006400;
+        /* ❄️ 크리스마스 밤 배경 */
+        body {
+            background: radial-gradient(circle at top, #1a2a6c, #b21f1f, #fdbb2d); /* 화려한 밤 */
+            background: linear-gradient(180deg, #0f0c29, #302b63, #24243e); /* 깊은 밤하늘 */
+            margin: 0;
+            padding: 0;
+            color: white;
             font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
         }
+
+        /* 눈송이 효과 */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: #fff;
+            font-size: 1em;
+            text-shadow: 0 0 5px #fff;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        /* 상태창 (전광판) */
         #status-board {
-            position: fixed; /* 상태창을 화면 위에 고정 */
-            top: 10px;
+            position: fixed;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: #a00000;
-            z-index: 100;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: rgba(160, 0, 0, 0.9); /* 크리스마스 레드 */
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #FFD700; /* 골드 */
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5), 0 0 10px #FFD700;
+            border: 3px solid #FFD700;
+            text-shadow: 1px 1px 2px black;
             width: 80%;
             max-width: 400px;
+            text-align: center;
         }
-        .winner-display {
-            font-size: 1.5em;
-            color: #ffD700;
-            text-shadow: 2px 2px 0px #a00000;
-            animation: pop 0.5s ease infinite alternate;
+
+        .container {
+            max-width: 500px; /* 캔버스 너비에 맞춤 */
+            margin: 100px auto 50px auto; /* 상단 여백 확보 */
+            text-align: center;
+            position: relative;
+            z-index: 10;
         }
-        @keyframes pop { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055, 2px 2px 0 #fff;
+            margin-bottom: 10px;
+        }
+
+        /* 캔버스 스타일 (사탕 지팡이 테두리) */
+        canvas {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+            margin-top: 20px;
+            touch-action: none;
+            display: block;
+            margin: 0 auto;
+            
+            /* 사탕 지팡이 스트라이프 테두리 */
+            border: 10px solid transparent;
+            border-image: repeating-linear-gradient(45deg, #ff0000, #ff0000 15px, #ffffff 15px, #ffffff 30px) 1;
+        }
+
+        /* 입력 영역 디자인 */
+        .input-area {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: #333;
+        }
+
+        textarea {
+            width: 90%;
+            height: 80px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #228B22; /* 포레스트 그린 */
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+        }
+
+        button, .home-btn {
+            background: linear-gradient(145deg, #228B22, #006400);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        button:hover, .home-btn:hover { transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
+
+        .btn-reset { background: linear-gradient(145deg, #555, #333); }
+        .home-btn { background: linear-gradient(145deg, #d40000, #a00000); }
+
     </style>
 </head>
 <body>
 
-    <div id="status-board">참가자를 입력하고 시작하세요!</div>
+    <div id="snow-container"></div>
 
-    <div class="container" style="margin-top: 80px;"> <h1>🔥 지옥의 서바이벌 🔥</h1>
-        <p>3단계 코스를 통과하고 살아남아라!</p>
-        <p style="font-size: 0.9em; color: gray;">💡 팁: <strong>이름*숫자</strong> (예: 나쨩*50)</p>
+    <div id="status-board">🎅 참가자를 입력해주세요!</div>
 
+    <div class="container">
+        <h1>🎄 지옥의 서바이벌 🎄</h1>
+        <p style="color:#ddd;">최후의 1인이 되어 선물을 차지하라!</p>
+        
         <div class="input-area" id="setup-area">
-            <textarea id="names" placeholder="예: 나쨩*50, 루루*10, 철수, 영희"></textarea>
-            <button onclick="startGame()" style="background: linear-gradient(145deg, #a00000, #800000);">
-                ⚔️ 서바이벌 시작!
-            </button>
+            <p style="margin-top:0; font-size:0.9em; color:#555;">💡 팁: <strong>이름*숫자</strong> (예: 나쨩*50, 오리*30)</p>
+            <textarea id="names" placeholder="예: 나쨩*50, 루루*30, 철수, 영희"></textarea>
+            <button onclick="startGame()">⚔️ 서바이벌 시작!</button>
         </div>
 
-        <canvas id="gameCanvas" width="450" height="1800"></canvas>
+        <canvas id="gameCanvas" width="450" height="2000"></canvas>
         
-        <div style="margin-top: 20px; padding-bottom: 50px;">
-            <button onclick="resetGame()" style="background: #555;">🔄 다시 설정</button>
+        <div style="margin-top: 30px; padding-bottom: 50px;">
+            <button onclick="resetGame()" class="btn-reset">🔄 다시 설정</button>
             <a href="index.html" class="home-btn">🏠 메인으로</a>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // ❄️ 1. 눈 내리는 효과 (배경)
+        // ==========================================
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const count = 50; 
+            for(let i=0; i<count; i++){
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = Math.random() > 0.5 ? '❄' : '●'; // 눈송이와 눈덩이 섞기
+                snow.style.left = Math.random() * 100 + 'vw';
+                snow.style.animationDuration = Math.random() * 3 + 3 + 's'; 
+                snow.style.opacity = Math.random() * 0.7 + 0.3;
+                snow.style.fontSize = Math.random() * 15 + 5 + 'px';
+                container.appendChild(snow);
+            }
+        }
+        createSnow();
+
+        // ==========================================
+        // 🎮 2. 서바이벌 핀볼 게임 로직
+        // ==========================================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const namesInput = document.getElementById('names');
         const statusBoard = document.getElementById('status-board');
         const setupArea = document.getElementById('setup-area');
 
-        // 게임 변수
         let balls = [];
-        let pegs = [];
-        let spinners = []; // 회전하는 장애물
-        let walls = [];    // 모래시계 벽
+        let pegs = [];     // 전구 장애물
+        let spinners = []; // 사탕 지팡이 회전체
+        let particles = []; // 충돌 이펙트
         let isPlaying = false;
         let animationId;
         
-        const gravity = 0.18; 
-        const pegRadius = 3;
-        const ballRadius = 5; // 공 크기 작게 (이름 표시 위해)
+        // 물리 상수
+        const gravity = 0.2; 
+        const friction = 0.99;
+        const pegRadius = 4;
+        const ballRadius = 6; 
 
-        // 맵 설정
-        const mapHeight = 1800; // 3배 길이
-        canvas.height = mapHeight;
+        // 크리스마스 컬러 팔레트 (오너먼트 색상)
+        const colors = ['#FF0000', '#00FF00', '#FFD700', '#00FFFF', '#FF00FF', '#FFFFFF'];
 
-        // 색상 팔레트
-        const colors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#FFFF33', '#33FFFF', '#FF8C00', '#FF1493'];
-
-        // ==========================================
-        // 🏗️ 맵 만들기 (장애물 배치)
-        // ==========================================
+        // 🏗️ 맵 만들기 (크리스마스 테마)
         function initMap() {
             pegs = [];
-            walls = [];
             spinners = [];
 
-            // 1구역: 일반 핀볼 (0 ~ 800px)
-            const rows1 = 18; 
-            const cols1 = 9;
+            // 구역 1: 크리스마스 트리 모양 배치 (0 ~ 900px)
+            const rows1 = 25;
             for (let r = 0; r < rows1; r++) {
-                const itemsInRow = r % 2 === 0 ? cols1 : cols1 - 1;
-                const spacingX = canvas.width / (cols1 + 1);
-                const offsetX = r % 2 === 0 ? spacingX : spacingX * 1.5;
-                for (let c = 0; c < itemsInRow; c++) {
-                    const noise = (Math.random() - 0.5) * 5;
-                    pegs.push({ x: offsetX + c * spacingX + noise, y: 150 + r * 35, r: pegRadius });
-                }
-            }
-
-            // 2구역: 모래시계 (깔때기) (800 ~ 1200px)
-            // 핀으로 벽을 만듦
-            for (let y = 800; y < 1100; y += 15) {
-                // 왼쪽 벽 (점점 중앙으로)
-                let xLeft = 0 + (y - 800) * 0.6; 
-                // 오른쪽 벽
-                let xRight = canvas.width - (y - 800) * 0.6;
+                // 트리의 삼각형 모양을 위해 너비를 조절
+                let widthFactor = 0.3 + (r / rows1) * 0.6; // 위는 좁고 아래는 넓게
+                let itemsInRow = Math.floor(widthFactor * 12);
                 
-                // 구멍 크기 확보 (너무 좁아지지 않게)
-                if (xRight - xLeft > 40) {
-                    pegs.push({x: xLeft, y: y, r: pegRadius * 1.5});
-                    pegs.push({x: xRight, y: y, r: pegRadius * 1.5});
+                let startX = (canvas.width - (canvas.width * widthFactor)) / 2;
+                let spacingX = (canvas.width * widthFactor) / itemsInRow;
+
+                for (let c = 0; c < itemsInRow; c++) {
+                    const noise = (Math.random() - 0.5) * 10;
+                    // 지그재그 배치
+                    let x = startX + c * spacingX + spacingX/2 + noise;
+                    // r이 짝수면 약간 엇갈리게
+                    if (r % 2 === 0) x += spacingX / 2;
+                    
+                    pegs.push({ 
+                        x: x, 
+                        y: 150 + r * 35, 
+                        r: pegRadius,
+                        color: colors[Math.floor(Math.random() * colors.length)] // 전구 색상
+                    });
                 }
             }
 
-            // 3구역: 회전하는 풍차 (Spinners) (1200 ~ 1700px)
-            // 중앙에서 도는 막대기 2개 추가
-            spinners.push({ x: canvas.width / 2, y: 1300, length: 120, angle: 0, speed: 0.05 });
-            spinners.push({ x: canvas.width / 2, y: 1550, length: 140, angle: Math.PI / 2, speed: -0.04 }); // 반대 방향
+            // 구역 2: 굴뚝 (좁은 통로) (900 ~ 1300px)
+            for (let y = 950; y < 1300; y += 20) {
+                // 왼쪽 벽
+                pegs.push({x: 100 + Math.random()*10, y: y, r: pegRadius, color: '#888'}); 
+                pegs.push({x: 80 + Math.random()*10, y: y, r: pegRadius, color: '#888'}); 
+                // 오른쪽 벽
+                pegs.push({x: canvas.width - 100 - Math.random()*10, y: y, r: pegRadius, color: '#888'});
+                pegs.push({x: canvas.width - 80 - Math.random()*10, y: y, r: pegRadius, color: '#888'});
+                
+                // 중간에 방해물 조금
+                if (y % 60 === 0) {
+                     pegs.push({x: canvas.width/2 + (Math.random()-0.5)*100, y: y, r: pegRadius, color: 'red'});
+                }
+            }
 
-            // 마지막 난장판 핀들
-            for (let i = 0; i < 30; i++) {
+            // 구역 3: 믹서기 (사탕 지팡이 풍차) (1300 ~ 1800px)
+            // 3개의 회전체 배치
+            spinners.push({ x: 130, y: 1450, length: 110, angle: 0, speed: 0.08, color: 'red' });
+            spinners.push({ x: canvas.width - 130, y: 1450, length: 110, angle: 1, speed: -0.08, color: 'green' });
+            
+            spinners.push({ x: canvas.width / 2, y: 1700, length: 160, angle: 0, speed: 0.12, color: 'gold' }); // 대왕 풍차
+
+            // 마지막 랜덤 장애물
+            for(let i=0; i<40; i++) {
                 pegs.push({
                     x: Math.random() * canvas.width,
-                    y: 1200 + Math.random() * 500,
-                    r: pegRadius
+                    y: 1350 + Math.random() * 500,
+                    r: pegRadius,
+                    color: 'white'
                 });
             }
         }
 
-        // ==========================================
-        // 🎮 게임 로직
-        // ==========================================
         function startGame() {
             const rawText = namesInput.value;
+            if (!rawText.trim()) { alert("참가자를 입력해주세요!"); return; }
+
             const rawList = rawText.split(',');
             let players = [];
 
@@ -174,7 +274,7 @@
                     const name = parts[0].trim();
                     let count = parseInt(parts[1]);
                     if (!isNaN(count) && count > 0) {
-                        if(count > 500) count = 500; 
+                        if(count > 500) count = 500; // 성능 제한
                         for (let i = 0; i < count; i++) players.push(name);
                     }
                 } else {
@@ -182,13 +282,10 @@
                 }
             });
 
-            if (players.length < 2) {
-                alert("최소 2개 이상의 공이 필요합니다!");
-                return;
-            }
+            if (players.length < 2) { alert("최소 2명 이상이어야 합니다!"); return; }
 
             setupArea.style.display = 'none';
-            statusBoard.innerHTML = `총 ${players.length}개 생존!`;
+            statusBoard.innerHTML = `🎄 총 ${players.length}명 생존 중!`;
             
             initMap();
             spawnBalls(players);
@@ -198,57 +295,87 @@
 
         function spawnBalls(players) {
             balls = [];
-            players.forEach((name, index) => {
+            players.forEach((name) => {
                 balls.push({
                     name: name,
-                    x: Math.random() * (canvas.width - 40) + 20,
-                    y: Math.random() * -300 - 50, // 시작 위치 분산
-                    vx: (Math.random() - 0.5) * 3,
+                    x: Math.random() * (canvas.width - 60) + 30,
+                    y: Math.random() * -400 - 50, // 시작 위치 분산
+                    vx: (Math.random() - 0.5) * 4,
                     vy: 0,
-                    color: colors[Math.floor(Math.random() * colors.length)],
+                    color: colors[Math.floor(Math.random() * colors.length)], // 오너먼트 색상
                     active: true
                 });
             });
         }
 
-        // ==========================================
-        // 🎞️ 애니메이션 & 물리 엔진
-        // ==========================================
+        // 파티클 생성 (충돌 효과)
+        function createParticles(x, y, color) {
+            for(let i=0; i<3; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    life: 1.0,
+                    color: color
+                });
+            }
+        }
+
         function animate() {
             if (!isPlaying) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 1. 회전 장애물 업데이트
-            spinners.forEach(spinner => {
-                spinner.angle += spinner.speed;
-                // 그리기
-                ctx.save();
-                ctx.translate(spinner.x, spinner.y);
-                ctx.rotate(spinner.angle);
-                ctx.fillStyle = "#FFD700";
-                ctx.fillRect(-spinner.length/2, -5, spinner.length, 10); // 가로 막대
-                ctx.fillRect(-5, -spinner.length/2, 10, spinner.length); // 세로 막대 (십자가 모양)
-                ctx.restore();
-            });
-
-            // 2. 핀 그리기
-            ctx.fillStyle = "white";
+            // 1. 핀(전구) 그리기
             pegs.forEach(peg => {
                 ctx.beginPath();
                 ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2);
+                ctx.fillStyle = peg.color;
+                ctx.shadowBlur = 10; // 빛나는 효과
+                ctx.shadowColor = peg.color;
                 ctx.fill();
+                ctx.shadowBlur = 0; // 초기화
             });
 
-            let activeCount = 0;
-            let lastSurvivor = null;
-            let avgY = 0; // 카메라 스크롤용 평균 높이
+            // 2. 회전 장애물 (사탕 지팡이) 그리기 & 업데이트
+            spinners.forEach(spinner => {
+                spinner.angle += spinner.speed;
+                ctx.save();
+                ctx.translate(spinner.x, spinner.y);
+                ctx.rotate(spinner.angle);
+                
+                // 막대 그리기 (사탕 무늬)
+                ctx.strokeStyle = (spinner.color === 'red') ? '#ff4444' : (spinner.color === 'green' ? '#44ff44' : '#FFD700');
+                ctx.lineWidth = 12;
+                ctx.lineCap = "round";
+                
+                // 십자가 모양
+                ctx.beginPath();
+                ctx.moveTo(-spinner.length/2, 0);
+                ctx.lineTo(spinner.length/2, 0);
+                ctx.moveTo(0, -spinner.length/2);
+                ctx.lineTo(0, spinner.length/2);
+                ctx.stroke();
 
+                // 중앙 장식
+                ctx.beginPath();
+                ctx.arc(0, 0, 8, 0, Math.PI*2);
+                ctx.fillStyle = "white";
+                ctx.fill();
+                
+                ctx.restore();
+            });
+
+            let activeBalls = [];
+            let avgY = 0; 
+
+            // 3. 공(오너먼트) 업데이트
             balls.forEach(ball => {
                 if (!ball.active) return;
 
                 // 물리 적용
                 ball.vy += gravity;
+                ball.vx *= friction;
                 ball.x += ball.vx;
                 ball.y += ball.vy;
 
@@ -256,7 +383,7 @@
                 if (ball.x < ballRadius) { ball.x = ballRadius; ball.vx *= -0.7; }
                 if (ball.x > canvas.width - ballRadius) { ball.x = canvas.width - ballRadius; ball.vx *= -0.7; }
 
-                // 핀 충돌 처리
+                // 핀 충돌
                 pegs.forEach(peg => {
                     const dx = ball.x - peg.x;
                     const dy = ball.y - peg.y;
@@ -264,121 +391,156 @@
                     if (dist < ballRadius + peg.r) {
                         const angle = Math.atan2(dy, dx);
                         const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                        const bounce = 0.6; // 탄성
+                        const bounce = 0.65;
+                        
                         ball.vx = Math.cos(angle) * speed * bounce + (Math.random()-0.5);
                         ball.vy = Math.sin(angle) * speed * bounce;
+                        
+                        // 겹침 방지
                         ball.x += Math.cos(angle) * (ballRadius + peg.r - dist);
                         ball.y += Math.sin(angle) * (ballRadius + peg.r - dist);
+
+                        // 파티클 효과
+                        createParticles(peg.x, peg.y, peg.color);
                     }
                 });
 
-                // 회전 장애물(Spinner) 충돌 처리 (간단한 거리 기반 튕기기)
+                // 회전체 충돌
                 spinners.forEach(spinner => {
                     const dx = ball.x - spinner.x;
                     const dy = ball.y - spinner.y;
                     const dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    // 회전체 중심 근처에 오면 튕겨나감 (단순화)
-                    if (dist < spinner.length / 2 + 10) {
-                         // 회전 속도에 따라 공을 확 쳐냄 (변수 창출!)
-                         ball.vx += Math.cos(spinner.angle) * 2;
-                         ball.vy += Math.sin(spinner.angle) * 2;
+                    // 간략한 충돌 처리 (중심부 근처면 튕김)
+                    if (dist < spinner.length/2 + 10) {
+                         // 회전 방향 힘 추가
+                         ball.vx += Math.cos(spinner.angle) * 3;
+                         ball.vy += Math.sin(spinner.angle) * 3;
+                         createParticles(ball.x, ball.y, "white");
                     }
                 });
 
                 // 탈락 체크
-                if (ball.y > canvas.height + 50) {
+                if (ball.y > canvas.height + 100) {
                     ball.active = false;
                 } else {
-                    activeCount++;
-                    lastSurvivor = ball;
+                    activeBalls.push(ball);
                     avgY += ball.y;
                 }
 
-                // 공 그리기
+                // 공 그리기 (3D 오너먼트 효과)
+                let grad = ctx.createRadialGradient(ball.x - 2, ball.y - 2, 1, ball.x, ball.y, ballRadius);
+                grad.addColorStop(0, "white");
+                grad.addColorStop(0.3, ball.color);
+                grad.addColorStop(1, "black");
+                
                 ctx.beginPath();
                 ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
-                ctx.fillStyle = ball.color;
+                ctx.fillStyle = grad;
                 ctx.fill();
                 
-                // ★ 이름 표시 (모든 공에)
+                // 이름 표시 (가독성 위해 외곽선 추가)
                 ctx.fillStyle = "white";
-                ctx.font = "bold 10px sans-serif"; // 글씨 작게
+                ctx.font = "bold 11px sans-serif";
                 ctx.textAlign = "center";
                 ctx.strokeStyle = "black";
                 ctx.lineWidth = 2;
-                ctx.strokeText(ball.name, ball.x, ball.y - 10);
-                ctx.fillText(ball.name, ball.x, ball.y - 10);
+                ctx.strokeText(ball.name, ball.x, ball.y - 12);
+                ctx.fillText(ball.name, ball.x, ball.y - 12);
             });
 
-            // 🎥 자동 스크롤 기능 (카메라)
-            if (activeCount > 0) {
-                avgY = avgY / activeCount;
-                // 화면 중앙에 공들이 오도록 스크롤 조정
+            // 4. 파티클(충돌 이펙트) 그리기
+            for(let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.05;
+                if(p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+
+            // 🎥 자동 스크롤 (카메라)
+            if (activeBalls.length > 0) {
+                avgY = avgY / activeBalls.length;
                 const targetScroll = avgY - window.innerHeight / 2;
                 window.scrollTo({ top: targetScroll, behavior: 'auto' });
             }
 
-            // 승자 판정
-            if (activeCount > 1) {
-                statusBoard.innerHTML = `😱 생존: ${activeCount}명 / 1등은 누구?!`;
+            // 게임 상태 업데이트
+            if (activeBalls.length > 1) {
+                statusBoard.innerHTML = `🎅 생존: ${activeBalls.length}명 / 1등은 누구?`;
                 animationId = requestAnimationFrame(animate);
-            } else if (activeCount === 1) {
+            } else if (activeBalls.length === 1) {
                 isPlaying = false;
-                statusBoard.innerHTML = `🎉 우승 확정! ${lastSurvivor.name} 🎉`;
-                drawWinner(lastSurvivor);
+                statusBoard.innerHTML = `🎉 우승! ${activeBalls[0].name} 🎉`;
+                drawWinner(activeBalls[0]);
             } else {
                 isPlaying = false;
-                statusBoard.innerHTML = "😅 전원 탈락! 다시 해주세요.";
+                statusBoard.innerHTML = "😅 전원 탈락! (재도전?)";
             }
         }
         
         function drawWinner(winner) {
-            // 화면을 우승자 위치로 이동
             window.scrollTo({ top: canvas.height, behavior: 'smooth' });
+            
+            // 배경 살짝 어둡게
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.globalAlpha = 0.3;
-            ctx.fillStyle = "white";
-            pegs.forEach(peg => { ctx.beginPath(); ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2); ctx.fill(); });
-            ctx.globalAlpha = 1.0;
+            const cx = canvas.width / 2;
+            const cy = canvas.height - 300;
+            
+            // 후광 효과
+            let grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 100);
+            grad.addColorStop(0, "rgba(255, 215, 0, 1)");
+            grad.addColorStop(1, "rgba(255, 215, 0, 0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 100, 0, Math.PI*2);
+            ctx.fill();
 
             // 우승자 왕만하게 그리기
-            const cx = canvas.width / 2;
-            const cy = canvas.height - 300; // 하단부
-            
+            let ballGrad = ctx.createRadialGradient(cx-10, cy-10, 5, cx, cy, 50);
+            ballGrad.addColorStop(0, "white");
+            ballGrad.addColorStop(0.3, winner.color);
+            ballGrad.addColorStop(1, "black");
+
             ctx.beginPath();
-            ctx.arc(cx, cy, 60, 0, Math.PI * 2);
-            ctx.fillStyle = winner.color;
+            ctx.arc(cx, cy, 50, 0, Math.PI * 2);
+            ctx.fillStyle = ballGrad;
             ctx.fill();
             
-            ctx.fillStyle = "white";
+            // 텍스트
+            ctx.fillStyle = "#FFD700";
             ctx.strokeStyle = "black";
-            ctx.lineWidth = 3;
-            ctx.font = "bold 40px Noto Sans KR";
+            ctx.lineWidth = 4;
+            ctx.font = "900 40px Noto Sans KR";
             ctx.textAlign = "center";
             
-            ctx.strokeText("👑 우승 👑", cx, cy - 80);
-            ctx.fillText("👑 우승 👑", cx, cy - 80);
+            ctx.strokeText("🏆 최후의 1인 🏆", cx, cy - 80);
+            ctx.fillText("🏆 최후의 1인 🏆", cx, cy - 80);
             
-            ctx.strokeText(winner.name, cx, cy + 15);
-            ctx.fillText(winner.name, cx, cy + 15);
+            ctx.font = "900 50px Noto Sans KR";
+            ctx.fillStyle = "white";
+            ctx.strokeText(winner.name, cx, cy + 80);
+            ctx.fillText(winner.name, cx, cy + 80);
         }
 
         function resetGame() {
             isPlaying = false;
             cancelAnimationFrame(animationId);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            statusBoard.innerHTML = "참가자를 입력하고 시작하세요!";
-            setupArea.style.display = 'flex';
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // 맨 위로
+            statusBoard.innerHTML = "🎅 참가자를 입력해주세요!";
+            setupArea.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        
-        initMap();
-        // 초기 화면 그리기
-        ctx.fillStyle = "white";
-        pegs.forEach(peg => { ctx.beginPath(); ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2); ctx.fill(); });
-
     </script>
 </body>
 </html>
