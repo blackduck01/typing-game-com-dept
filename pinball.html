@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 최후의 1인 서바이벌 🏆</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>
+        /* 서바이벌 핀볼 전용 스타일 */
+        canvas {
+            background-color: #222;
+            border: 5px solid #a00000;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(160, 0, 0, 0.5);
+            margin-top: 10px;
+            max-width: 100%;
+            touch-action: none;
+        }
+        .input-area {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        textarea {
+            width: 80%;
+            height: 80px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #006400;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        #status-board {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #006400;
+            min-height: 30px;
+        }
+        .winner-display {
+            font-size: 2em;
+            color: #ffD700;
+            text-shadow: 2px 2px 0px #a00000;
+            animation: pop 0.5s ease infinite alternate;
+        }
+        @keyframes pop { from { transform: scale(1); } to { transform: scale(1.1); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🔥 최후의 1인 서바이벌 🔥</h1>
+        <p>가장 오랫동안 화면에 살아남는 공이 우승!</p>
+
+        <div class="input-area" id="setup-area">
+            <label for="names">참가자 닉네임 (쉼표로 구분)</label>
+            <textarea id="names" placeholder="예: 나쨩, 루루, 철수, 영희, 맹구"></textarea>
+            <button onclick="startGame()" style="background: linear-gradient(145deg, #a00000, #800000);">
+                ⚔️ 서바이벌 시작!
+            </button>
+        </div>
+
+        <div id="status-board">참가자를 입력하고 시작하세요!</div>
+
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="resetGame()" style="background: #555;">🔄 다시 설정</button>
+            <a href="index.html" class="home-btn">🏠 메인으로</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const namesInput = document.getElementById('names');
+        const statusBoard = document.getElementById('status-board');
+        const setupArea = document.getElementById('setup-area');
+
+        // 게임 변수
+        let balls = [];
+        let pegs = [];
+        let isPlaying = false;
+        let animationId;
+        const gravity = 0.15; // 중력 (낮을수록 천천히 떨어짐)
+        const pegRadius = 4;
+        const ballRadius = 8;
+
+        // 색상 팔레트 (공 색깔 랜덤)
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#FFFF33', '#33FFFF', '#FF8C00', '#FF1493'];
+
+        // 핀(장애물) 생성 - 촘촘하게 배치해서 공이 오래 머물도록 함
+        function initPegs() {
+            pegs = [];
+            const rows = 12; 
+            const cols = 7; 
+            const spacingY = (canvas.height - 150) / rows; // 아래쪽 여유 공간
+            
+            for (let r = 0; r < rows; r++) {
+                const itemsInRow = r % 2 === 0 ? cols : cols - 1;
+                const spacingX = canvas.width / (cols + 1);
+                const offsetX = r % 2 === 0 ? spacingX : spacingX * 1.5;
+
+                for (let c = 0; c < itemsInRow; c++) {
+                    // 약간의 랜덤성을 주어 핀 위치를 불규칙하게 만듦 (더 재밌음)
+                    const randomOffset = (Math.random() - 0.5) * 5;
+                    pegs.push({
+                        x: offsetX + c * spacingX + randomOffset,
+                        y: 120 + r * spacingY, // 120px 아래부터 시작
+                        r: pegRadius
+                    });
+                }
+            }
+        }
+
+        // 게임 시작
+        function startGame() {
+            const rawNames = namesInput.value.split(',');
+            // 빈칸 제거하고 이름 리스트 만들기
+            const players = rawNames.map(n => n.trim()).filter(n => n !== "");
+
+            if (players.length < 2) {
+                alert("최소 2명 이상의 참가자가 필요합니다!");
+                return;
+            }
+
+            setupArea.style.display = 'none'; // 입력창 숨김
+            statusBoard.innerHTML = `총 ${players.length}명 생존 중...`;
+            statusBoard.className = '';
+            
+            initPegs();
+            spawnBalls(players);
+            isPlaying = true;
+            animate();
+        }
+
+        // 공 생성
+        function spawnBalls(players) {
+            balls = [];
+            players.forEach((name, index) => {
+                balls.push({
+                    name: name,
+                    x: Math.random() * (canvas.width - 40) + 20, // 랜덤 가로 위치
+                    y: Math.random() * -100 - 20, // 화면 위쪽 안 보이는 곳에서 시작 (시간차 낙하)
+                    vx: (Math.random() - 0.5) * 2, // 약간의 좌우 움직임
+                    vy: 0,
+                    color: colors[index % colors.length],
+                    active: true // 생존 여부
+                });
+            });
+        }
+
+        // 애니메이션 루프
+        function animate() {
+            if (!isPlaying) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. 핀 그리기
+            ctx.fillStyle = "white";
+            pegs.forEach(peg => {
+                ctx.beginPath();
+                ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 2. 공 업데이트 및 그리기
+            let activeCount = 0;
+            let lastSurvivor = null;
+
+            balls.forEach(ball => {
+                if (!ball.active) return; // 탈락한 공은 무시
+
+                // 물리 적용
+                ball.vy += gravity;
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+
+                // 벽 충돌
+                if (ball.x < ballRadius || ball.x > canvas.width - ballRadius) {
+                    ball.vx *= -0.7;
+                    ball.x = ball.x < ballRadius ? ballRadius : canvas.width - ballRadius;
+                }
+
+                // 핀 충돌 체크
+                pegs.forEach(peg => {
+                    const dx = ball.x - peg.x;
+                    const dy = ball.y - peg.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < ballRadius + peg.r) {
+                        // 충돌 반사 각도 계산
+                        const angle = Math.atan2(dy, dx);
+                        const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                        
+                        // 탄성 (0.6 ~ 0.8)
+                        const bounce = 0.7;
+                        
+                        ball.vx = Math.cos(angle) * speed * bounce;
+                        ball.vy = Math.sin(angle) * speed * bounce;
+                        
+                        // 겹침 방지 (핀 밖으로 밀어내기)
+                        const overlap = (ballRadius + peg.r) - dist;
+                        ball.x += Math.cos(angle) * overlap;
+                        ball.y += Math.sin(angle) * overlap;
+                    }
+                });
+
+                // 탈락 체크 (화면 아래로 떨어지면)
+                if (ball.y > canvas.height + ballRadius) {
+                    ball.active = false;
+                } else {
+                    activeCount++;
+                    lastSurvivor = ball; // 현재 생존자 기록
+                }
+
+                // 공 그리기
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = ball.color;
+                ctx.fill();
+                ctx.strokeStyle = "white";
+                ctx.stroke();
+
+                // 이름 표시 (공 위에)
+                ctx.fillStyle = "white";
+                ctx.font = "12px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(ball.name, ball.x, ball.y - 12);
+            });
+
+            // 3. 상태 업데이트 및 승자 판정
+            if (activeCount > 1) {
+                statusBoard.innerHTML = `😱 현재 생존자: ${activeCount}명! 버텨라!`;
+                animationId = requestAnimationFrame(animate);
+            } else if (activeCount === 1) {
+                // 최후의 1인 확정!
+                isPlaying = false;
+                statusBoard.innerHTML = `<div class='winner-display'>🎉 우승: ${lastSurvivor.name}! 🎉</div>`;
+                
+                // 우승자 공을 화면 중앙으로 이동시키거나 강조하는 효과
+                drawWinner(lastSurvivor);
+            } else {
+                // 혹시 동시에 다 떨어졌을 경우 (거의 없지만 대비)
+                isPlaying = false;
+                statusBoard.innerHTML = "😅 무승부! 다시 해주세요.";
+            }
+        }
+        
+        // 우승자 단독 샷
+        function drawWinner(winner) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 핀 다시 그리기 (배경)
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = "white";
+            pegs.forEach(peg => { ctx.beginPath(); ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2); ctx.fill(); });
+            ctx.globalAlpha = 1.0;
+
+            // 우승자 공 크게 그리기
+            ctx.beginPath();
+            ctx.arc(canvas.width/2, canvas.height/2, 50, 0, Math.PI * 2);
+            ctx.fillStyle = winner.color;
+            ctx.fill();
+            
+            ctx.fillStyle = "white";
+            ctx.font = "bold 30px Noto Sans KR";
+            ctx.textAlign = "center";
+            ctx.fillText("👑 우승 👑", canvas.width/2, canvas.height/2 - 70);
+            ctx.fillText(winner.name, canvas.width/2, canvas.height/2 + 10);
+        }
+
+        function resetGame() {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            statusBoard.innerHTML = "참가자를 입력하고 시작하세요!";
+            setupArea.style.display = 'flex';
+        }
+        
+        // 초기 화면 그리기 (핀만 보여줌)
+        initPegs();
+        ctx.fillStyle = "white";
+        pegs.forEach(peg => { ctx.beginPath(); ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2); ctx.fill(); });
+
+    </script>
+</body>
+</html>
