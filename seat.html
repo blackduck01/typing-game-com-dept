@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 크리스마스 자리 배치 & 역할 분담 🎁</title>
+    <title>🎄 자리 배치 & 역할 분담 🎄</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* ❄️ 크리스마스 테마 CSS 시작 ❄️ */
@@ -63,11 +63,22 @@
 
         .tables-area {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
+            grid-template-columns: repeat(3, 1fr); /* 5개니까 3열로 변경해서 예쁘게 */
+            gap: 30px;
             margin-bottom: 40px;
+            justify-content: center;
         }
-        @media (max-width: 768px) { .tables-area { grid-template-columns: 1fr; } }
+        /* 마지막 줄 가운데 정렬을 위한 처리 */
+        .tables-area .table-group:last-child:nth-child(3n-1) {
+            grid-column-end: -2;
+        }
+        
+        @media (max-width: 900px) { 
+            .tables-area { grid-template-columns: repeat(2, 1fr); } 
+        }
+        @media (max-width: 600px) { 
+            .tables-area { grid-template-columns: 1fr; } 
+        }
 
         .table-group {
             background: #f8f9fa;
@@ -86,9 +97,10 @@
             position: absolute;
             background: #d40000;
             color: white;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 20px;
             font-weight: bold;
+            font-size: 0.9em;
             border: 3px solid #FFD700;
             z-index: 1;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -114,7 +126,6 @@
             line-height: 1.1;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        /* ★★★ 호스트(오리) 관련 스타일 모두 삭제됨! ★★★ */
         
         .btn-group {
             display: flex;
@@ -173,7 +184,7 @@
     <div id="snow-container"></div>
 
     <div class="seat-container">
-        <h1>🎅 크리스마스 자리 배치 🎄</h1>
+        <h1>🎄 자리 배치 🎄</h1>
         
         <div class="role-guide">
             <div class="role-item"><span class="dot bg-black"></span>⚫ 진행/스탭</div>
@@ -184,10 +195,11 @@
         </div>
 
         <div class="tables-area">
-            <div class="table-group" id="table-1"><div class="table-center">1조 (5명)</div></div>
-            <div class="table-group" id="table-2"><div class="table-center">2조 (5명)</div></div>
-            <div class="table-group" id="table-3"><div class="table-center">3조 (5명)</div></div>
+            <div class="table-group" id="table-1"><div class="table-center">1조 (4명)</div></div>
+            <div class="table-group" id="table-2"><div class="table-center">2조 (4명)</div></div>
+            <div class="table-group" id="table-3"><div class="table-center">3조 (4명)</div></div>
             <div class="table-group" id="table-4"><div class="table-center">4조 (4명)</div></div>
+            <div class="table-group" id="table-5"><div class="table-center">5조 (3명)</div></div>
         </div>
 
         <div class="btn-group">
@@ -225,6 +237,7 @@
         }
         createSnowflakes();
 
+        // 19명 데이터
         let people = [
             { id: 1, name: "오리", role: "black", color: "bg-black", prev: 0 }, 
             { id: 2, name: "옴뇸뇸", role: "black", color: "bg-black", prev: 0 },
@@ -247,24 +260,30 @@
             { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
+        // 1부 배치: 4명, 4명, 4명, 4명, 3명으로 나눔
         function setPhase1() {
             clearTables();
-            assignRender(people[0], 1); assignRender(people[3], 1); assignRender(people[4], 1); assignRender(people[5], 1); assignRender(people[6], 1);
-            assignRender(people[1], 2); assignRender(people[7], 2); assignRender(people[8], 2); assignRender(people[9], 2); assignRender(people[10], 2);
-            assignRender(people[2], 3); assignRender(people[11], 3); assignRender(people[12], 3); assignRender(people[13], 3); assignRender(people[14], 3);
-            assignRender(people[15], 4); assignRender(people[16], 4); assignRender(people[17], 4); assignRender(people[18], 4);
+            // 1조 (오리 포함 4명)
+            assignRender(people[0], 1); assignRender(people[3], 1); assignRender(people[4], 1); assignRender(people[5], 1);
+            // 2조 (옴뇸뇸 포함 4명)
+            assignRender(people[1], 2); assignRender(people[6], 2); assignRender(people[7], 2); assignRender(people[8], 2);
+            // 3조 (둘리 포함 4명)
+            assignRender(people[2], 3); assignRender(people[9], 3); assignRender(people[10], 3); assignRender(people[11], 3);
+            // 4조 (4명)
+            assignRender(people[12], 4); assignRender(people[13], 4); assignRender(people[14], 4); assignRender(people[15], 4);
+            // 5조 (3명)
+            assignRender(people[16], 5); assignRender(people[17], 5); assignRender(people[18], 5);
         }
 
         function assignRender(person, tableNum) {
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
-            // ★★★ 오리(ID:1)에게 'host' 클래스 주는 부분 삭제함! ★★★
-            // if (person.id === 1) el.classList.add('host'); 
             el.innerHTML = `${person.name}`;
 
             const currentCount = table.querySelectorAll('.person').length;
-            const maxSeats = (tableNum === 4) ? 4 : 5; 
+            const maxSeats = 4; // 테이블당 최대 4명으로 제한
+            
             const displayMax = Math.max(currentCount + 1, maxSeats);
             const angle = (360 / displayMax) * currentCount - 90; 
             const radius = 95; 
@@ -284,17 +303,28 @@
             });
         }
 
+        // 5개 테이블로 섞기 로직
         function shuffleSeats(mode) {
             const MAX_RETRIES = 500;
             let success = false;
             let finalPlan = [];
 
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-                let tempTables = { 1: {count:0,colors:[]}, 2: {count:0,colors:[]}, 3: {count:0,colors:[]}, 4: {count:0,colors:[]} };
+                // 테이블 5개 초기화
+                let tempTables = { 
+                    1: {count:0,colors:[]}, 
+                    2: {count:0,colors:[]}, 
+                    3: {count:0,colors:[]}, 
+                    4: {count:0,colors:[]},
+                    5: {count:0,colors:[]} 
+                };
                 let tempPlan = []; 
+                
+                // 진행팀 3명 배치 (테이블 5개라 널널함)
                 let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
-                let tableOptions = [1, 2, 3, 4]; 
+                let tableOptions = [1, 2, 3, 4, 5]; 
                 let leaderFail = false;
+                
                 for (let leader of leaders) {
                     let options = tableOptions.filter(t => tempTables[t].count === 0 && t !== leader.prev);
                     if (options.length === 0) options = tableOptions.filter(t => tempTables[t].count === 0);
@@ -306,19 +336,23 @@
                 }
                 if (leaderFail) continue; 
 
+                // 참가자 배치
                 let users = people.slice(3).sort(() => Math.random() - 0.5); 
                 let userFail = false;
                 for (let user of users) {
-                    let candidates = [1, 2, 3, 4].filter(t => {
-                        let limit = (t === 4) ? 4 : 5;
+                    let candidates = [1, 2, 3, 4, 5].filter(t => {
+                        let limit = 4; // 모든 테이블 정원 4명
                         let hasSpace = tempTables[t].count < limit;
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
                         return hasSpace && colorOk;
                     });
+                    
                     if (candidates.length === 0) { userFail = true; break; }
+                    
                     let bestOptions = candidates.filter(t => t !== user.prev);
                     let finalOptions = (bestOptions.length > 0) ? bestOptions : candidates;
                     let selectedTable = finalOptions[Math.floor(Math.random() * finalOptions.length)];
+                    
                     tempTables[selectedTable].count++;
                     tempTables[selectedTable].colors.push(user.role);
                     tempPlan.push({ person: user, table: selectedTable });
