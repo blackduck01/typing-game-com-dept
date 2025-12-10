@@ -6,7 +6,7 @@
     <title>🎄 크리스마스 자리 배치 & 역할 분담 🎁</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* ❄️ 크리스마스 테마 CSS 시작 ❄️ */
+        /* ❄️ 크리스마스 테마 CSS ❄️ */
         body { 
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             background-color: #1a472a;
@@ -16,6 +16,7 @@
             min-height: 100vh;
             box-sizing: border-box;
             overflow-x: hidden;
+            cursor: pointer; /* 매직 완드 느낌 */
         }
 
         .seat-container {
@@ -72,12 +73,8 @@
             grid-column-end: -2;
         }
         
-        @media (max-width: 900px) { 
-            .tables-area { grid-template-columns: repeat(2, 1fr); } 
-        }
-        @media (max-width: 600px) { 
-            .tables-area { grid-template-columns: 1fr; } 
-        }
+        @media (max-width: 900px) { .tables-area { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .tables-area { grid-template-columns: 1fr; } }
 
         .table-group {
             background: #f8f9fa;
@@ -91,7 +88,24 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), inset 0 0 30px rgba(255, 215, 0, 0.1);
+            transition: transform 0.2s;
         }
+        /* 셔플 중일 때 테이블 흔들림 효과 */
+        .shaking { animation: shake 0.5s infinite; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
         .table-center {
             position: absolute;
             background: #d40000;
@@ -117,7 +131,7 @@
             font-size: 0.75em;
             font-weight: bold;
             position: absolute;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: all 0.5s ease-out; /* 부드러운 이동 */
             border: 3px solid white;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 10;
@@ -152,12 +166,14 @@
         }
         button:hover, .home-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         button:active { transform: scale(0.95); }
+        button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 
         .btn-blue { background: linear-gradient(145deg, #0056b3, #004494); }
         .btn-green { background: linear-gradient(145deg, #218838, #1e7e34); }
         .btn-orange { background: linear-gradient(145deg, #e06c00, #c86400); }
         .btn-red { background: linear-gradient(145deg, #c82333, #bd2130); }
 
+        /* 눈송이 & 요정가루 스타일 */
         .snowflake {
             position: fixed;
             top: -10px;
@@ -167,7 +183,7 @@
             text-shadow: 0 0 1px #000;
             z-index: 1;
             user-select: none;
-            cursor: default;
+            pointer-events: none;
             animation-name: snowflakes-fall, snowflakes-shake;
             animation-duration: 10s, 3s;
             animation-timing-function: linear, ease-in-out;
@@ -176,6 +192,23 @@
         }
         @keyframes snowflakes-fall { 0% { top: -10%; } 100% { top: 100%; } }
         @keyframes snowflakes-shake { 0% { transform: translateX(0px); } 50% { transform: translateX(80px); } 100% { transform: translateX(0px); } }
+
+        /* 마우스 요정 가루 효과 */
+        .magic-dust {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #FFD700;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fadeOut 1s forwards;
+            box-shadow: 0 0 10px #FFD700;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1) translate(0, 0); }
+            100% { opacity: 0; transform: scale(0) translate(0, 20px); }
+        }
     </style>
 </head>
 <body>
@@ -202,16 +235,16 @@
         </div>
 
         <div class="btn-group">
-            <button onclick="setPhase1()" class="btn-blue">
+            <button onclick="setPhase1()" class="btn-blue" id="btn-reset">
                 1️⃣ 1부 배치 (초기)
             </button>
             
-            <button onclick="shuffleSeats('balanced')" class="btn-green">
+            <button onclick="shuffleSeats('balanced')" class="btn-green" id="btn-mix-1">
                 🎁 역할 균등 섞기
                 <span style="display:block; font-size:0.7em; font-weight:normal;">색깔X + 이전자리X</span>
             </button>
             
-            <button onclick="shuffleSeats('random')" class="btn-orange">
+            <button onclick="shuffleSeats('random')" class="btn-orange" id="btn-mix-2">
                 🎲 완전 랜덤 섞기
                 <span style="display:block; font-size:0.7em; font-weight:normal;">색깔O + 이전자리X</span>
             </button>
@@ -221,6 +254,29 @@
     </div>
 
     <script>
+        // ==========================================
+        // ✨ 1. 마우스 요정 가루 효과 ✨
+        // ==========================================
+        document.addEventListener('mousemove', function(e) {
+            const dust = document.createElement('div');
+            dust.className = 'magic-dust';
+            // 색상을 랜덤하게 (금색, 흰색, 빨강)
+            const colors = ['#FFD700', '#FFFFFF', '#FF0000', '#00FF00'];
+            dust.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            dust.style.left = e.pageX + 'px';
+            dust.style.top = e.pageY + 'px';
+            document.body.appendChild(dust);
+            
+            // 1초 뒤에 메모리에서 삭제
+            setTimeout(() => {
+                dust.remove();
+            }, 1000);
+        });
+
+        // ==========================================
+        // ❄️ 2. 눈 내리는 효과 ❄️
+        // ==========================================
         function createSnowflakes() {
             const snowContainer = document.getElementById('snow-container');
             const snowflakesCount = 50;
@@ -236,7 +292,9 @@
         }
         createSnowflakes();
 
-        // 19명 데이터
+        // ==========================================
+        // 🪑 3. 자리 배치 로직
+        // ==========================================
         let people = [
             { id: 1, name: "오리", role: "black", color: "bg-black", prev: 0 }, 
             { id: 2, name: "옴뇸뇸", role: "black", color: "bg-black", prev: 0 },
@@ -259,40 +317,27 @@
             { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
-        // 1부 배치
         function setPhase1() {
             clearTables();
-            // 1조 (4명)
             assignRender(people[0], 1, 4); assignRender(people[3], 1, 4); assignRender(people[4], 1, 4); assignRender(people[5], 1, 4);
-            // 2조 (4명)
             assignRender(people[1], 2, 4); assignRender(people[6], 2, 4); assignRender(people[7], 2, 4); assignRender(people[8], 2, 4);
-            // 3조 (4명)
             assignRender(people[2], 3, 4); assignRender(people[9], 3, 4); assignRender(people[10], 3, 4); assignRender(people[11], 3, 4);
-            // 4조 (4명)
             assignRender(people[12], 4, 4); assignRender(people[13], 4, 4); assignRender(people[14], 4, 4); assignRender(people[15], 4, 4);
-            // 5조 (3명) -> 초기 설정은 5번을 3명으로 고정
             assignRender(people[16], 5, 3); assignRender(people[17], 5, 3); assignRender(people[18], 5, 3);
-            
-            updateTableLabels(5); // 초기엔 5번이 3명
+            updateTableLabels(5);
         }
 
-        // maxSeats 매개변수 추가하여 유동적으로 배치
         function assignRender(person, tableNum, maxSeats) {
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
             el.innerHTML = `${person.name}`;
-
             const currentCount = table.querySelectorAll('.person').length;
-            
-            // 시각적 배치를 위한 각도 계산
             const displayMax = Math.max(currentCount + 1, maxSeats);
             const angle = (360 / displayMax) * currentCount - 90; 
             const radius = 95; 
-
             const x = Math.cos(angle * Math.PI / 180) * radius;
             const y = Math.sin(angle * Math.PI / 180) * radius;
-            
             el.style.transform = `translate(${x}px, ${y}px)`;
             table.appendChild(el);
         }
@@ -305,7 +350,6 @@
             });
         }
 
-        // 라벨 업데이트 (몇 명인지 표시)
         function updateTableLabels(smallTableNum) {
             for(let i=1; i<=5; i++) {
                 let count = (i === smallTableNum) ? 3 : 4;
@@ -313,24 +357,93 @@
             }
         }
 
-        // ★★★ 자리 섞기 수정 (3명 테이블은 1번 또는 5번만 가능) ★★★
-        function shuffleSeats(mode) {
+        // ==========================================
+        // 🎰 4. 슬롯머신 스타일 셔플 효과 (업그레이드!)
+        // ==========================================
+        let isShuffling = false;
+
+        async function shuffleSeats(mode) {
+            if (isShuffling) return; // 이미 섞는 중이면 클릭 방지
+            isShuffling = true;
+
+            // 버튼 비활성화 (중복 클릭 방지)
+            const btns = document.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+
+            // 1. 결과 미리 계산
+            const result = calculateShuffle(mode);
+            if (!result.success) {
+                alert("⚠️ 조건에 맞는 배치를 찾지 못했어요!\n다시 한 번 눌러주세요.");
+                isShuffling = false;
+                btns.forEach(b => b.disabled = false);
+                return;
+            }
+
+            // 2. 두구두구 애니메이션 (2초 동안)
+            const tables = document.querySelectorAll('.table-group');
+            tables.forEach(t => t.classList.add('shaking')); // 테이블 흔들기!
+
+            let elapsed = 0;
+            const interval = 100; // 0.1초마다 바뀜
+            const duration = 2000; // 2초간 실행
+
+            const timer = setInterval(() => {
+                elapsed += interval;
+                
+                // 가짜 데이터로 막 섞어서 보여주기 (시각적 효과)
+                clearTables();
+                const randomSmall = (Math.random() < 0.5) ? 1 : 5;
+                updateTableLabels(randomSmall);
+                
+                // 사람들을 무작위 테이블에 그냥 막 뿌림 (규칙 무시하고 시각적 혼란)
+                let tempPeople = [...people].sort(() => Math.random() - 0.5);
+                let personIdx = 0;
+                
+                for(let t=1; t<=5; t++) {
+                    let limit = (t === randomSmall) ? 3 : 4;
+                    for(let k=0; k<limit; k++) {
+                        if(personIdx < tempPeople.length) {
+                            assignRender(tempPeople[personIdx], t, limit);
+                            personIdx++;
+                        }
+                    }
+                }
+
+                if (elapsed >= duration) {
+                    clearInterval(timer);
+                    finishShuffle(result, btns);
+                }
+            }, interval);
+        }
+
+        function finishShuffle(result, btns) {
+            // 3. 최종 결과 렌더링
+            clearTables();
+            document.querySelectorAll('.table-group').forEach(t => t.classList.remove('shaking')); // 흔들림 멈춤
+            
+            updateTableLabels(result.chosenSmallTable);
+            result.finalPlan.forEach(item => {
+                item.person.prev = item.table; 
+                let maxSeats = (item.table === result.chosenSmallTable) ? 3 : 4;
+                assignRender(item.person, item.table, maxSeats);
+            });
+
+            isShuffling = false;
+            btns.forEach(b => b.disabled = false);
+        }
+
+        // 실제 계산 로직 (기존과 동일)
+        function calculateShuffle(mode) {
             const MAX_RETRIES = 500;
             let success = false;
             let finalPlan = [];
-            let chosenSmallTable = 5; // 나중에 라벨 업데이트용
+            let chosenSmallTable = 5;
 
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-                
-                // 1. 3명 앉을 테이블 결정 (1번 또는 5번 중 하나 랜덤)
                 let smallTable = (Math.random() < 0.5) ? 1 : 5;
-                
-                let tempTables = { 
-                    1: {count:0,colors:[]}, 2: {count:0,colors:[]}, 3: {count:0,colors:[]}, 4: {count:0,colors:[]}, 5: {count:0,colors:[]} 
-                };
+                let tempTables = { 1: {count:0,colors:[]}, 2: {count:0,colors:[]}, 3: {count:0,colors:[]}, 4: {count:0,colors:[]}, 5: {count:0,colors:[]} };
                 let tempPlan = []; 
                 
-                // 진행팀 3명 배치
                 let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
                 let tableOptions = [1, 2, 3, 4, 5]; 
                 let leaderFail = false;
@@ -346,51 +459,28 @@
                 }
                 if (leaderFail) continue; 
 
-                // 참가자 배치
                 let users = people.slice(3).sort(() => Math.random() - 0.5); 
                 let userFail = false;
-                
                 for (let user of users) {
                     let candidates = [1, 2, 3, 4, 5].filter(t => {
-                        // ★핵심: 테이블마다 정원(limit)이 다름
                         let limit = (t === smallTable) ? 3 : 4; 
-                        
                         let hasSpace = tempTables[t].count < limit;
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
                         return hasSpace && colorOk;
                     });
-                    
                     if (candidates.length === 0) { userFail = true; break; }
-                    
                     let bestOptions = candidates.filter(t => t !== user.prev);
                     let finalOptions = (bestOptions.length > 0) ? bestOptions : candidates;
                     let selectedTable = finalOptions[Math.floor(Math.random() * finalOptions.length)];
-                    
                     tempTables[selectedTable].count++;
                     tempTables[selectedTable].colors.push(user.role);
                     tempPlan.push({ person: user, table: selectedTable });
                 }
-                
                 if (!userFail) { 
-                    success = true; 
-                    finalPlan = tempPlan; 
-                    chosenSmallTable = smallTable; // 성공한 배치의 3인 테이블 번호 저장
-                    break; 
+                    success = true; finalPlan = tempPlan; chosenSmallTable = smallTable; break; 
                 }
             }
-
-            if (success) {
-                clearTables();
-                updateTableLabels(chosenSmallTable); // 라벨 업데이트 (3명/4명 표시)
-                finalPlan.forEach(item => {
-                    item.person.prev = item.table; 
-                    // 렌더링 할 때 해당 테이블의 정원을 넘겨줌
-                    let maxSeats = (item.table === chosenSmallTable) ? 3 : 4;
-                    assignRender(item.person, item.table, maxSeats);
-                });
-            } else {
-                alert("⚠️ 조건에 맞는 배치를 찾지 못했어요!\n다시 한 번 눌러주세요.");
-            }
+            return { success, finalPlan, chosenSmallTable };
         }
 
         setPhase1(); 
