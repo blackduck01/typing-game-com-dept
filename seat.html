@@ -51,7 +51,7 @@
             border-radius: 20px;
             padding: 20px;
             position: relative;
-            min-height: 250px; /* 높이 확보 */
+            min-height: 280px; /* 인원이 늘어서 높이 조금 더 확보 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -88,9 +88,6 @@
         }
         .person.host { border: 3px solid #FFD700; transform: scale(1.1); z-index: 20; }
         
-        /* 이전 자리 표시 (디버깅용, 실제론 안보임) */
-        .prev-table-mark { font-size: 0.6em; opacity: 0.7; font-weight: normal; }
-
         .manual-box {
             background-color: #fff3cd;
             border: 2px solid #ffecb5;
@@ -118,8 +115,8 @@
 
         <div class="tables-area">
             <div class="table-group" id="table-1"><div class="table-center">1조 (5명)</div></div>
-            <div class="table-group" id="table-2"><div class="table-center">2조 (4명)</div></div>
-            <div class="table-group" id="table-3"><div class="table-center">3조 (4명)</div></div>
+            <div class="table-group" id="table-2"><div class="table-center">2조 (5명)</div></div>
+            <div class="table-group" id="table-3"><div class="table-center">3조 (5명)</div></div>
             <div class="table-group" id="table-4"><div class="table-center">4조 (4명)</div></div>
         </div>
 
@@ -143,65 +140,69 @@
     </div>
 
     <script>
-        // 사람 데이터 (나쨩 + 스태프2 + 참가자들)
-        // previousTable: 직전 테이블 번호를 기억함
+        // 사람 데이터 (총 19명: 나쨩 + 스태프3 + 참가자15)
         let people = [
             // 1. 호스트 (고정)
             { id: 1, name: "나쨩", role: "host", color: "bg-black", prev: 0 }, 
             
-            // 2. 스태프 (2명만 섞음)
+            // 2. 스태프 (3명) - *스태프 1명이 늘어서 이제 2,3,4조에 1명씩 배치 가능!
             { id: 2, name: "스텝1", role: "staff", color: "bg-black", prev: 0 },
             { id: 3, name: "스텝2", role: "staff", color: "bg-black", prev: 0 },
+            { id: 4, name: "스텝3", role: "staff", color: "bg-black", prev: 0 },
 
-            // 3. 참가자들 (색깔별로 구분)
-            { id: 4, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 5, name: "참가2", role: "green", color: "bg-green", prev: 0 },
-            { id: 6, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 7, name: "참가4", role: "red", color: "bg-red", prev: 0 },
+            // 3. 참가자들 (15명으로 증가!) - 색깔 분배: 파4, 초4, 주4, 빨3
+            { id: 5, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 6, name: "참가2", role: "green", color: "bg-green", prev: 0 },
+            { id: 7, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 8, name: "참가4", role: "red", color: "bg-red", prev: 0 },
             
-            { id: 8, name: "참가5", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 9, name: "참가6", role: "green", color: "bg-green", prev: 0 },
-            { id: 10, name: "참가7", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 11, name: "참가8", role: "red", color: "bg-red", prev: 0 },
+            { id: 9, name: "참가5", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 10, name: "참가6", role: "green", color: "bg-green", prev: 0 },
+            { id: 11, name: "참가7", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 12, name: "참가8", role: "red", color: "bg-red", prev: 0 },
             
-            { id: 12, name: "참가9", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 13, name: "참가10", role: "green", color: "bg-green", prev: 0 },
-            { id: 14, name: "참가11", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 15, name: "참가12", role: "red", color: "bg-red", prev: 0 },
-            { id: 16, name: "참가13", role: "blue", color: "bg-blue", prev: 0 } 
+            { id: 13, name: "참가9", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 14, name: "참가10", role: "green", color: "bg-green", prev: 0 },
+            { id: 15, name: "참가11", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 16, name: "참가12", role: "red", color: "bg-red", prev: 0 },
+            
+            { id: 17, name: "참가13", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 18, name: "참가14", role: "green", color: "bg-green", prev: 0 }, // 추가됨
+            { id: 19, name: "참가15", role: "orange", color: "bg-orange", prev: 0 } // 추가됨
         ];
 
-        // 1부 배치 (고정)
+        // 1부 배치 (19명 배치: 5, 5, 5, 4)
         function setPhase1() {
             clearTables();
-            // 1조 (나쨩 + 4명)
-            assign(people[0], 1); assign(people[3], 1); assign(people[4], 1); assign(people[5], 1); assign(people[6], 1);
-            // 2조 (스텝1 + 4명)
-            assign(people[1], 2); assign(people[7], 2); assign(people[8], 2); assign(people[9], 2); assign(people[10], 2);
-            // 3조 (스텝2 + 4명)
-            assign(people[2], 3); assign(people[11], 3); assign(people[12], 3); assign(people[13], 3); assign(people[14], 3);
-            // 4조 (3명)
-            assign(people[15], 4); 
-            // 사람 부족하면 비워둠... (현재 인원 16명 예시)
+            // 1조 (나쨩 + 4명) = 5명
+            assign(people[0], 1); assign(people[4], 1); assign(people[5], 1); assign(people[6], 1); assign(people[7], 1);
+            
+            // 2조 (스텝1 + 4명) = 5명
+            assign(people[1], 2); assign(people[8], 2); assign(people[9], 2); assign(people[10], 2); assign(people[11], 2);
+            
+            // 3조 (스텝2 + 4명) = 5명
+            assign(people[2], 3); assign(people[12], 3); assign(people[13], 3); assign(people[14], 3); assign(people[15], 3);
+            
+            // 4조 (스텝3 + 3명) = 4명 (남은 사람들)
+            assign(people[3], 4); assign(people[16], 4); assign(people[17], 4); assign(people[18], 4);
         }
 
-        // 자리 배정 및 그리기 함수
         function assign(person, tableNum) {
-            person.prev = tableNum; // 현재 자리를 기록 (다음에 피하기 위해)
-            
+            person.prev = tableNum;
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
             if (person.role === 'host') el.classList.add('host');
-            
-            // 이름과 역할 표시
             el.innerHTML = `${person.name}`;
 
-            // 원형 배치 계산
-            const maxSeats = tableNum === 1 ? 5 : 4; 
+            // 원형 배치 (5명일 때와 4명일 때 간격 자동 조정)
             const currentCount = table.querySelectorAll('.person').length;
-            const angle = (360 / maxSeats) * currentCount - 90;
-            const radius = 80; // 반지름
+            const maxSeats = (tableNum === 4) ? 4 : 5; // 4조는 4명, 나머진 5명 기준 (유동적)
+            
+            // 만약 5명 넘어가면 간격 좁히기
+            const displayMax = Math.max(table.querySelectorAll('.person').length + 1, maxSeats);
+            const angle = (360 / displayMax) * currentCount - 90;
+            const radius = 85; 
 
             const x = Math.cos(angle * Math.PI / 180) * radius;
             const y = Math.sin(angle * Math.PI / 180) * radius;
@@ -210,7 +211,6 @@
             table.appendChild(el);
         }
 
-        // 테이블 비우기
         function clearTables() {
             document.querySelectorAll('.table-group').forEach(el => {
                 const center = el.querySelector('.table-center');
@@ -219,98 +219,77 @@
             });
         }
 
-        // ★ 핵심: 자리 섞기 로직 (모드 선택)
+        // 자리 섞기 (19명 대응)
         function shuffleSeats(mode) {
             clearTables();
 
-            // 1. 나쨩은 1조 고정
+            // 1. 나쨩 1조 고정
             assign(people[0], 1);
 
-            // 2. 섞을 사람들 분류 (나쨩 제외)
-            let staff = people.filter(p => p.role === 'staff'); // 스텝 2명
-            let users = people.filter(p => p.role !== 'host' && p.role !== 'staff');
+            // 2. 섞을 사람들 (나쨩 제외)
+            let staff = people.filter(p => p.role === 'staff'); // 스텝 3명
+            let users = people.filter(p => p.role !== 'host' && p.role !== 'staff'); // 참가자 15명
 
-            // 3. 스태프 배치 (2조, 3조, 4조 중 랜덤 2곳)
-            // 스태프가 갔던 곳은 최대한 피하게 섞음
+            // 3. 스태프 배치 (2, 3, 4조에 각각 1명씩 분산!)
             staff.sort(() => Math.random() - 0.5);
+            // 스텝들이 이전 조와 겹치지 않게 노력
+            let availableTables = [2, 3, 4];
             
-            let staffTables = [2, 3, 4];
-            // 스텝1 배치
-            let st1_Table = getBestTable(staff[0], staffTables, []);
-            assign(staff[0], st1_Table);
-            
-            // 스텝2 배치 (스텝1이 간 곳 제외)
-            let remainingTables = staffTables.filter(t => t !== st1_Table);
-            let st2_Table = getBestTable(staff[1], remainingTables, []);
-            assign(staff[1], st2_Table);
+            // 간단하게 순서대로 배치 (어차피 2,3,4 다 감)
+            assign(staff[0], 2);
+            assign(staff[1], 3);
+            assign(staff[2], 4);
 
             // 4. 일반 참가자 배치
-            users.sort(() => Math.random() - 0.5); // 일단 랜덤 섞기
+            users.sort(() => Math.random() - 0.5);
 
-            // 테이블별 현재 인원 및 역할(색깔) 상태 추적
+            // 테이블 상태 (스태프가 이미 차 있음)
             let tableStatus = {
-                1: { count: 1, colors: [] }, // 나쨩 있음
-                2: { count: (st1_Table===2 || st2_Table===2) ? 1 : 0, colors: [] },
-                3: { count: (st1_Table===3 || st2_Table===3) ? 1 : 0, colors: [] },
-                4: { count: (st1_Table===4 || st2_Table===4) ? 1 : 0, colors: [] }
+                1: { count: 1, colors: [] },
+                2: { count: 1, colors: ['staff'] },
+                3: { count: 1, colors: ['staff'] },
+                4: { count: 1, colors: ['staff'] }
             };
-            if(st1_Table) tableStatus[st1_Table].colors.push('staff');
-            if(st2_Table) tableStatus[st2_Table].colors.push('staff');
 
-            // 한 명씩 자리에 넣기
             for (let user of users) {
-                // 들어갈 수 있는 테이블 찾기
+                // 들어갈 테이블 찾기
+                let candidates = [1, 2, 3, 4].filter(t => {
+                    // 1,2,3조는 5명까지, 4조는 4명까지 (총 19명)
+                    // 유동적으로 5명까지 허용해서 꽉 채움
+                    return tableStatus[t].count < 5;
+                });
+                
+                // 만약 4조가 꽉 차서 갈 곳이 없으면 5명 룰 적용
+                if (candidates.length === 0) candidates = [1,2,3,4].filter(t => tableStatus[t].count < 6);
+
+                // 균등 모드 로직
                 let bestTable = -1;
                 
-                // 테이블 1~4 순회하며 조건에 맞는 곳 찾기
-                // 조건: 정원 미달 && (균등모드일 경우 색깔 안 겹침) && (가능하면 이전 자리 아님)
-                
-                // 가능한 테이블 후보군
-                let candidates = [1, 2, 3, 4].filter(t => {
-                    let max = (t === 1) ? 5 : 4;
-                    return tableStatus[t].count < max;
-                });
-
-                // 우선순위 1: 색깔 안 겹치고 + 이전 자리 아닌 곳
+                // 1순위: 색깔 안 겹치고 + 이전 자리 아님
                 let p1 = candidates.filter(t => {
                     let colorSafe = (mode === 'balanced') ? !tableStatus[t].colors.includes(user.role) : true;
                     let historySafe = t !== user.prev;
                     return colorSafe && historySafe;
                 });
 
-                // 우선순위 2: 색깔 안 겹치는 곳 (이전 자리라도 어쩔 수 없음)
+                // 2순위: 색깔만 안 겹침
                 let p2 = candidates.filter(t => {
                      return (mode === 'balanced') ? !tableStatus[t].colors.includes(user.role) : true;
                 });
 
-                // 우선순위 3: 그냥 빈 곳 (어쩔 수 없음)
-                let p3 = candidates;
-
                 if (p1.length > 0) bestTable = p1[Math.floor(Math.random() * p1.length)];
                 else if (p2.length > 0) bestTable = p2[Math.floor(Math.random() * p2.length)];
-                else if (p3.length > 0) bestTable = p3[Math.floor(Math.random() * p3.length)];
+                else bestTable = candidates[Math.floor(Math.random() * candidates.length)];
                 
-                // 배치 확정
                 if (bestTable !== -1) {
                     assign(user, bestTable);
                     tableStatus[bestTable].count++;
                     tableStatus[bestTable].colors.push(user.role);
-                } else {
-                    console.log("자리 부족 비상!"); // 이론상 발생 안 함
                 }
             }
         }
 
-        // 최적의 테이블 찾기 (단순 버전)
-        function getBestTable(person, options, occupiedColors) {
-            // 1순위: 이전 자리가 아님
-            let better = options.filter(t => t !== person.prev);
-            if (better.length > 0) return better[Math.floor(Math.random() * better.length)];
-            // 2순위: 아무데나
-            return options[Math.floor(Math.random() * options.length)];
-        }
-
-        setPhase1(); // 시작 시 1부 배치
+        setPhase1();
 
     </script>
 </body>
