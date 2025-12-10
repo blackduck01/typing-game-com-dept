@@ -3,73 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🪑 자리 배치 & 역할 분담</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <title>🎄 크리스마스 자리 배치 & 역할 분담 🎁</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* CSS 스타일 시작 */
+        /* ❄️ 크리스마스 테마 CSS 시작 ❄️ */
         body { 
-            background-color: #f9f9f9; 
+            /* 배경: 깊은 크리스마스 밤 그라데이션 */
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background-color: #1a472a; /* 혹시 그라데이션 안 먹을 때 대비 */
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow-x: hidden; /* 눈송이 스크롤 방지 */
         }
+
         .seat-container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
+            /* 메인 컨테이너 배경: 약간 투명한 하얀색 */
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            /* 🎁 사탕 지팡이 테두리 효과! */
+            border: 8px solid transparent;
+            border-image: repeating-linear-gradient(45deg, #d40000, #d40000 15px, #ffffff 15px, #ffffff 30px, #008000 30px, #008000 45px, #ffffff 45px, #ffffff 60px) 1;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); /* 금빛 광채 */
+            position: relative;
+            z-index: 10;
         }
 
-        h1 { margin-bottom: 20px; color: #333; }
+        h1 { 
+            margin-bottom: 25px; 
+            color: #d40000; /* 크리스마스 레드 */
+            font-weight: 900;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 0px #006400; /* 초록색 그림자 */
+        }
+        h1 span { font-size: 3rem; }
 
         .role-guide {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 20px;
-            background: white;
+            margin-bottom: 30px;
+            background: #fffaf0; /* 따뜻한 아이보리 */
             padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            border: 3px solid #c19a6b; /* 쿠키색 테두리 */
+            box-shadow: inset 0 0 10px rgba(212, 0, 0, 0.1);
         }
-        .role-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: bold; }
-        .dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; }
+        .role-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: bold; color: #333; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         
-        .bg-black { background-color: #333; box-shadow: 0 0 5px #333; }
-        .bg-blue { background-color: #007bff; box-shadow: 0 0 5px #007bff; }
-        .bg-green { background-color: #28a745; box-shadow: 0 0 5px #28a745; }
-        .bg-orange { background-color: #fd7e14; box-shadow: 0 0 5px #fd7e14; }
-        .bg-red { background-color: #dc3545; box-shadow: 0 0 5px #dc3545; }
+        /* 색상 정의 유지 */
+        .bg-black { background-color: #333; }
+        .bg-blue { background-color: #007bff; }
+        .bg-green { background-color: #28a745; }
+        .bg-orange { background-color: #fd7e14; }
+        .bg-red { background-color: #dc3545; }
 
         .tables-area {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         @media (max-width: 768px) { .tables-area { grid-template-columns: 1fr; } }
 
+        /* 🎄 테이블 디자인 변경 */
         .table-group {
-            background: white;
-            border: 3px solid #ddd;
-            border-radius: 20px;
+            background: #f8f9fa; /* 밝은 테이블 배경 */
+            /* 금색 테두리와 붉은색 빛 번짐 */
+            border: 5px solid #FFD700; 
+            border-radius: 50%; /* 완전 원형 테이블 */
             padding: 20px;
             position: relative;
-            min-height: 280px;
+            aspect-ratio: 1 / 1; /* 정사각형 비율 유지 (원형을 위해) */
+            min-height: auto;
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), inset 0 0 30px rgba(255, 215, 0, 0.1);
         }
         .table-center {
             position: absolute;
-            background: #f0f0f0;
-            padding: 10px 20px;
-            border-radius: 10px;
+            background: #d40000; /* 센터는 빨간색 */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
             font-weight: bold;
-            color: #555;
-            border: 2px solid #ccc;
+            border: 3px solid #FFD700; /* 금색 테두리 */
             z-index: 1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .person {
@@ -84,41 +113,88 @@
             font-size: 0.75em;
             font-weight: bold;
             position: absolute;
-            transition: all 0.8s ease-in-out;
-            border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* 튕기는 효과 추가 */
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 10;
             text-align: center;
             line-height: 1.1;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        .person.host { border: 3px solid #FFD700; transform: scale(1.1); z-index: 20; }
+        /* 호스트는 금색 왕관 느낌 */
+        .person.host { 
+            border: 4px solid #FFD700; 
+            transform: scale(1.15); 
+            z-index: 20; 
+            box-shadow: 0 0 20px #FFD700;
+        }
+        .person.host::after {
+            content: '👑';
+            position: absolute;
+            top: -20px;
+            font-size: 1.5em;
+        }
         
         .btn-group {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
         }
         button, .home-btn {
             border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
+            padding: 15px 25px;
+            border-radius: 50px; /* 둥근 버튼 */
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
             text-decoration: none;
             font-size: 1rem;
             display: inline-block;
             text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 3px solid rgba(255,255,255,0.3);
         }
+        button:hover, .home-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         button:active { transform: scale(0.95); }
+
+        /* 버튼 색상 테마 강화 */
+        .btn-blue { background: linear-gradient(145deg, #0056b3, #004494); }
+        .btn-green { background: linear-gradient(145deg, #218838, #1e7e34); }
+        .btn-orange { background: linear-gradient(145deg, #e06c00, #c86400); }
+        .btn-red { background: linear-gradient(145deg, #c82333, #bd2130); }
+
+        /* 눈송이 스타일 */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: #fff;
+            font-size: 1em;
+            font-family: Arial;
+            text-shadow: 0 0 1px #000;
+            z-index: 1;
+            user-select: none;
+            cursor: default;
+            animation-name: snowflakes-fall, snowflakes-shake;
+            animation-duration: 10s, 3s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            animation-play-state: running, running;
+        }
+        @keyframes snowflakes-fall { 0% { top: -10%; } 100% { top: 100%; } }
+        @keyframes snowflakes-shake { 0% { transform: translateX(0px); } 50% { transform: translateX(80px); } 100% { transform: translateX(0px); } }
     </style>
 </head>
 <body>
 
+    <div id="snow-container"></div>
+
     <div class="seat-container">
-        <h1>🪑 자리 배치 & 역할 분담</h1>
+        <h1>🎅 크리스마스 자리 배치 🎄</h1>
         
         <div class="role-guide">
             <div class="role-item"><span class="dot bg-black"></span>⚫ 진행/스탭</div>
@@ -136,66 +212,73 @@
         </div>
 
         <div class="btn-group">
-            <button onclick="setPhase1()" style="background: linear-gradient(145deg, #007bff, #0056b3);">
+            <button onclick="setPhase1()" class="btn-blue">
                 1️⃣ 1부 배치 (초기)
             </button>
             
-            <button onclick="shuffleSeats('balanced')" style="background: linear-gradient(145deg, #28a745, #1e7e34);">
-                🎨 역할 균등 섞기
+            <button onclick="shuffleSeats('balanced')" class="btn-green">
+                🎁 역할 균등 섞기
                 <span style="display:block; font-size:0.7em; font-weight:normal;">색깔X + 이전자리X</span>
             </button>
             
-            <button onclick="shuffleSeats('random')" style="background: linear-gradient(145deg, #fd7e14, #e67e22);">
+            <button onclick="shuffleSeats('random')" class="btn-orange">
                 🎲 완전 랜덤 섞기
                 <span style="display:block; font-size:0.7em; font-weight:normal;">색깔O + 이전자리X</span>
             </button>
 
-            <a href="index.html" class="home-btn" style="background: linear-gradient(145deg, #a00000, #800000);">🏠 메인</a>
+            <a href="index.html" class="home-btn btn-red">🏠 메인</a>
         </div>
     </div>
 
     <script>
-        // 사람 데이터 (총 19명: 나쨩 + 스태프2 + 참가자16)
+        // ==========================================
+        // ❄️ 눈 내리는 효과 스크립트 ❄️
+        // ==========================================
+        function createSnowflakes() {
+            const snowContainer = document.getElementById('snow-container');
+            const snowflakesCount = 50; // 눈송이 개수 조절
+            for (let i = 0; i < snowflakesCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = '❄';
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDelay = Math.random() * 5 + 's, ' + Math.random() * 3 + 's';
+                snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                snowContainer.appendChild(snowflake);
+            }
+        }
+        createSnowflakes();
+
+        // ==========================================
+        // 🪑 자리 배치 스크립트 (기능은 그대로 유지!)
+        // ==========================================
         let people = [
-            // 1. 호스트 (나쨩도 움직임 -> role: 'black')
             { id: 1, name: "나쨩", role: "black", color: "bg-black", prev: 0 }, 
-            
-            // 2. 스태프 (role: 'black')
             { id: 2, name: "스텝1", role: "black", color: "bg-black", prev: 0 },
             { id: 3, name: "스텝2", role: "black", color: "bg-black", prev: 0 },
-
-            // 3. 참가자 16명
             { id: 4, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
             { id: 5, name: "참가2", role: "green", color: "bg-green", prev: 0 },
             { id: 6, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
             { id: 7, name: "참가4", role: "red", color: "bg-red", prev: 0 },
-            
             { id: 8, name: "참가5", role: "blue", color: "bg-blue", prev: 0 },
             { id: 9, name: "참가6", role: "green", color: "bg-green", prev: 0 },
             { id: 10, name: "참가7", role: "orange", color: "bg-orange", prev: 0 },
             { id: 11, name: "참가8", role: "red", color: "bg-red", prev: 0 },
-            
             { id: 12, name: "참가9", role: "blue", color: "bg-blue", prev: 0 },
             { id: 13, name: "참가10", role: "green", color: "bg-green", prev: 0 },
             { id: 14, name: "참가11", role: "orange", color: "bg-orange", prev: 0 },
             { id: 15, name: "참가12", role: "red", color: "bg-red", prev: 0 },
-            
             { id: 16, name: "참가13", role: "blue", color: "bg-blue", prev: 0 },
             { id: 17, name: "참가14", role: "green", color: "bg-green", prev: 0 }, 
             { id: 18, name: "참가15", role: "orange", color: "bg-orange", prev: 0 },
             { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
-        // 1부 배치 (초기 상태)
         function setPhase1() {
             clearTables();
-            // 1조 (나쨩 + 4명)
             assignRender(people[0], 1); assignRender(people[3], 1); assignRender(people[4], 1); assignRender(people[5], 1); assignRender(people[6], 1);
-            // 2조 (스텝1 + 4명)
             assignRender(people[1], 2); assignRender(people[7], 2); assignRender(people[8], 2); assignRender(people[9], 2); assignRender(people[10], 2);
-            // 3조 (스텝2 + 4명)
             assignRender(people[2], 3); assignRender(people[11], 3); assignRender(people[12], 3); assignRender(people[13], 3); assignRender(people[14], 3);
-            // 4조 (4명)
             assignRender(people[15], 4); assignRender(people[16], 4); assignRender(people[17], 4); assignRender(people[18], 4);
         }
 
@@ -208,10 +291,10 @@
 
             const currentCount = table.querySelectorAll('.person').length;
             const maxSeats = (tableNum === 4) ? 4 : 5; 
-            
             const displayMax = Math.max(currentCount + 1, maxSeats);
             const angle = (360 / displayMax) * currentCount - 90; 
-            const radius = 85; 
+            // 테이블 크기가 커져서 반지름도 조금 키움
+            const radius = 95; 
 
             const x = Math.cos(angle * Math.PI / 180) * radius;
             const y = Math.sin(angle * Math.PI / 180) * radius;
@@ -228,40 +311,21 @@
             });
         }
 
-        // ★★★ 자리 섞기 (나쨩 포함 자유 이동 + 완벽 중복 방지) ★★★
         function shuffleSeats(mode) {
             const MAX_RETRIES = 500;
             let success = false;
             let finalPlan = [];
 
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-                
-                // 1. 테이블 초기화
-                let tempTables = {
-                    1: { count: 0, colors: [] },
-                    2: { count: 0, colors: [] },
-                    3: { count: 0, colors: [] },
-                    4: { count: 0, colors: [] }
-                };
+                let tempTables = { 1: {count:0,colors:[]}, 2: {count:0,colors:[]}, 3: {count:0,colors:[]}, 4: {count:0,colors:[]} };
                 let tempPlan = []; 
-
-                // 2. 진행팀 배치 (나쨩 + 스텝1 + 스텝2 = 총 3명, 'black')
-                // -> 서로 다른 테이블에 배치되도록 함 (검은색 뭉침 방지)
                 let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
                 let tableOptions = [1, 2, 3, 4]; 
-
                 let leaderFail = false;
                 for (let leader of leaders) {
-                    // 빈 테이블이면서 & 이전 자리가 아닌 곳 우선
                     let options = tableOptions.filter(t => tempTables[t].count === 0 && t !== leader.prev);
-                    
-                    // 정 없으면 그냥 빈 테이블 아무데나
-                    if (options.length === 0) {
-                        options = tableOptions.filter(t => tempTables[t].count === 0);
-                    }
-
+                    if (options.length === 0) options = tableOptions.filter(t => tempTables[t].count === 0);
                     if (options.length === 0) { leaderFail = true; break; }
-
                     let target = options[Math.floor(Math.random() * options.length)];
                     tempTables[target].count++;
                     tempTables[target].colors.push('black'); 
@@ -269,39 +333,24 @@
                 }
                 if (leaderFail) continue; 
 
-                // 3. 참가자 배치 (나머지 16명)
                 let users = people.slice(3).sort(() => Math.random() - 0.5); 
                 let userFail = false;
-
                 for (let user of users) {
                     let candidates = [1, 2, 3, 4].filter(t => {
                         let limit = (t === 4) ? 4 : 5;
                         let hasSpace = tempTables[t].count < limit;
-                        
-                        // 균등 모드일 땐 같은 색깔 있으면 후보 탈락
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
-                        
                         return hasSpace && colorOk;
                     });
-
                     if (candidates.length === 0) { userFail = true; break; }
-
-                    // 이전 자리 피하기
                     let bestOptions = candidates.filter(t => t !== user.prev);
                     let finalOptions = (bestOptions.length > 0) ? bestOptions : candidates;
-                    
                     let selectedTable = finalOptions[Math.floor(Math.random() * finalOptions.length)];
-
                     tempTables[selectedTable].count++;
                     tempTables[selectedTable].colors.push(user.role);
                     tempPlan.push({ person: user, table: selectedTable });
                 }
-
-                if (!userFail) {
-                    success = true;
-                    finalPlan = tempPlan;
-                    break;
-                }
+                if (!userFail) { success = true; finalPlan = tempPlan; break; }
             }
 
             if (success) {
@@ -315,7 +364,7 @@
             }
         }
 
-        setPhase1(); // 초기 실행
+        setPhase1(); 
     </script>
 </body>
 </html>
