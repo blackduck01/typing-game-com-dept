@@ -14,63 +14,74 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
         }
         .intro-container { 
             max-width: 600px; 
+            width: 100%;
             background: #ffffff; 
-            padding: 50px; 
+            padding: 40px; 
             border-radius: 15px; 
             box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
             border: 5px dashed #a00000; 
-            border-image: repeating-linear-gradient(45deg, #a00000, #a00000 10px, #006400 10px, #006400 20px) 5;
         }
         h1 { 
             color: #a00000; 
-            font-size: 3em;
-            text-shadow: 2px 2px 4px #006400; 
+            font-size: 2.5em; 
             margin-bottom: 20px;
+            text-shadow: 1px 1px 2px #006400;
         }
-        p {
-            color: #006400;
-            font-size: 1.2em;
-            margin-bottom: 30px;
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* 모바일: 1열 */
+            gap: 15px;
+            margin-top: 30px;
         }
-        .main-button {
-            display: inline-block;
+        /* 버튼 스타일 */
+        .menu-btn {
+            display: block;
             text-decoration: none;
             background-color: #006400; 
             color: white;
-            padding: 15px 30px;
-            font-size: 1.5em;
+            padding: 20px;
+            font-size: 1.3em;
             font-weight: bold;
             border-radius: 10px;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: transform 0.2s, background-color 0.3s;
             box-shadow: 0 4px #004d00;
         }
-        .main-button:hover {
+        .menu-btn:hover {
             background-color: #a00000;
-            box-shadow: 0 4px #800000;
+            transform: translateY(-3px);
         }
-        .main-button:active {
-            transform: translateY(4px);
-            box-shadow: none;
+        .menu-btn span {
+            display: block;
+            font-size: 0.8em;
+            font-weight: normal;
+            margin-top: 5px;
+            color: #ffcccc;
         }
     </style>
 </head>
 <body>
     <div class="intro-container">
         <h1>🎉 방통대 컴과 연말 모임 🎉</h1>
-        <p>크리스마스 타자왕 선발전 및 다양한 프로그램이 준비되어 있습니다.<br>지금 바로 타자왕에 도전하세요!</p>
+        <p>원하는 프로그램을 선택해주세요!</p>
         
-        <a href="typing-game.html" class="main-button">
-            👑 타자왕 대회 시작 👑
-        </a>
-        
-        <p style="margin-top: 50px; font-size: 0.9em; color: gray;">
-            다른 프로그램 링크는 타자 대회 페이지에서 확인하실 수 있습니다.
-        </p>
+        <div class="menu-grid">
+            <a href="typing-game.html" class="menu-btn">
+                ⌨️ 타자왕 선발전
+                <span>나의 타자 실력은 몇 위?</span>
+            </a>
+
+            <a href="#" onclick="alert('아직 준비 중입니다!')" class="menu-btn" style="background-color: #555; box-shadow: 0 4px #333;">
+                ❓ 상식 퀴즈 (준비중)
+            </a>
+            <a href="#" onclick="alert('아직 준비 중입니다!')" class="menu-btn" style="background-color: #555; box-shadow: 0 4px #333;">
+                📸 포토존 (준비중)
+            </a>
+        </div>
     </div>
 </body>
 </html>
