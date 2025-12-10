@@ -6,9 +6,9 @@
     <title>🎄 BGM 박스 🎵</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet"> 
     <style>
-        /* ❄️ 고급스러운 겨울 밤 배경 */
+        /* ❄️ 배경: 차분하고 깊은 크리스마스 그린 */
         body {
-            background: radial-gradient(circle at 50% -20%, #1b2735 0%, #090a0f 100%);
+            background: linear-gradient(135deg, #1a472a, #0d2b1a);
             font-family: 'Noto Sans KR', sans-serif;
             color: white;
             margin: 0;
@@ -16,125 +16,119 @@
             min-height: 100vh;
             box-sizing: border-box;
             overflow-x: hidden;
-            cursor: pointer;
         }
 
-        /* 눈송이 효과 (조금 더 천천히, 우아하게) */
-        .snowflake { position: fixed; top: -10px; color: rgba(255,255,255,0.8); font-size: 1em; text-shadow: 0 0 5px rgba(255,255,255,0.8); z-index: 1; user-select: none; pointer-events: none; animation: fall linear infinite; }
+        /* 눈송이 효과 */
+        .snowflake { position: fixed; top: -10px; color: rgba(255,255,255,0.5); font-size: 1em; text-shadow: 0 0 5px rgba(255,255,255,0.5); z-index: 1; user-select: none; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
-        /* 요정 가루 (금빛) */
-        .magic-dust { position: absolute; width: 4px; height: 4px; background: #FFD700; border-radius: 50%; pointer-events: none; z-index: 9999; animation: fadeOut 1s forwards; box-shadow: 0 0 10px #FFD700; }
-        @keyframes fadeOut { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-20px) scale(0); } }
-
-        /* 🎁 메인 컨테이너: 럭셔리 골드 프레임 */
+        /* 메인 컨테이너 */
         .container {
-            max-width: 900px;
+            max-width: 700px; /* 폭을 좀 줄여서 집중도 높임 */
             margin: 0 auto;
             text-align: center;
             position: relative;
             z-index: 10;
-            padding: 50px 40px;
-            
-            /* 유리 질감 배경 */
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-
-            /* ★핵심: 고급스러운 테두리 (골드 그라데이션) */
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 
-                0 0 20px rgba(0, 0, 0, 0.5), /* 기본 그림자 */
-                0 0 0 1px rgba(255, 215, 0, 0.2) inset; /* 안쪽 얇은 선 */
-                
-            /* 숨쉬는 듯한 빛 효과 */
-            animation: breathingLight 4s infinite alternate;
         }
 
-        /* 우아하게 빛나는 애니메이션 */
-        @keyframes breathingLight {
-            0% { box-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 0 2px rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.3); }
-            100% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.15), 0 0 0 2px rgba(255, 215, 0, 0.5); border-color: rgba(255, 215, 0, 0.8); }
-        }
-
+        /* 제목 스타일 */
         h1 { 
             font-family: 'Noto Sans KR', sans-serif;
-            color: #FFD700; /* 촌스러운 빨강 대신 골드 */
-            font-size: 2.8rem; 
-            font-weight: 300; /* 얇은 폰트로 세련되게 */
+            color: #FFD700; /* 골드 */
+            font-size: 2.5rem; 
+            font-weight: 700;
             margin-bottom: 10px; 
-            letter-spacing: 5px; /* 자간 넓게 */
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            letter-spacing: -1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        h1 span { font-weight: 700; color: #fff; }
+        
+        .subtitle { 
+            color: #a8d5ba; /* 연한 민트색 */
+            font-size: 1rem; 
+            margin-bottom: 50px; 
+            font-weight: 300; 
+        }
 
-        p.subtitle { color: #aaa; font-size: 1rem; margin-bottom: 60px; font-weight: 300; letter-spacing: 1px; }
-
-        /* 🎵 음악 카드: 미니멀 & 모던 */
+        /* 🎵 음악 카드 (심플 버전) */
         .music-card {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05); /* 아주 연한 배경 */
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
             margin-bottom: 30px;
-            display: flex; flex-wrap: wrap; align-items: center;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
         .music-card:hover {
             transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 215, 0, 0.5); /* 호버 시 골드 라인 */
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border-color: #FFD700; /* 호버 시 골드 라인 포인트 */
         }
 
-        /* LP판 스타일 (그대로 유지하되 조금 더 어둡게) */
-        .vinyl-wrapper { flex: 0 0 140px; display: flex; justify-content: center; align-items: center; margin-right: 40px; }
-        .vinyl { width: 120px; height: 120px; background: radial-gradient(#111 30%, #222 31%, #111 32%, #222 45%, #111 46%, #222 60%, #111 61%); border-radius: 50%; border: 1px solid #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; animation: spin 8s linear infinite; }
-        .music-card:hover .vinyl { animation-duration: 3s; }
-        .vinyl::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #b00; border-radius: 50%; border: 2px solid #fff; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        /* 텍스트 영역 */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 10px;
+        }
 
-        /* 텍스트 & 비디오 */
-        .content-wrapper { flex: 1; text-align: left; min-width: 300px; }
-        .content-wrapper h2 { margin: 0 0 15px 0; color: #fff; display: flex; align-items: center; gap: 15px; font-size: 1.5rem; font-weight: 500; }
-        .content-wrapper p { margin: 0 0 20px 0; color: #888; font-size: 0.95rem; font-weight: 300; }
+        .card-title {
+            text-align: left;
+        }
+
+        .card-title h2 { 
+            margin: 0; 
+            font-size: 1.4rem; 
+            color: #fff; 
+            font-weight: 700;
+        }
         
+        .card-title p { 
+            margin: 5px 0 0 0; 
+            color: #bbb; 
+            font-size: 0.9rem; 
+        }
+
+        /* 이퀄라이저 (작고 귀엽게 우측 배치) */
+        .equalizer { display: flex; gap: 3px; height: 15px; align-items: flex-end; }
+        .bar { width: 4px; background: #FFD700; animation: bounce 1s infinite ease-in-out; border-radius: 2px; }
+        @keyframes bounce { 0%, 100% { height: 3px; } 50% { height: 15px; } }
+
+        /* 비디오 영역 */
         .video-box { 
-            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1); /* 얇은 테두리 */
+            position: relative; 
+            padding-bottom: 56.25%; /* 16:9 비율 */
+            height: 0; 
+            overflow: hidden; 
+            border-radius: 12px; 
+            background: #000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* 이퀄라이저 (심플하게) */
-        .equalizer { display: flex; gap: 3px; height: 20px; align-items: flex-end; margin-left: auto; opacity: 0.7; }
-        .bar { width: 4px; background: #FFD700; animation: bounce 1s infinite ease-in-out; border-radius: 2px; }
-        @keyframes bounce { 0%, 100% { height: 5px; } 50% { height: 20px; } }
-
-        /* 홈 버튼 (모던 버튼) */
+        /* 홈 버튼 */
         .home-btn { 
-            display: inline-block; margin-top: 50px; padding: 15px 50px; 
-            font-size: 1.1rem; color: #fff; text-decoration: none; 
-            background: transparent; 
-            border: 1px solid rgba(255,255,255,0.3); 
+            display: inline-block; margin-top: 40px; padding: 12px 30px; 
+            font-size: 1rem; color: #fff; text-decoration: none; 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2); 
             border-radius: 50px; 
             transition: all 0.3s;
         }
         .home-btn:hover { 
-            background: rgba(255,255,255,0.1); 
-            border-color: #fff; 
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            background: #FFD700; 
+            color: #0d2b1a;
+            border-color: #FFD700;
+            font-weight: bold;
         }
 
-        @media (max-width: 768px) {
-            .container { padding: 30px 20px; }
-            .music-card { display: block; text-align: center; padding: 25px; }
-            .vinyl-wrapper { margin: 0 auto 25px auto; }
-            .content-wrapper { text-align: center; }
-            .content-wrapper h2 { justify-content: center; }
-            .equalizer { display: none; } /* 모바일에서 이퀄라이저 숨김 (깔끔하게) */
+        @media (max-width: 600px) {
+            .container { padding: 0 10px; }
+            h1 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -143,120 +137,99 @@
     <div id="snow-container"></div>
 
     <div class="container">
-        <h1>🎄크리스마스🎄<span></span></h1>
-        <p class="subtitle">Christmas Mood Station</p>
+        <h1>Christmas Playlist 🎄</h1>
+        <p class="subtitle">파티의 분위기를 책임질 음악을 선택하세요</p>
         
         <div class="music-card">
-            <div class="vinyl-wrapper"><div class="vinyl" style="animation-delay: 0s;"></div></div>
-            <div class="content-wrapper">
-                <h2>
-                    Dinner Jazz
-                    <div class="equalizer" id="eq-1"></div>
-                </h2>
-                <p>고급스러운 저녁 식사를 위한 재즈 선율</p>
-                <div class="video-box">
-                    <iframe src="https://www.youtube.com/embed/z_WLELlE6HY" title="Mealtime Jazz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>🎄🎅 Jazz 🎅🎄</h2>
+                    <p>맛있는 식사/기본 BGM</p>
                 </div>
+                <div class="equalizer">
+                    <div class="bar" style="animation-delay: 0.1s"></div>
+                    <div class="bar" style="animation-delay: 0.3s"></div>
+                    <div class="bar" style="animation-delay: 0.5s"></div>
+                </div>
+            </div>
+            <div class="video-box">
+                <iframe src="https://www.youtube.com/embed/z_WLELlE6HY" title="Mealtime Jazz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
 
         <div class="music-card">
-            <div class="vinyl-wrapper"><div class="vinyl" style="animation-delay: -2s;"></div></div>
-            <div class="content-wrapper">
-                <h2>
-                    Game & Party
-                    <div class="equalizer" id="eq-2"></div>
-                </h2>
-                <p>승부욕을 자극하는 신나는 비트</p>
-                <div class="video-box">
-                    <iframe src="https://www.youtube.com/embed/F7Qdmk65xiA" title="Game BGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>🔥 Game Time</h2>
+                    <p>둠칫 둠칫</p>
                 </div>
+                <div class="equalizer">
+                    <div class="bar" style="background:#ff4d4d; animation-delay: 0.2s"></div>
+                    <div class="bar" style="background:#ff4d4d; animation-delay: 0.4s"></div>
+                    <div class="bar" style="background:#ff4d4d; animation-delay: 0.1s"></div>
+                </div>
+            </div>
+            <div class="video-box">
+                <iframe src="https://www.youtube.com/embed/F7Qdmk65xiA" title="Game BGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
 
         <div class="music-card">
-            <div class="vinyl-wrapper"><div class="vinyl" style="animation-delay: -1s;"></div></div>
-            <div class="content-wrapper">
-                <h2>
-                    Clean Up Time
-                    <div class="equalizer" id="eq-3"></div>
-                </h2>
-                <p>청소빨리 </p>
-                <div class="video-box">
-                    <iframe src="https://www.youtube.com/embed/uNEW_CzhpEc" title="Cleanup BGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>🧹 Clean Up</h2>
+                    <p>빨리하고 2차 갑시다!😎 노동요 모음</p>
                 </div>
+                <div class="equalizer">
+                    <div class="bar" style="background:#4da6ff; animation-delay: 0.3s"></div>
+                    <div class="bar" style="background:#4da6ff; animation-delay: 0.1s"></div>
+                    <div class="bar" style="background:#4da6ff; animation-delay: 0.4s"></div>
+                </div>
+            </div>
+            <div class="video-box">
+                <iframe src="https://www.youtube.com/embed/uNEW_CzhpEc" title="Cleanup BGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
         
-        <div class="music-card" style="border-color: rgba(220, 20, 60, 0.3);">
-            <div class="vinyl-wrapper">
-                <div class="vinyl" style="animation-delay: -3s;"></div>
-            </div>
-            <div class="content-wrapper">
-                <h2 style="color: #ff4d4d;">
-                    Christmas Carol
-                    <div class="equalizer" id="eq-4"></div>
-                </h2>
-                <p>연말 분위기를 완성하는 캐롤 모음</p>
-                <div class="video-box">
-                    <iframe src="https://www.youtube.com/embed/aAkMkVFwAoo" title="Christmas Carol" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div class="music-card" style="border: 1px solid #ff4d4d;">
+            <div class="card-header">
+                <div class="card-title">
+                    <h2 style="color: #ff4d4d;">🎅 Christmas Carol</h2>
+                    <p>크리스마스 분위기 100% 충전</p>
                 </div>
+                <div class="equalizer">
+                    <div class="bar" style="background:#ff4d4d; animation-delay: 0.2s"></div>
+                    <div class="bar" style="background:#2ecc71; animation-delay: 0.4s"></div>
+                    <div class="bar" style="background:#ff4d4d; animation-delay: 0.1s"></div>
+                </div>
+            </div>
+            <div class="video-box">
+                <iframe src="https://www.youtube.com/embed/aAkMkVFwAoo" title="Christmas Carol" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
 
         <br>
         
-        <a href="index.html" class="home-btn">Main Menu</a>
+        <a href="index.html" class="home-btn">메인으로 돌아가기</a>
     </div>
 
     <script>
-        // 1. 눈송이 효과 (천천히, 고급스럽게)
+        // 눈송이 효과 (심플하고 잔잔하게)
         function createSnow() {
             const container = document.getElementById('snow-container');
-            const count = 40; 
+            const count = 30; 
             for(let i=0; i<count; i++){
                 const snow = document.createElement('div');
                 snow.className = 'snowflake';
-                snow.innerHTML = '❄'; // 점(●) 대신 눈송이 모양만 사용
+                snow.innerHTML = '❄';
                 snow.style.left = Math.random() * 100 + 'vw';
-                snow.style.animationDuration = Math.random() * 5 + 5 + 's'; // 더 천천히 떨어짐
-                snow.style.opacity = Math.random() * 0.5 + 0.1; // 투명도 다양하게
-                snow.style.fontSize = Math.random() * 10 + 8 + 'px'; // 크기 작게 조정
+                snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
+                snow.style.opacity = Math.random() * 0.5 + 0.1;
+                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
                 container.appendChild(snow);
             }
         }
         createSnow();
-
-        // 2. 마우스 요정 가루 (금빛 입자)
-        document.addEventListener('mousemove', function(e) {
-            const dust = document.createElement('div');
-            dust.className = 'magic-dust';
-            dust.style.left = e.pageX + 'px';
-            dust.style.top = e.pageY + 'px';
-            document.body.appendChild(dust);
-            setTimeout(() => { dust.remove(); }, 1000);
-        });
-
-        // 3. 이퀄라이저 바 생성기
-        function createEqualizerBars() {
-            const eqs = document.querySelectorAll('.equalizer');
-            eqs.forEach(eq => {
-                for(let i=0; i<5; i++) {
-                    const bar = document.createElement('div');
-                    bar.className = 'bar';
-                    bar.style.animationDuration = (Math.random() * 0.5 + 0.3) + 's';
-                    
-                    // 캐롤 카드만 빨간색 바, 나머지는 골드
-                    if (eq.id === 'eq-4') {
-                        bar.style.backgroundColor = '#ff4d4d';
-                    } else {
-                        bar.style.backgroundColor = '#FFD700';
-                    }
-                    eq.appendChild(bar);
-                }
-            });
-        }
-        createEqualizerBars();
     </script>
 </body>
 </html>
