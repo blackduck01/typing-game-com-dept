@@ -14,7 +14,6 @@
             padding: 20px;
         }
 
-        /* 역할 가이드 */
         .role-guide {
             display: flex;
             justify-content: center;
@@ -29,14 +28,12 @@
         .role-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: bold; }
         .dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; }
         
-        /* 색상 정의 */
         .bg-black { background-color: #333; box-shadow: 0 0 5px #333; }
         .bg-blue { background-color: #007bff; box-shadow: 0 0 5px #007bff; }
         .bg-green { background-color: #28a745; box-shadow: 0 0 5px #28a745; }
         .bg-orange { background-color: #fd7e14; box-shadow: 0 0 5px #fd7e14; }
         .bg-red { background-color: #dc3545; box-shadow: 0 0 5px #dc3545; }
 
-        /* 테이블 영역 */
         .tables-area {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -51,7 +48,7 @@
             border-radius: 20px;
             padding: 20px;
             position: relative;
-            min-height: 280px; /* 인원이 늘어서 높이 조금 더 확보 */
+            min-height: 280px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -87,17 +84,6 @@
             line-height: 1.1;
         }
         .person.host { border: 3px solid #FFD700; transform: scale(1.1); z-index: 20; }
-        
-        .manual-box {
-            background-color: #fff3cd;
-            border: 2px solid #ffecb5;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: left;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            color: #856404;
-        }
     </style>
 </head>
 <body>
@@ -106,7 +92,7 @@
         <h1>🪑 자리 배치 & 역할 분담</h1>
         
         <div class="role-guide">
-            <div class="role-item"><span class="dot bg-black"></span>⚫ 진행</div>
+            <div class="role-item"><span class="dot bg-black"></span>⚫ 진행/스탭</div>
             <div class="role-item"><span class="dot bg-blue"></span>🔵 리필</div>
             <div class="role-item"><span class="dot bg-green"></span>🟢 인증</div>
             <div class="role-item"><span class="dot bg-orange"></span>🟠 정리</div>
@@ -127,12 +113,12 @@
             
             <button onclick="shuffleSeats('balanced')" style="background: linear-gradient(145deg, #28a745, #1e7e34);">
                 🎨 역할 균등 섞기
-                <span style="display:block; font-size:0.7em; font-weight:normal;">색깔 안 겹치게!</span>
+                <span style="display:block; font-size:0.7em; font-weight:normal;">색깔X + 이전자리X</span>
             </button>
             
             <button onclick="shuffleSeats('random')" style="background: linear-gradient(145deg, #fd7e14, #e67e22);">
                 🎲 완전 랜덤 섞기
-                <span style="display:block; font-size:0.7em; font-weight:normal;">색깔 겹쳐도 OK</span>
+                <span style="display:block; font-size:0.7em; font-weight:normal;">색깔O + 이전자리X</span>
             </button>
 
             <a href="index.html" class="home-btn" style="background: linear-gradient(145deg, #a00000, #800000); color: white;">🏠 메인</a>
@@ -140,66 +126,62 @@
     </div>
 
     <script>
-        // 사람 데이터 (총 19명: 나쨩 + 스태프3 + 참가자15)
+        // 사람 데이터 (총 19명: 나쨩 + 스태프2 + 참가자16)
         let people = [
-            // 1. 호스트 (고정)
+            // 1. 호스트
             { id: 1, name: "나쨩", role: "host", color: "bg-black", prev: 0 }, 
             
-            // 2. 스태프 (3명) - *스태프 1명이 늘어서 이제 2,3,4조에 1명씩 배치 가능!
+            // 2. 스태프
             { id: 2, name: "스텝1", role: "staff", color: "bg-black", prev: 0 },
             { id: 3, name: "스텝2", role: "staff", color: "bg-black", prev: 0 },
-            { id: 4, name: "스텝3", role: "staff", color: "bg-black", prev: 0 },
 
-            // 3. 참가자들 (15명으로 증가!) - 색깔 분배: 파4, 초4, 주4, 빨3
-            { id: 5, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 6, name: "참가2", role: "green", color: "bg-green", prev: 0 },
-            { id: 7, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 8, name: "참가4", role: "red", color: "bg-red", prev: 0 },
+            // 3. 참가자 16명
+            { id: 4, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 5, name: "참가2", role: "green", color: "bg-green", prev: 0 },
+            { id: 6, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 7, name: "참가4", role: "red", color: "bg-red", prev: 0 },
             
-            { id: 9, name: "참가5", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 10, name: "참가6", role: "green", color: "bg-green", prev: 0 },
-            { id: 11, name: "참가7", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 12, name: "참가8", role: "red", color: "bg-red", prev: 0 },
+            { id: 8, name: "참가5", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 9, name: "참가6", role: "green", color: "bg-green", prev: 0 },
+            { id: 10, name: "참가7", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 11, name: "참가8", role: "red", color: "bg-red", prev: 0 },
             
-            { id: 13, name: "참가9", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 14, name: "참가10", role: "green", color: "bg-green", prev: 0 },
-            { id: 15, name: "참가11", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 16, name: "참가12", role: "red", color: "bg-red", prev: 0 },
+            { id: 12, name: "참가9", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 13, name: "참가10", role: "green", color: "bg-green", prev: 0 },
+            { id: 14, name: "참가11", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 15, name: "참가12", role: "red", color: "bg-red", prev: 0 },
             
-            { id: 17, name: "참가13", role: "blue", color: "bg-blue", prev: 0 },
-            { id: 18, name: "참가14", role: "green", color: "bg-green", prev: 0 }, // 추가됨
-            { id: 19, name: "참가15", role: "orange", color: "bg-orange", prev: 0 } // 추가됨
+            { id: 16, name: "참가13", role: "blue", color: "bg-blue", prev: 0 },
+            { id: 17, name: "참가14", role: "green", color: "bg-green", prev: 0 }, 
+            { id: 18, name: "참가15", role: "orange", color: "bg-orange", prev: 0 },
+            { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
-        // 1부 배치 (19명 배치: 5, 5, 5, 4)
+        // 1부 배치
         function setPhase1() {
             clearTables();
-            // 1조 (나쨩 + 4명) = 5명
-            assign(people[0], 1); assign(people[4], 1); assign(people[5], 1); assign(people[6], 1); assign(people[7], 1);
-            
-            // 2조 (스텝1 + 4명) = 5명
-            assign(people[1], 2); assign(people[8], 2); assign(people[9], 2); assign(people[10], 2); assign(people[11], 2);
-            
-            // 3조 (스텝2 + 4명) = 5명
-            assign(people[2], 3); assign(people[12], 3); assign(people[13], 3); assign(people[14], 3); assign(people[15], 3);
-            
-            // 4조 (스텝3 + 3명) = 4명 (남은 사람들)
-            assign(people[3], 4); assign(people[16], 4); assign(people[17], 4); assign(people[18], 4);
+            // 1조 (나쨩 + 4명)
+            assign(people[0], 1); assign(people[3], 1); assign(people[4], 1); assign(people[5], 1); assign(people[6], 1);
+            // 2조 (스텝1 + 4명)
+            assign(people[1], 2); assign(people[7], 2); assign(people[8], 2); assign(people[9], 2); assign(people[10], 2);
+            // 3조 (스텝2 + 4명)
+            assign(people[2], 3); assign(people[11], 3); assign(people[12], 3); assign(people[13], 3); assign(people[14], 3);
+            // 4조 (4명)
+            assign(people[15], 4); assign(people[16], 4); assign(people[17], 4); assign(people[18], 4);
         }
 
         function assign(person, tableNum) {
-            person.prev = tableNum;
+            person.prev = tableNum; // ★중요: 현재 앉은 자리를 '기록'함 (다음에 피하려고)
+            
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
             if (person.role === 'host') el.classList.add('host');
             el.innerHTML = `${person.name}`;
 
-            // 원형 배치 (5명일 때와 4명일 때 간격 자동 조정)
             const currentCount = table.querySelectorAll('.person').length;
-            const maxSeats = (tableNum === 4) ? 4 : 5; // 4조는 4명, 나머진 5명 기준 (유동적)
+            const maxSeats = (tableNum === 4) ? 4 : 5; 
             
-            // 만약 5명 넘어가면 간격 좁히기
             const displayMax = Math.max(table.querySelectorAll('.person').length + 1, maxSeats);
             const angle = (360 / displayMax) * currentCount - 90;
             const radius = 85; 
@@ -219,66 +201,79 @@
             });
         }
 
-        // 자리 섞기 (19명 대응)
+        // ★★★ 자리 섞기 (중복 방지 강화) ★★★
         function shuffleSeats(mode) {
             clearTables();
 
             // 1. 나쨩 1조 고정
             assign(people[0], 1);
 
-            // 2. 섞을 사람들 (나쨩 제외)
-            let staff = people.filter(p => p.role === 'staff'); // 스텝 3명
-            let users = people.filter(p => p.role !== 'host' && p.role !== 'staff'); // 참가자 15명
+            // 2. 대상 분류
+            let staff = [people[1], people[2]]; // 스텝1, 2
+            let users = people.slice(3); // 참가자 16명
 
-            // 3. 스태프 배치 (2, 3, 4조에 각각 1명씩 분산!)
+            // 3. 스태프 배치 (이전 조 피해서!)
             staff.sort(() => Math.random() - 0.5);
-            // 스텝들이 이전 조와 겹치지 않게 노력
-            let availableTables = [2, 3, 4];
             
-            // 간단하게 순서대로 배치 (어차피 2,3,4 다 감)
-            assign(staff[0], 2);
-            assign(staff[1], 3);
-            assign(staff[2], 4);
+            // 가능한 테이블 (2, 3, 4조)
+            let tableOptions = [2, 3, 4];
+            
+            // 스텝1 배치 (이전 자리 피하기)
+            let st1_Options = tableOptions.filter(t => t !== staff[0].prev);
+            if (st1_Options.length === 0) st1_Options = tableOptions; // 비상시 아무데나
+            let st1_Table = st1_Options[Math.floor(Math.random() * st1_Options.length)];
+            assign(staff[0], st1_Table);
+            
+            // 스텝2 배치 (이전 자리 피하기 + 스텝1이랑 안 겹치기)
+            let st2_Options = tableOptions.filter(t => t !== staff[1].prev && t !== st1_Table);
+            if (st2_Options.length === 0) st2_Options = tableOptions.filter(t => t !== st1_Table); // 차선책
+            let st2_Table = st2_Options[Math.floor(Math.random() * st2_Options.length)];
+            assign(staff[1], st2_Table);
 
-            // 4. 일반 참가자 배치
+            // 4. 참가자 배치 (강화된 로직)
             users.sort(() => Math.random() - 0.5);
 
-            // 테이블 상태 (스태프가 이미 차 있음)
+            // 테이블 상태 추적
             let tableStatus = {
                 1: { count: 1, colors: [] },
-                2: { count: 1, colors: ['staff'] },
-                3: { count: 1, colors: ['staff'] },
-                4: { count: 1, colors: ['staff'] }
+                2: { count: (st1_Table===2 || st2_Table===2)?1:0, colors: ['staff'] },
+                3: { count: (st1_Table===3 || st2_Table===3)?1:0, colors: ['staff'] },
+                4: { count: (st1_Table===4 || st2_Table===4)?1:0, colors: ['staff'] }
             };
 
             for (let user of users) {
-                // 들어갈 테이블 찾기
+                // 들어갈 수 있는(자리가 남은) 테이블 찾기
                 let candidates = [1, 2, 3, 4].filter(t => {
-                    // 1,2,3조는 5명까지, 4조는 4명까지 (총 19명)
-                    // 유동적으로 5명까지 허용해서 꽉 채움
-                    return tableStatus[t].count < 5;
+                    let limit = (t === 4) ? 4 : 5;
+                    return tableStatus[t].count < limit;
                 });
                 
-                // 만약 4조가 꽉 차서 갈 곳이 없으면 5명 룰 적용
+                // 4조가 꽉 찼을 경우 대비 (유동적 확장)
                 if (candidates.length === 0) candidates = [1,2,3,4].filter(t => tableStatus[t].count < 6);
 
-                // 균등 모드 로직
                 let bestTable = -1;
-                
-                // 1순위: 색깔 안 겹치고 + 이전 자리 아님
+
+                // ★ 1순위: [이전 자리 아님] AND [색깔 안 겹침(균등모드일 때)]
                 let p1 = candidates.filter(t => {
+                    let historySafe = (t !== user.prev); // 중복 방지 (최우선)
                     let colorSafe = (mode === 'balanced') ? !tableStatus[t].colors.includes(user.role) : true;
-                    let historySafe = t !== user.prev;
-                    return colorSafe && historySafe;
+                    return historySafe && colorSafe;
                 });
 
-                // 2순위: 색깔만 안 겹침
+                // ★ 2순위: [이전 자리 아님] (색깔은 겹쳐도 됨 - 중복 방지가 더 중요!)
                 let p2 = candidates.filter(t => {
+                    return (t !== user.prev);
+                });
+
+                // ★ 3순위: [색깔 안 겹침] (어쩔 수 없이 이전 자리 앉아야 할 때)
+                let p3 = candidates.filter(t => {
                      return (mode === 'balanced') ? !tableStatus[t].colors.includes(user.role) : true;
                 });
-
+                
+                // 선택 로직
                 if (p1.length > 0) bestTable = p1[Math.floor(Math.random() * p1.length)];
                 else if (p2.length > 0) bestTable = p2[Math.floor(Math.random() * p2.length)];
+                else if (p3.length > 0) bestTable = p3[Math.floor(Math.random() * p3.length)];
                 else bestTable = candidates[Math.floor(Math.random() * candidates.length)];
                 
                 if (bestTable !== -1) {
@@ -289,7 +284,7 @@
             }
         }
 
-        setPhase1();
+        setPhase1(); // 초기 실행
 
     </script>
 </body>
