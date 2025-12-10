@@ -1,0 +1,87 @@
+/* style.css - 모든 페이지의 디자인 담당 */
+
+/* 1. 기본 폰트 및 배경 (스무스 스크롤 적용!) */
+html {
+    scroll-behavior: smooth; /* 스크롤 부드럽게 */
+}
+body { 
+    font-family: 'Noto Sans KR', sans-serif;
+    text-align: center; 
+    padding: 20px; 
+    background-color: #f0f8ff; 
+    color: #333;
+    margin: 0;
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+}
+
+/* 2. 컨테이너 디자인 (크리스마스 테마) */
+.container, .intro-container { 
+    max-width: 850px; 
+    width: 90%;
+    margin: 30px auto; 
+    background: #ffffff; 
+    padding: 30px; 
+    border-radius: 15px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); /* 그림자 더 진하게 */
+    border: 5px dashed #a00000; 
+    position: relative;
+    z-index: 10; /* 눈 내리는 효과보다 위에 오게 */
+}
+
+/* 3. 텍스트 및 제목 스타일 */
+h1 { 
+    color: #a00000; 
+    font-size: 2.5em; 
+    text-shadow: 1px 1px 2px #006400; 
+    margin-bottom: 20px;
+}
+p { color: #006400; font-weight: bold; font-size: 1.1em; }
+
+/* 4. 버튼 공통 스타일 (더 멋지게!) */
+button, .menu-btn, .home-btn, .main-button, .link-btn {
+    display: inline-block;
+    background: linear-gradient(145deg, #006400, #004d00); /* 그라데이션 */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin: 5px;
+}
+button:hover, .menu-btn:hover, .home-btn:hover, .main-button:hover, .link-btn:hover {
+    transform: translateY(-3px); /* 붕 뜨는 효과 */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    background: linear-gradient(145deg, #007500, #005900);
+}
+.reset-rank-btn { background: linear-gradient(145deg, #dc3545, #b02a37) !important; }
+.home-btn { background: linear-gradient(145deg, #a00000, #800000) !important; }
+
+/* 5. 눈 내리는 효과 (JS에서 사용) */
+.snowflake {
+    position: fixed;
+    top: -10px;
+    z-index: 1; /* 컨테이너 뒤에 배치 */
+    color: #aad4ff;
+    font-size: 1em;
+    opacity: 0.8;
+    animation: fall linear infinite;
+}
+@keyframes fall {
+    to { transform: translateY(100vh); }
+}
+
+/* 6. 스크롤 등장은 애니메이션 (JS에서 사용) */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: none;
+}
