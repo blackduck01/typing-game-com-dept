@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 BGM 플레이어</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>
+        /* BGM 페이지 전용 스타일 */
+        body {
+            background-color: #1a1a1a; /* 음악 감상실 같은 어두운 배경 */
+            color: white;
+        }
+        h1 { color: #ffd700; text-shadow: 2px 2px 5px #000; }
+        p { color: #ddd; font-weight: normal; }
+        
+        /* 음악 섹션 박스 디자인 */
+        .music-section {
+            background-color: #333;
+            border: 2px solid #555;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 40px; /* 섹션 간격 벌리기 */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .music-section h2 {
+            margin-top: 0;
+            color: #ffcccc; /* 제목 색상 */
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* 유튜브 영상 반응형 (화면 크기에 맞춰 조절) */
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 비율 유지 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" style="background-color: #222; border-color: #ffd700;">
+        <h1>🎧 연말 파티 DJ 박스 🎧</h1>
+        <p>상황에 맞는 음악을 선택해서 재생하세요!</p>
+        
+        <br>
+
+        <div class="music-section">
+            <h2>🍷 우아한 식사 시간 (Jazz)</h2>
+            <p>편안한 재즈 선율과 함께 맛있는 식사를 즐겨보세요.</p>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/z_WLELlE6HY" title="Mealtime Jazz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="music-section">
+            <h2>🔥 불타는 승부욕! 게임 시간</h2>
+            <p>타자왕 선발전이나 퀴즈 풀 때 틀어주세요!</p>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/TRV48bV6T-Y" title="Game BGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="music-section">
+            <h2>🎄 크리스마스 분위기 UP</h2>
+            <p>쉬는 시간이나 포토존 촬영 때 딱!</p>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/aAkMkVFwAoo" title="Christmas Carol" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <br>
+        
+        <a href="index.html" class="home-btn" style="background: linear-gradient(145deg, #ffd700, #b8860b); color: black;">
+            🏠 메인 화면으로 가기
+        </a>
+    </div>
+
+</body>
+</html>
