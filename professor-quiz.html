@@ -3,232 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎅 히든 캐치: 이분은 누구?! 🎅</title>
+    <title>🎅 인물 퀴즈: 교수님을 찾아라! 🎅</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
     <style>
-        /* 퀴즈 페이지 전용 스타일 */
-        .quiz-container {
-            background-color: #fff0f5; /* 연한 핑크 배경 */
-            border-color: #ff69b4; /* 핫핑크 테두리 */
+        /* 사회자 진행 모드 전용 스타일 */
+        body {
+            overflow: hidden; /* 스크롤 방지 (집중도 UP) */
         }
-        #image-box {
+        .quiz-container {
+            background-color: #222; /* 영화관처럼 어두운 배경 */
+            color: white;
+            border: 5px solid #ffd700;
+            max-width: 1000px; /* 화면 넓게 쓰기 */
+            height: 90vh; /* 화면 꽉 차게 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 사진 영역 */
+        #image-area {
+            position: relative;
             width: 100%;
-            max-width: 500px;
-            height: 400px; /* 사진 크기 고정 */
-            margin: 20px auto;
-            background-color: #ddd;
-            border: 5px solid #a00000;
-            border-radius: 10px;
-            overflow: hidden;
+            height: 60%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
-            color: #555;
+            margin-bottom: 20px;
         }
         #prof-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 비율 유지하며 꽉 채우기 */
-            display: none; /* 이미지가 로드되면 보여줌 */
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            /* 처음엔 모자이크 처리 (재미 요소!) */
+            filter: blur(15px); 
+            transition: filter 1s ease; 
         }
-        .input-group {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+        /* 정답 공개 시 모자이크 해제 클래스 */
+        .reveal-image {
+            filter: blur(0) !important;
         }
-        #answer-input {
-            padding: 12px;
-            font-size: 1.2em;
-            border: 3px solid #a00000;
-            border-radius: 8px;
-            width: 60%;
-            text-align: center;
-        }
-        #result-message {
-            margin: 20px 0;
-            font-size: 1.5em;
+
+        /* 정답 텍스트 (처음엔 숨김) */
+        #answer-display {
+            font-size: 4em;
             font-weight: bold;
-            min-height: 1.5em;
+            color: #ffd700;
+            text-shadow: 3px 3px 0 #a00000;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .correct-msg { color: #006400; }
-        .wrong-msg { color: #dc3545; }
-        #score-board {
+        .show-answer {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+        }
+
+        /* 컨트롤 패널 (사회자용 버튼) */
+        .control-panel {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+        }
+        .control-btn {
+            font-size: 1.5em;
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .control-btn:active { transform: scale(0.95); }
+        
+        #btn-reveal { background: linear-gradient(145deg, #28a745, #218838); color: white; }
+        #btn-next { background: linear-gradient(145deg, #007bff, #0069d9); color: white; display: none; }
+        #btn-home { background: #555; color: white; font-size: 1em; padding: 10px 20px; position: absolute; top: 20px; right: 20px; }
+
+        /* 문제 번호 표시 */
+        .q-number {
             position: absolute;
             top: 20px;
-            right: 20px;
-            background: #a00000;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
+            left: 20px;
+            font-size: 2em;
+            color: #888;
         }
     </style>
 </head>
 <body>
 
     <div class="container quiz-container">
-        <div id="score-board">점수: 0점</div>
-        <h1>🎅 대반전 인물 퀴즈! 🎅</h1>
-        <p>??? : "자네, 내 수업은 잘 듣고 있나?"</p>
-        <p>사진 속 인물의 성함을 정확히 입력해주세요!</p>
+        <div class="q-number" id="q-num">Q. 1</div>
+        <a href="index.html" class="home-btn" id="btn-home">🏠 종료</a>
 
-        <div id="image-box">
-            <span id="loading-text">이미지 로딩 중...</span>
+        <h1>🎅 이분은 누구일까요? 🎅</h1>
+
+        <div id="image-area">
             <img id="prof-image" src="" alt="교수님 사진">
         </div>
+
+        <div id="answer-display">정답 텍스트</div>
+
+        <div class="control-panel">
+            <button id="btn-reveal" class="control-btn" onclick="revealAnswer()">👀 정답 공개</button>
+            <button id="btn-next" class="control-btn" onclick="nextQuestion()">👉 다음 문제</button>
+        </div>
         
-        <div class="input-group">
-            <input type="text" id="answer-input" placeholder="예: 홍길동 (성함만 입력)">
-            <button id="submit-btn" onclick="checkAnswer()" style="background: linear-gradient(145deg, #006400, #004d00);">정답 확인</button>
-        </div>
-
-        <div id="result-message"></div>
-
-        <div class="btn-group">
-            <button id="next-btn" onclick="loadNextQuestion()" style="display: none; background: linear-gradient(145deg, #FFD700, #DAA520); color: black;">
-                👉 다음 문제!
-            </button>
-            <a href="index.html" class="home-btn" style="background: linear-gradient(145deg, #a00000, #800000); color: white;">
-                🏠 메인으로
-            </a>
-        </div>
+        <p style="margin-top:20px; color:gray; font-size:0.8em;">💡 팁: 스페이스바(정답), 오른쪽 화살표(다음)</p>
     </div>
 
     <script>
         // ======================================================
-        // ★★★ 여기를 수정해야 해! (가장 중요) ★★★
-        // 교수님 성함과 사진 파일명을 여기에 적어줘!
+        // ★★★ [수정 구역] 교수님 사진과 성함을 넣어주세요! ★★★
         // ======================================================
         const professorData = [
-            // 예시: { name: "교수님성함", image: "사진파일이름.jpg" },
-            // 꼭 콤마(,)로 구분해야 해!
-            
-            { name: "김컴과", image: "prof_kim.jpg" }, // ← 이거 지우고 나쨩이 준비한 걸로 바꿔!
-            { name: "박알고", image: "prof_park.png" }, // ← 이것도!
-            { name: "이DB", image: "prof_lee.jpeg" }    // ← 이것도! 더 추가해도 돼!
+            { name: "김컴과 교수님", image: "prof1.jpg" }, 
+            { name: "박알고 교수님", image: "prof2.jpg" },
+            { name: "이DB 교수님", image: "prof3.jpg" },
+            { name: "최네트워크 교수님", image: "prof4.jpg" }
         ];
         // ======================================================
 
-        let currentQuestionIndex = 0;
-        let score = 0;
-        const profImage = document.getElementById('prof-image');
-        const loadingText = document.getElementById('loading-text');
-        const answerInput = document.getElementById('answer-input');
-        const resultMessage = document.getElementById('result-message');
-        const nextBtn = document.getElementById('next-btn');
-        const submitBtn = document.getElementById('submit-btn');
-        const scoreBoard = document.getElementById('score-board');
+        let currentIndex = 0;
+        const imgElement = document.getElementById('prof-image');
+        const answerElement = document.getElementById('answer-display');
+        const revealBtn = document.getElementById('btn-reveal');
+        const nextBtn = document.getElementById('btn-next');
+        const qNumElement = document.getElementById('q-num');
 
-        // 데이터 섞기 (랜덤 출제)
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        // 게임 시작 초기화
+        // 게임 초기화
         function initGame() {
-            shuffleArray(professorData);
-            currentQuestionIndex = 0;
-            score = 0;
-            updateScore();
+            currentIndex = 0;
             loadQuestion();
         }
 
-        // 문제 불러오기
+        // 문제 로드
         function loadQuestion() {
-            if (currentQuestionIndex >= professorData.length) {
-                finishGame();
+            if (currentIndex >= professorData.length) {
+                // 모든 문제 종료 시
+                imgElement.style.display = 'none';
+                answerElement.innerHTML = "🎉 퀴즈 종료! 🎉<br><span style='font-size:0.5em'>수고하셨습니다!</span>";
+                answerElement.classList.add('show-answer');
+                revealBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                qNumElement.textContent = "";
                 return;
             }
 
-            const currentData = professorData[currentQuestionIndex];
+            const data = professorData[currentIndex];
             
-            // 이미지 로딩 처리
-            loadingText.style.display = "block";
-            profImage.style.display = "none";
-            profImage.src = currentData.image; // 이미지 경로 설정
-
-            profImage.onload = () => {
-                loadingText.style.display = "none";
-                profImage.style.display = "block";
-            };
-
-            answerInput.value = "";
-            answerInput.disabled = false;
-            submitBtn.disabled = false;
-            resultMessage.textContent = "";
-            nextBtn.style.display = "none";
-            answerInput.focus();
+            // 화면 초기화
+            imgElement.src = data.image;
+            imgElement.classList.remove('reveal-image'); // 다시 흐릿하게
+            answerElement.textContent = data.name;
+            answerElement.classList.remove('show-answer'); // 정답 숨김
+            
+            revealBtn.style.display = 'inline-block';
+            nextBtn.style.display = 'none';
+            qNumElement.textContent = `Q. ${currentIndex + 1}`;
         }
 
-        // 정답 확인
-        function checkAnswer() {
-            const userAnswer = answerInput.value.trim();
-            const correctAnswer = professorData[currentQuestionIndex].name;
-
-            if (userAnswer === correctAnswer) {
-                resultMessage.innerHTML = "🎉 정답입니다! 교수님을 알아보셨군요! 🎉";
-                resultMessage.className = "correct-msg";
-                score += 10;
-                updateScore();
-            } else {
-                resultMessage.innerHTML = `땡! 틀렸습니다! 😭 (정답: ${correctAnswer} 교수님)`;
-                resultMessage.className = "wrong-msg";
-            }
-
-            answerInput.disabled = true;
-            submitBtn.disabled = true;
-            nextBtn.style.display = "inline-block"; // 다음 문제 버튼 표시
+        // 정답 공개 (버튼 누르면 실행)
+        function revealAnswer() {
+            // 1단계: 사진 선명하게
+            imgElement.classList.add('reveal-image');
+            
+            // 2단계: 잠시 후 이름 등장 (0.5초 뒤)
+            setTimeout(() => {
+                answerElement.classList.add('show-answer');
+                
+                // 버튼 교체 (공개 -> 다음)
+                revealBtn.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+            }, 500);
         }
 
-        // 다음 문제로 이동
-        function loadNextQuestion() {
-            currentQuestionIndex++;
+        // 다음 문제로
+        function nextQuestion() {
+            currentIndex++;
             loadQuestion();
         }
 
-        // 점수 업데이트
-        function updateScore() {
-            scoreBoard.textContent = `점수: ${score}점`;
-        }
-
-        // 게임 종료
-        function finishGame() {
-            profImage.style.display = 'none';
-            loadingText.innerHTML = "퀴즈 종료!";
-            loadingText.style.display = "block";
-            
-            answerInput.style.display = 'none';
-            submitBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-
-            resultMessage.innerHTML = `
-                <h2>🎁 최종 결과 🎁</h2>
-                <p style="font-size:1.2em; color:#a00000;">총 ${professorData.length}문제 중 ${score / 10}문제 맞춤!</p>
-                <p>당신의 학점... 아니, 애교심 점수는: <strong>${score}점</strong> 입니다!</p>
-            `;
-            resultMessage.className = "";
-        }
-
-        // 엔터키로 정답 제출 기능
-        answerInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                if (!submitBtn.disabled) {
-                    checkAnswer();
-                } else if (nextBtn.style.display !== 'none') {
-                    loadNextQuestion();
-                }
+        // 키보드 조작 기능 (사회자 편의성)
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                if (revealBtn.style.display !== 'none') revealAnswer();
+                else if (nextBtn.style.display !== 'none') nextQuestion();
+            }
+            if (e.code === 'ArrowRight') {
+                if (nextBtn.style.display !== 'none') nextQuestion();
             }
         });
 
-        // 페이지 로드 시 게임 시작
+        // 시작
         initGame();
+
     </script>
 </body>
 </html>
