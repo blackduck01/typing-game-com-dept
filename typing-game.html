@@ -3,58 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>타자왕 선발전</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"> 
+    <title>🎄 타자위너 선발전 🎅</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet"> 
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; text-align: center; padding: 20px; background-color: #f0f8ff; }
-        .container { max-width: 850px; margin: 20px auto; background: #ffffff; padding: 30px; border-radius: 15px; border: 5px dashed #a00000; }
-        h1 { color: #a00000; text-shadow: 1px 1px 2px #006400; }
-        #target-text { font-size: 1.3em; border: 3px solid #006400; padding: 20px; margin-bottom: 20px; text-align: left; background-color: #ffeaea; border-radius: 8px; min-height: 80px; }
-        #typing-input { width: 90%; padding: 15px; font-size: 1.2em; border: 3px solid #a00000; border-radius: 8px; margin-bottom: 20px; }
-        .correct { background-color: #d4edda; color: #155724; }
-        .incorrect { background-color: #f8d7da; color: #721c24; }
-        .highlight-current { background-color: gold; } 
-        #result { margin-top: 20px; font-size: 1.5em; font-weight: bold; color: #a00000; min-height: 50px; }
+        /* ❄️ 전체 페이지 스타일 (크리스마스 밤) */
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            text-align: center; 
+            margin: 0;
+            padding: 20px; 
+            background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #fdbb2d); /* 화려한 배경 */
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* 겨울 밤 */
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 눈송이 효과 */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: #fff;
+            font-size: 1em;
+            text-shadow: 0 0 5px #fff;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        /* 메인 컨테이너 (유리 효과) */
+        .container { 
+            max-width: 850px; 
+            margin: 40px auto; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 40px; 
+            border-radius: 20px; 
+            border: 4px solid #d40000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3), 0 0 50px rgba(0, 255, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { 
+            color: #d40000; 
+            text-shadow: 2px 2px 0 #006400; 
+            font-size: 2.5rem; 
+            margin-bottom: 10px;
+            animation: titleBounce 2s infinite;
+        }
+        @keyframes titleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 콤보 카운터 */
+        #combo-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #ff9800;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: transform 0.1s;
+        }
+        .combo-active { opacity: 1 !important; transform: scale(1.2) !important; text-shadow: 0 0 10px gold; }
+
+        /* 타자 입력 영역 스타일 */
+        #target-text { 
+            font-size: 1.5em; 
+            border: 3px solid #006400; 
+            padding: 25px; 
+            margin-bottom: 25px; 
+            text-align: left; 
+            background-color: #fffaf0; 
+            border-radius: 15px; 
+            min-height: 80px; 
+            line-height: 1.6;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #target-text span { position: relative; transition: color 0.2s; }
         
-        .btn-group { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        button, .link-btn { background-color: #006400; color: white; border: none; padding: 10px 20px; font-size: 1.1em; font-weight: bold; border-radius: 5px; cursor: pointer; text-decoration: none; }
-        button:hover, .link-btn:hover { background-color: #004d00; }
-        .reset-rank-btn { background-color: #dc3545; }
+        /* 현재 입력해야 할 글자 강조 */
+        .highlight-current { 
+            background-color: #ffd700; 
+            border-radius: 3px; 
+            box-shadow: 0 0 10px #ffd700;
+            font-weight: bold;
+            transform: scale(1.1);
+            display: inline-block;
+        }
+
+        .correct { color: #28a745; font-weight: bold; text-shadow: 0 0 5px #28a745; }
+        .incorrect { color: #dc3545; text-decoration: underline; text-decoration-style: wavy; font-weight: bold; }
+
+        #typing-input { 
+            width: 90%; 
+            padding: 15px; 
+            font-size: 1.3em; 
+            border: 3px solid #d40000; 
+            border-radius: 15px; 
+            margin-bottom: 20px; 
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+        #typing-input:focus { box-shadow: 0 0 15px rgba(212, 0, 0, 0.5); }
+
+        /* 흔들림 효과 (오타 났을 때) */
+        .shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* 정보 패널 */
+        .info-panel {
+            display: flex;
+            justify-content: space-around;
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .info-item span { font-size: 1.2em; color: #d40000; }
+
+        #result { 
+            margin-top: 20px; 
+            font-size: 1.8em; 
+            font-weight: 900; 
+            color: #d40000; 
+            min-height: 50px;
+            text-shadow: 1px 1px 0 #fff;
+        }
         
-        /* 메인으로 가기 버튼 스타일 (빨간색) */
-        .home-btn { background-color: #a00000 !important; } 
-        .home-btn:hover { background-color: #800000 !important; }
+        .btn-group { margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        button, .link-btn { 
+            background: linear-gradient(145deg, #006400, #004d00);
+            color: white; border: none; padding: 12px 25px; 
+            font-size: 1.1em; font-weight: bold; border-radius: 50px; 
+            cursor: pointer; text-decoration: none; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        button:hover, .link-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .reset-rank-btn { background: linear-gradient(145deg, #dc3545, #b02a37); }
+        .home-btn { background: linear-gradient(145deg, #a00000, #800000) !important; }
+
+        /* 파티클 효과 */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: fadeOut 1s forwards;
+        }
+        @keyframes fadeOut {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-50px) scale(0); opacity: 0; }
+        }
 
         /* 랭킹 테이블 */
-        #ranking-table { width: 90%; margin: 30px auto; border-collapse: collapse; }
-        #ranking-table th, #ranking-table td { border: 1px solid #ddd; padding: 10px; }
-        #ranking-table th { background-color: #a00000; color: white; }
+        #ranking-table { width: 100%; margin: 30px auto 0; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        #ranking-table th { background-color: #a00000; color: white; padding: 12px; }
+        #ranking-table td { background-color: white; border-bottom: 1px solid #eee; padding: 10px; }
+        #ranking-table tr:last-child td { border-bottom: none; }
+        #ranking-table tr:hover td { background-color: #ffeaea; }
     </style>
 </head>
 <body>
+    
+    <div id="snow-container"></div>
+
     <div class="container">
-        <h1>⌨️ 타자왕 선발전 ⌨️</h1>
-        <p style="color: #006400; font-weight: bold;">문장을 빠르고 정확하게 입력하세요!</p>
+        <div id="combo-box">0 COMBO!</div>
+
+        <h1>⌨️ 🎄 타자왕 선발전 🎅 ⌨️</h1>
+        <p style="color: #006400; font-weight: bold;">산타보다 빠르게! 루돌프보다 정확하게!</p>
 
         <div id="target-text"></div>
-        <textarea id="typing-input" rows="5" placeholder="여기에 입력을 시작하세요..."></textarea>
+        <textarea id="typing-input" rows="3" placeholder="준비되셨나요? 여기를 클릭하고 시작하세요!"></textarea>
         
         <div class="info-panel">
-            <p>시간: <span id="timer">0.00</span>초 | 타수: <span id="current-cpm">0</span>타</p> 
-            <p>정확도: <span id="accuracy">100</span>% | 오타: <span id="error-count">0</span>개</p> 
-        </div>
+            <div class="info-item">⏱️ 시간: <span id="timer">0.00</span>초</div>
+            <div class="info-item">⚡ 타수: <span id="current-cpm">0</span>타</div>
+            <div class="info-item">🎯 정확도: <span id="accuracy">100</span>%</div>
+            </div>
         
         <div id="result"></div>
         
         <div class="btn-group">
+            <button onclick="initText()">🔄 다시 도전</button>
+            <button onclick="resetRanking()" class="reset-rank-btn">🗑️ 랭킹 초기화</button>
             <a href="index.html" class="link-btn home-btn">🏠 메인으로</a>
-            
-            <button onclick="initText()">다시 시작</button>
-            <button onclick="resetRanking()" class="reset-rank-btn">랭킹 초기화</button>
         </div>
 
-        <hr>
-        <h3>👑 명예의 전당 👑</h3>
+        <hr style="margin: 30px 0; border: 1px dashed #ccc;">
+        
+        <h3 style="color:#d40000;">👑 명예의 전당 👑</h3>
         <table id="ranking-table">
             <thead>
                 <tr><th>순위</th><th>닉네임</th><th>타수</th><th>정확도</th></tr>
@@ -64,24 +218,50 @@
     </div>
 
     <script>
+        // ============================
+        // 1. 눈 내리는 효과 Script
+        // ============================
+        function createSnow() {
+            const snowContainer = document.getElementById('snow-container');
+            const count = 50; 
+            for(let i=0; i<count; i++){
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = '❄';
+                snow.style.left = Math.random() * 100 + 'vw';
+                snow.style.animationDuration = Math.random() * 3 + 2 + 's'; 
+                snow.style.opacity = Math.random();
+                snow.style.fontSize = Math.random() * 20 + 10 + 'px';
+                snowContainer.appendChild(snow);
+            }
+        }
+        createSnow();
+
+        // ============================
+        // 2. 타자 게임 로직
+        // ============================
         const targetTextElement = document.getElementById('target-text');
         const typingInput = document.getElementById('typing-input');
         const timerElement = document.getElementById('timer');
         const accuracyElement = document.getElementById('accuracy');
         const currentCpmElement = document.getElementById('current-cpm');
-        const errorCountElement = document.getElementById('error-count');
         const resultElement = document.getElementById('result');
         const rankingBody = document.getElementById('ranking-body');
+        const comboBox = document.getElementById('combo-box');
+        const container = document.querySelector('.container');
 
         const targetSentences = [
             "메리 크리스마스! 방통대 컴과 연말 모임에 오신 것을 환영합니다.",
-            "붉은색과 초록색 조명처럼 우리의 앞날도 빛나기를 바랍니다.",
-            "올 한 해 컴퓨터과학과에서 열심히 코딩하고 공부하느라 수고 많았습니다.",
-            "프론트엔드, 백엔드, 데이터베이스의 조화가 완벽한 애플리케이션을 만듭니다.",
-            "산타 할아버지가 코드를 버그 없이 선물해주길 바랍니다!"
+            "루돌프 코가 매우 반짝이는 이유는 디버깅 중이라서 그렇습니다.",
+            "올 한 해 에러와 싸우느라 고생 많으셨습니다. 내년엔 무에러 기원!",
+            "산타 할아버지는 알고 계신대 누가 코딩을 잘하는지 못하는지.",
+            "행복한 연말 보내시고 내년에도 즐거운 코딩 라이프 되세요!",
+            "하얀 눈이 내려와 온 세상을 하얗게 덮어주는 화이트 크리스마스",
+            "징글벨 징글벨 울리는 종소리만큼 우리의 타자 소리도 경쾌합니다."
         ];
         
         let targetText, startTime, timerInterval, isTypingStarted = false;
+        let combo = 0; // 콤보 카운트
 
         function initText() {
             targetText = targetSentences[Math.floor(Math.random() * targetSentences.length)];
@@ -90,10 +270,12 @@
             timerElement.textContent = '0.00';
             accuracyElement.textContent = '100';
             currentCpmElement.textContent = '0';
-            errorCountElement.textContent = '0';
             resultElement.textContent = '';
             typingInput.disabled = false;
             isTypingStarted = false;
+            combo = 0;
+            updateCombo(0);
+            
             clearInterval(timerInterval);
             if (targetTextElement.children.length > 0) targetTextElement.children[0].classList.add('highlight-current');
             typingInput.focus();
@@ -111,40 +293,109 @@
             }, 100); 
         }
 
+        // 입력 이벤트 리스너
         typingInput.addEventListener('input', (e) => {
             if (!isTypingStarted) { startTimer(); isTypingStarted = true; }
+            
             const currentInput = e.target.value;
-            let correctChars = 0, currentErrors = 0;
+            let correctChars = 0;
             const targetChars = targetTextElement.children;
+            const lastCharIndex = currentInput.length - 1;
 
+            // 현재 입력한 글자가 맞는지 확인 (콤보 및 이펙트용)
+            if (currentInput.length > 0) {
+                if (currentInput[lastCharIndex] === targetText[lastCharIndex]) {
+                    // 맞았을 때
+                    createSparkle(); // 파티클 효과
+                    combo++;
+                    updateCombo(combo);
+                } else {
+                    // 틀렸을 때
+                    combo = 0;
+                    updateCombo(0);
+                    container.classList.add('shake'); // 화면 흔들림
+                    setTimeout(() => container.classList.remove('shake'), 400);
+                }
+            } else {
+                combo = 0;
+                updateCombo(0);
+            }
+
+            // 전체 텍스트 비교 및 색상 변경
+            let currentErrors = 0;
             for (let i = 0; i < targetChars.length; i++) {
                 targetChars[i].classList.remove('highlight-current');
+                
+                // 커서 위치 강조
                 if (i === currentInput.length) targetChars[i].classList.add('highlight-current');
                 
                 if (i < currentInput.length) {
                     if (currentInput[i] === targetText[i]) {
-                        targetChars[i].className = 'correct'; correctChars++;
+                        targetChars[i].className = 'correct'; 
+                        correctChars++;
                     } else {
-                        targetChars[i].className = 'incorrect'; currentErrors++;
+                        targetChars[i].className = 'incorrect'; 
+                        currentErrors++;
                     }
-                } else { targetChars[i].className = ''; }
+                } else { 
+                    targetChars[i].className = ''; 
+                }
             }
 
+            // 정확도 계산
             const accuracy = ((correctChars / currentInput.length) * 100) || 100;
             accuracyElement.textContent = accuracy.toFixed(0);
-            errorCountElement.textContent = currentErrors;
 
+            // 게임 종료 조건
             if (currentInput.length === targetText.length) {
                 clearInterval(timerInterval);
-                const cpm = Math.floor(targetText.length / (parseFloat(timerElement.textContent) / 60));
-                resultElement.innerHTML = `🎉 완료! 타수: ${cpm}타 / 정확도: ${accuracy.toFixed(0)}%`;
+                const finalTime = parseFloat(timerElement.textContent);
+                const cpm = Math.floor(targetText.length / (finalTime / 60));
+                
+                resultElement.innerHTML = `🎉 대단해요! ${cpm}타 / 정확도 ${accuracy.toFixed(0)}%`;
                 typingInput.disabled = true;
-                setTimeout(() => saveRanking(cpm, accuracy, parseFloat(timerElement.textContent)), 100);
+                
+                launchConfetti(); // 폭죽 발사!
+                setTimeout(() => saveRanking(cpm, accuracy, finalTime), 500);
             }
         });
 
+        // 콤보 업데이트 함수
+        function updateCombo(count) {
+            comboBox.innerText = count + " COMBO!";
+            if(count > 2) {
+                comboBox.classList.add('combo-active');
+                // 콤보가 늘어날 때마다 텍스트가 튀어오르는 효과
+                comboBox.style.transform = 'scale(1.5)';
+                setTimeout(() => comboBox.style.transform = 'scale(1)', 100);
+            } else {
+                comboBox.classList.remove('combo-active');
+            }
+        }
+
+        // 파티클(금가루) 효과 함수
+        function createSparkle() {
+            const inputRect = typingInput.getBoundingClientRect();
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // 색상 랜덤 (금색, 빨강, 초록)
+            const colors = ['#FFD700', '#FF0000', '#008000'];
+            particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+            particle.innerHTML = '✦'; // 별 모양
+            
+            // 위치: 입력창 주변 랜덤
+            particle.style.left = (inputRect.left + Math.random() * inputRect.width) + 'px';
+            particle.style.top = (inputRect.top + Math.random() * 30) + 'px';
+            particle.style.fontSize = Math.random() * 20 + 10 + 'px';
+            
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 1000);
+        }
+
+        // 랭킹 저장
         function saveRanking(cpm, accuracy, time) {
-            const nickname = prompt("기록 저장! 닉네임을 입력하세요:");
+            const nickname = prompt("🏆 기록 달성! 명예의 전당에 올릴 닉네임은?");
             if (nickname) {
                 let ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
                 ranking.push({ nickname, cpm, accuracy: accuracy.toFixed(0) });
@@ -156,13 +407,47 @@
 
         function loadRanking() {
             const ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
-            rankingBody.innerHTML = ranking.map((r, i) => 
-                `<tr><td>${i+1}</td><td>${r.nickname}</td><td>${r.cpm}</td><td>${r.accuracy}%</td></tr>`
-            ).join('');
+            rankingBody.innerHTML = ranking.slice(0, 10).map((r, i) => { // 상위 10명만
+                let medal = '';
+                if(i===0) medal = '🥇 ';
+                else if(i===1) medal = '🥈 ';
+                else if(i===2) medal = '🥉 ';
+                return `<tr><td>${medal}${i+1}</td><td>${r.nickname}</td><td>${r.cpm}</td><td>${r.accuracy}%</td></tr>`;
+            }).join('');
         }
 
         function resetRanking() {
-            if(confirm("랭킹을 초기화할까요?")) { localStorage.removeItem('typingRanking'); loadRanking(); }
+            if(confirm("모든 랭킹 기록을 삭제할까요?")) { 
+                localStorage.removeItem('typingRanking'); 
+                loadRanking(); 
+            }
+        }
+
+        // 폭죽 효과 (성공 시)
+        function launchConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#ffd700', '#ffffff'];
+            for(let i=0; i<100; i++) {
+                const p = document.createElement('div');
+                p.style.position = 'fixed';
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.width = '10px';
+                p.style.height = '10px';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.zIndex = '9999';
+                document.body.appendChild(p);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 300 + 100;
+                
+                p.animate([
+                    { transform: 'translate(0,0)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px)`, opacity: 0 }
+                ], {
+                    duration: 1500,
+                    easing: 'ease-out'
+                }).onfinish = () => p.remove();
+            }
         }
 
         window.onload = initText;
