@@ -4,82 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎄 방통대 컴과 연말 모임 🎁</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"> 
-    <style>
-        body { 
-            font-family: 'Noto Sans KR', sans-serif;
-            text-align: center; 
-            padding: 20px; 
-            background-color: #f0f8ff; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .intro-container { 
-            max-width: 600px; 
-            width: 100%;
-            background: #ffffff; 
-            padding: 40px; 
-            border-radius: 15px; 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3); 
-            border: 5px dashed #a00000; 
-        }
-        h1 { 
-            color: #a00000; 
-            font-size: 2.5em; 
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px #006400;
-        }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* 모바일: 1열 */
-            gap: 15px;
-            margin-top: 30px;
-        }
-        /* 버튼 스타일 */
-        .menu-btn {
-            display: block;
-            text-decoration: none;
-            background-color: #006400; 
-            color: white;
-            padding: 20px;
-            font-size: 1.3em;
-            font-weight: bold;
-            border-radius: 10px;
-            transition: transform 0.2s, background-color 0.3s;
-            box-shadow: 0 4px #004d00;
-        }
-        .menu-btn:hover {
-            background-color: #a00000;
-            transform: translateY(-3px);
-        }
-        .menu-btn span {
-            display: block;
-            font-size: 0.8em;
-            font-weight: normal;
-            margin-top: 5px;
-            color: #ffcccc;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="intro-container">
         <h1>🎉 방통대 컴과 연말 모임 🎉</h1>
         <p>원하는 프로그램을 선택해주세요!</p>
         
-        <div class="menu-grid">
+        <div class="menu-grid" style="display: grid; gap: 15px; justify-content: center;">
             <a href="typing-game.html" class="menu-btn">
                 ⌨️ 타자왕 선발전
-                <span>나의 타자 실력은 몇 위?</span>
+                <span style="display:block; font-size:0.8em; font-weight:normal;">나의 타자 실력은 몇 위?</span>
             </a>
 
-            <a href="#" onclick="alert('아직 준비 중입니다!')" class="menu-btn" style="background-color: #555; box-shadow: 0 4px #333;">
-                ❓ 상식 퀴즈 (준비중)
+            <a href="bgm.html" class="menu-btn" style="background: linear-gradient(145deg, #6a0dad, #4b0082);">
+                🎧 BGM 플레이어
+                <span style="display:block; font-size:0.8em; font-weight:normal;">식사 & 게임 분위기 메이커!</span>
             </a>
-            <a href="#" onclick="alert('아직 준비 중입니다!')" class="menu-btn" style="background-color: #555; box-shadow: 0 4px #333;">
-                📸 포토존 (준비중)
+            
+            <a href="#" onclick="alert('준비 중!')" class="menu-btn" style="background: #555;">
+                📸 추억의 포토존 (준비중)
             </a>
         </div>
     </div>
