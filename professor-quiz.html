@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎅 인물 맞추기 퀴즈</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -15,6 +15,7 @@
             min-height: 100vh;
             margin: 0;
             text-align: center;
+            overflow: hidden; /* 폭죽 스크롤 방지 */
         }
 
         .quiz-container {
@@ -22,192 +23,188 @@
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 500px;
+            max-width: 600px; /* 화면이 크니까 조금 더 넓게 */
             width: 90%;
-            border: 4px solid #ff69b4; /* 핫핑크 테두리 */
+            border: 5px solid #ff69b4; 
+            position: relative;
         }
 
         h1 {
             color: #c71585;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .sub-title {
+            color: #666;
             margin-bottom: 20px;
-            font-size: 1.8rem;
+            font-size: 1.1rem;
         }
 
         .image-box {
             background-color: #ffe4e1;
-            padding: 10px;
+            padding: 15px;
             border-radius: 15px;
             margin-bottom: 25px;
-            overflow: hidden;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            display: inline-block;
         }
 
         .image-box img {
             max-width: 100%;
+            max-height: 300px; /* 너무 커지지 않게 제한 */
             border-radius: 10px;
             display: block;
-            margin: 0 auto;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            padding: 15px;
-            font-size: 1.1rem;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            width: 70%;
-            outline: none;
-            transition: 0.3s;
-            text-align: center;
-        }
-
-        input[type="text"]:focus {
-            border-color: #ff69b4;
-        }
-
-        .btn {
-            padding: 15px 25px;
-            font-size: 1.1rem;
+        /* 정답 공개 버튼 */
+        .reveal-btn {
+            background: linear-gradient(145deg, #ff69b4, #c71585);
             color: white;
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
+            padding: 15px 40px;
+            font-size: 1.5rem;
             font-weight: bold;
-            transition: transform 0.2s;
-            margin-top: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: pulse 2s infinite; /* 버튼이 심장처럼 뜀 */
         }
 
-        .submit-btn {
-            background: linear-gradient(145deg, #ff69b4, #c71585);
-            width: 100%;
-            margin-bottom: 10px;
+        .reveal-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
         }
-        
-        .hint-btn {
-            background-color: #ffcc00;
-            color: #333;
-            font-size: 0.9rem;
-            padding: 10px 20px;
+
+        .reveal-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 정답 텍스트 영역 (처음엔 숨김) */
+        #answer-area {
+            display: none; /* 숨김 */
+            margin-top: 20px;
+        }
+
+        .answer-text {
+            font-size: 3rem; /* 엄청 크게! */
+            font-weight: 900;
+            color: #28a745;
+            text-shadow: 2px 2px 0 #fff, 0 0 10px rgba(40, 167, 69, 0.5);
+            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .answer-desc {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 5px;
         }
 
         .home-btn {
+            margin-top: 30px;
             background-color: #6c757d;
-            font-size: 0.9rem;
+            color: white;
+            border: none;
             padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin-top: 10px;
+            font-size: 0.9rem;
         }
 
-        .btn:active { transform: scale(0.95); }
-
-        /* 피드백 메시지 */
-        #result-msg {
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            min-height: 30px;
+        /* 애니메이션 정의 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-        .success { color: #28a745; }
-        .fail { color: #dc3545; }
 
-        /* 틀렸을 때 흔들리는 효과 */
-        .shake { animation: shake 0.5s; }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
+        @keyframes popUp {
+            0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+
     </style>
 </head>
 <body>
 
     <div class="quiz-container">
         <h1>🎅 이분은 누구실까요?</h1>
-        <p>눈, 코, 입을 보고 교수님의 성함을 맞춰보세요!</p>
+        <p class="sub-title">눈, 코, 입 퍼즐을 보고 맞춰보세요!</p>
         
         <div class="image-box">
             <img src="quiz-image.png" alt="교수님 퀴즈 사진">
         </div>
 
-        <div class="input-group">
-            <input type="text" id="answer-input" placeholder="정답 입력 (예: 홍길동)" onkeypress="if(event.keyCode==13) {checkAnswer();}">
+        <br>
+
+        <button id="reveal-btn" class="reveal-btn" onclick="revealAnswer()">
+            🥁 정답 공개!
+        </button>
+
+        <div id="answer-area">
+            <div class="answer-text">이광수 교수님</div>
+            <p class="answer-desc">"방통대 컴과의 빛!"</p>
         </div>
 
-        <button class="btn submit-btn" onclick="checkAnswer()">정답 확인</button>
-        <div id="result-msg"></div>
-
-        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-            <button class="btn hint-btn" onclick="showHint()">💡 힌트 보기</button>
-            <a href="index.html" class="btn home-btn">🏠 메인으로</a>
-        </div>
+        <br>
+        <a href="index.html" class="home-btn">🏠 메인으로</a>
     </div>
 
     <script>
-        // ★★★ 나쨩! 여기서 정답이랑 힌트를 수정해줘! ★★★
-        const correctAnswers = ["이광수", "이광수 교수님", "이광수교수님"]; // 정답 목록 (여러 개 가능)
-        const hintText = "컴퓨터과학과의 빛과 소금... 힌트는 '광'!"; // 힌트 내용
+        function revealAnswer() {
+            const btn = document.getElementById('reveal-btn');
+            const answerArea = document.getElementById('answer-area');
 
-        function checkAnswer() {
-            const input = document.getElementById('answer-input');
-            const resultMsg = document.getElementById('result-msg');
-            const container = document.querySelector('.quiz-container');
-            
-            // 공백 제거하고 비교
-            const userVal = input.value.trim();
+            // 1. 버튼 숨기기
+            btn.style.display = 'none';
 
-            if (correctAnswers.includes(userVal)) {
-                // 정답!
-                resultMsg.innerHTML = "🎉 정답입니다!!! 대박! 🎉";
-                resultMsg.className = "success";
-                launchConfetti(); // 폭죽 펑펑
-            } else {
-                // 오답!
-                resultMsg.innerHTML = "땡! 다시 자세히 봐보세요 😜";
-                resultMsg.className = "fail";
-                
-                // 흔들리는 효과
-                container.classList.add('shake');
-                setTimeout(() => container.classList.remove('shake'), 500);
-                input.value = ''; // 입력창 비우기
-                input.focus();
-            }
+            // 2. 정답 보여주기
+            answerArea.style.display = 'block';
+
+            // 3. 폭죽 효과 발사!
+            launchConfetti();
         }
 
-        function showHint() {
-            alert(hintText);
-        }
-
-        // 간단한 폭죽 효과 함수
+        // 폭죽 효과 (파티 분위기!)
         function launchConfetti() {
-            const colors = ['#ff69b4', '#ffd700', '#007bff', '#28a745'];
-            for(let i=0; i<50; i++) {
+            const colors = ['#ff69b4', '#ffd700', '#007bff', '#28a745', '#ff4500'];
+            
+            for(let i=0; i<100; i++) {
                 const particle = document.createElement('div');
                 particle.style.position = 'fixed';
+                
+                // 화면 중앙에서 시작
                 particle.style.left = '50%';
                 particle.style.top = '50%';
-                particle.style.width = '10px';
-                particle.style.height = '10px';
+                
+                particle.style.width = Math.random() * 10 + 5 + 'px';
+                particle.style.height = Math.random() * 10 + 5 + 'px';
                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.borderRadius = '50%';
-                particle.style.pointerEvents = 'none';
+                
+                // 모양 랜덤 (원형 or 사각형)
+                if(Math.random() > 0.5) particle.style.borderRadius = '50%';
+                else particle.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+
+                particle.style.zIndex = '9999';
+                particle.style.pointerEvents = 'none'; // 클릭 방해 안 함
                 document.body.appendChild(particle);
 
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 300 + 100;
+                // 사방으로 퍼지는 움직임 계산
+                const angle = Math.random() * Math.PI * 2; // 360도 랜덤
+                const velocity = Math.random() * 400 + 100; // 속도 랜덤
                 const tx = Math.cos(angle) * velocity;
                 const ty = Math.sin(angle) * velocity;
 
+                // 애니메이션
                 particle.animate([
-                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(0, 0) scale(1)`, opacity: 1 },
                     { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
                 ], {
-                    duration: 1000,
+                    duration: 1200,
                     easing: 'cubic-bezier(0, .9, .57, 1)',
                 }).onfinish = () => particle.remove();
             }
