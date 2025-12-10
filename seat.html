@@ -1,10 +1,166 @@
-<script>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🪑 자리 배치 & 역할 분담</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS 스타일 시작 */
+        body { 
+            background-color: #f9f9f9; 
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .seat-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 { margin-bottom: 20px; color: #333; }
+
+        .role-guide {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .role-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: bold; }
+        .dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; }
+        
+        .bg-black { background-color: #333; box-shadow: 0 0 5px #333; }
+        .bg-blue { background-color: #007bff; box-shadow: 0 0 5px #007bff; }
+        .bg-green { background-color: #28a745; box-shadow: 0 0 5px #28a745; }
+        .bg-orange { background-color: #fd7e14; box-shadow: 0 0 5px #fd7e14; }
+        .bg-red { background-color: #dc3545; box-shadow: 0 0 5px #dc3545; }
+
+        .tables-area {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) { .tables-area { grid-template-columns: 1fr; } }
+
+        .table-group {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            min-height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .table-center {
+            position: absolute;
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #555;
+            border: 2px solid #ccc;
+            z-index: 1;
+        }
+
+        .person {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75em;
+            font-weight: bold;
+            position: absolute;
+            transition: all 0.8s ease-in-out;
+            border: 2px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 10;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .person.host { border: 3px solid #FFD700; transform: scale(1.1); z-index: 20; }
+        
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button, .home-btn {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-block;
+            text-align: center;
+        }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="seat-container">
+        <h1>🪑 자리 배치 & 역할 분담</h1>
+        
+        <div class="role-guide">
+            <div class="role-item"><span class="dot bg-black"></span>⚫ 진행/스탭</div>
+            <div class="role-item"><span class="dot bg-blue"></span>🔵 리필</div>
+            <div class="role-item"><span class="dot bg-green"></span>🟢 인증</div>
+            <div class="role-item"><span class="dot bg-orange"></span>🟠 정리</div>
+            <div class="role-item"><span class="dot bg-red"></span>🔴 쾌적</div>
+        </div>
+
+        <div class="tables-area">
+            <div class="table-group" id="table-1"><div class="table-center">1조 (5명)</div></div>
+            <div class="table-group" id="table-2"><div class="table-center">2조 (5명)</div></div>
+            <div class="table-group" id="table-3"><div class="table-center">3조 (5명)</div></div>
+            <div class="table-group" id="table-4"><div class="table-center">4조 (4명)</div></div>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="setPhase1()" style="background: linear-gradient(145deg, #007bff, #0056b3);">
+                1️⃣ 1부 배치 (초기)
+            </button>
+            
+            <button onclick="shuffleSeats('balanced')" style="background: linear-gradient(145deg, #28a745, #1e7e34);">
+                🎨 역할 균등 섞기
+                <span style="display:block; font-size:0.7em; font-weight:normal;">색깔X + 이전자리X</span>
+            </button>
+            
+            <button onclick="shuffleSeats('random')" style="background: linear-gradient(145deg, #fd7e14, #e67e22);">
+                🎲 완전 랜덤 섞기
+                <span style="display:block; font-size:0.7em; font-weight:normal;">색깔O + 이전자리X</span>
+            </button>
+
+            <a href="index.html" class="home-btn" style="background: linear-gradient(145deg, #a00000, #800000);">🏠 메인</a>
+        </div>
+    </div>
+
+    <script>
         // 사람 데이터 (총 19명: 나쨩 + 스태프2 + 참가자16)
         let people = [
-            // 1. 호스트 (나쨩도 이제 움직이니까 role을 'black'으로 통일!)
+            // 1. 호스트 (나쨩도 움직임 -> role: 'black')
             { id: 1, name: "나쨩", role: "black", color: "bg-black", prev: 0 }, 
             
-            // 2. 스태프
+            // 2. 스태프 (role: 'black')
             { id: 2, name: "스텝1", role: "black", color: "bg-black", prev: 0 },
             { id: 3, name: "스텝2", role: "black", color: "bg-black", prev: 0 },
 
@@ -30,7 +186,7 @@
             { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
-        // 1부 배치 (초기는 나쨩이 1조에 있는 걸로 시작! 버튼 누르면 섞임)
+        // 1부 배치 (초기 상태)
         function setPhase1() {
             clearTables();
             // 1조 (나쨩 + 4명)
@@ -72,7 +228,7 @@
             });
         }
 
-        // ★★★ 자리 섞기 (나쨩 포함 랜덤 섞기!) ★★★
+        // ★★★ 자리 섞기 (나쨩 포함 자유 이동 + 완벽 중복 방지) ★★★
         function shuffleSeats(mode) {
             const MAX_RETRIES = 500;
             let success = false;
@@ -89,18 +245,17 @@
                 };
                 let tempPlan = []; 
 
-                // 2. 진행팀 배치 (나쨩 + 스텝1 + 스텝2 = 총 3명)
-                // 이들을 'black' 역할로 묶어서 서로 다른 테이블에 배치
+                // 2. 진행팀 배치 (나쨩 + 스텝1 + 스텝2 = 총 3명, 'black')
+                // -> 서로 다른 테이블에 배치되도록 함 (검은색 뭉침 방지)
                 let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
-                let tableOptions = [1, 2, 3, 4]; // 모든 테이블 가능!
+                let tableOptions = [1, 2, 3, 4]; 
 
                 let leaderFail = false;
                 for (let leader of leaders) {
                     // 빈 테이블이면서 & 이전 자리가 아닌 곳 우선
-                    // (진행팀은 서로 'black'이므로 색깔 겹침 방지를 위해 빈 테이블만 찾음)
                     let options = tableOptions.filter(t => tempTables[t].count === 0 && t !== leader.prev);
                     
-                    // 조건에 맞는 곳 없으면, 그냥 빈 테이블 아무데나
+                    // 정 없으면 그냥 빈 테이블 아무데나
                     if (options.length === 0) {
                         options = tableOptions.filter(t => tempTables[t].count === 0);
                     }
@@ -109,10 +264,10 @@
 
                     let target = options[Math.floor(Math.random() * options.length)];
                     tempTables[target].count++;
-                    tempTables[target].colors.push('black'); // 색깔 등록!
+                    tempTables[target].colors.push('black'); 
                     tempPlan.push({ person: leader, table: target });
                 }
-                if (leaderFail) continue; // 실패시 재시도
+                if (leaderFail) continue; 
 
                 // 3. 참가자 배치 (나머지 16명)
                 let users = people.slice(3).sort(() => Math.random() - 0.5); 
@@ -123,7 +278,7 @@
                         let limit = (t === 4) ? 4 : 5;
                         let hasSpace = tempTables[t].count < limit;
                         
-                        // 균등 모드면 색깔 체크 (black 포함해서 모든 색 체크됨)
+                        // 균등 모드일 땐 같은 색깔 있으면 후보 탈락
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
                         
                         return hasSpace && colorOk;
@@ -131,6 +286,7 @@
 
                     if (candidates.length === 0) { userFail = true; break; }
 
+                    // 이전 자리 피하기
                     let bestOptions = candidates.filter(t => t !== user.prev);
                     let finalOptions = (bestOptions.length > 0) ? bestOptions : candidates;
                     
@@ -151,13 +307,15 @@
             if (success) {
                 clearTables();
                 finalPlan.forEach(item => {
-                    item.person.prev = item.table; // 자리 기록 업데이트
+                    item.person.prev = item.table; 
                     assignRender(item.person, item.table);
                 });
             } else {
-                alert("⚠️ 배치 실패! 다시 시도해주세요.");
+                alert("⚠️ 조건에 맞는 배치를 찾지 못했어요!\n다시 한 번 눌러주세요.");
             }
         }
 
-        setPhase1(); // 페이지 열리면 초기 상태 보여줌
+        setPhase1(); // 초기 실행
     </script>
+</body>
+</html>
