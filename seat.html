@@ -1,12 +1,12 @@
-    <script>
+<script>
         // 사람 데이터 (총 19명: 나쨩 + 스태프2 + 참가자16)
         let people = [
-            // 1. 호스트
-            { id: 1, name: "나쨩", role: "host", color: "bg-black", prev: 0 }, 
+            // 1. 호스트 (나쨩도 이제 움직이니까 role을 'black'으로 통일!)
+            { id: 1, name: "나쨩", role: "black", color: "bg-black", prev: 0 }, 
             
             // 2. 스태프
-            { id: 2, name: "스텝1", role: "staff", color: "bg-black", prev: 0 },
-            { id: 3, name: "스텝2", role: "staff", color: "bg-black", prev: 0 },
+            { id: 2, name: "스텝1", role: "black", color: "bg-black", prev: 0 },
+            { id: 3, name: "스텝2", role: "black", color: "bg-black", prev: 0 },
 
             // 3. 참가자 16명
             { id: 4, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
@@ -30,7 +30,7 @@
             { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
-        // 1부 배치
+        // 1부 배치 (초기는 나쨩이 1조에 있는 걸로 시작! 버튼 누르면 섞임)
         function setPhase1() {
             clearTables();
             // 1조 (나쨩 + 4명)
@@ -43,22 +43,17 @@
             assignRender(people[15], 4); assignRender(people[16], 4); assignRender(people[17], 4); assignRender(people[18], 4);
         }
 
-        // 화면에 그리기 전용 함수
         function assignRender(person, tableNum) {
-            person.prev = tableNum; // 현재 자리 기록
-            
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
-            if (person.role === 'host') el.classList.add('host');
+            if (person.id === 1) el.classList.add('host'); 
             el.innerHTML = `${person.name}`;
 
             const currentCount = table.querySelectorAll('.person').length;
             const maxSeats = (tableNum === 4) ? 4 : 5; 
             
-            // 자리 배치 각도 계산
             const displayMax = Math.max(currentCount + 1, maxSeats);
-            // 360도를 인원수로 나눠서 배치
             const angle = (360 / displayMax) * currentCount - 90; 
             const radius = 85; 
 
@@ -77,102 +72,92 @@
             });
         }
 
-        // ★★★ 자리 섞기 (재시도 로직 적용) ★★★
+        // ★★★ 자리 섞기 (나쨩 포함 랜덤 섞기!) ★★★
         function shuffleSeats(mode) {
-            const MAX_RETRIES = 500; // 500번까지 시도해서 완벽한 조합 찾기
+            const MAX_RETRIES = 500;
             let success = false;
-            let finalPlan = []; // 성공한 배치 계획을 담을 곳
+            let finalPlan = [];
 
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-                // 1. 시뮬레이션용 테이블 초기화
+                
+                // 1. 테이블 초기화
                 let tempTables = {
-                    1: { count: 1, colors: [] }, // 나쨩 자리 확보
+                    1: { count: 0, colors: [] },
                     2: { count: 0, colors: [] },
                     3: { count: 0, colors: [] },
                     4: { count: 0, colors: [] }
                 };
-                let tempPlan = []; // [ {person:객체, table:번호} ]
+                let tempPlan = []; 
 
-                // 2. 나쨩 1조 고정
-                tempPlan.push({ person: people[0], table: 1 });
+                // 2. 진행팀 배치 (나쨩 + 스텝1 + 스텝2 = 총 3명)
+                // 이들을 'black' 역할로 묶어서 서로 다른 테이블에 배치
+                let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
+                let tableOptions = [1, 2, 3, 4]; // 모든 테이블 가능!
 
-                // 3. 스태프 배치 (랜덤)
-                let staff = [people[1], people[2]].sort(() => Math.random() - 0.5);
-                
-                // 스태프가 갈 수 있는 곳 (2,3,4조 중 하나)
-                // 조건: 이전 자리 피하기 시도 (하지만 필수는 아님, 스태프는 자리가 중요해서)
-                let staffFail = false;
-                for (let st of staff) {
-                    let options = [2, 3, 4].filter(t => tempTables[t].count === 0); // 스태프끼리 겹치지 않게 (각 조에 1명씩)
+                let leaderFail = false;
+                for (let leader of leaders) {
+                    // 빈 테이블이면서 & 이전 자리가 아닌 곳 우선
+                    // (진행팀은 서로 'black'이므로 색깔 겹침 방지를 위해 빈 테이블만 찾음)
+                    let options = tableOptions.filter(t => tempTables[t].count === 0 && t !== leader.prev);
                     
-                    // 만약 꽉 찼으면 (3명 이상일 때) 아무데나 빈 곳
-                    if (options.length === 0) options = [2, 3, 4].filter(t => tempTables[t].count < 2);
-                    
-                    if (options.length === 0) { staffFail = true; break; } // 배치 실패
+                    // 조건에 맞는 곳 없으면, 그냥 빈 테이블 아무데나
+                    if (options.length === 0) {
+                        options = tableOptions.filter(t => tempTables[t].count === 0);
+                    }
 
-                    // 스태프 배치
+                    if (options.length === 0) { leaderFail = true; break; }
+
                     let target = options[Math.floor(Math.random() * options.length)];
                     tempTables[target].count++;
-                    tempTables[target].colors.push('staff');
-                    tempPlan.push({ person: st, table: target });
+                    tempTables[target].colors.push('black'); // 색깔 등록!
+                    tempPlan.push({ person: leader, table: target });
                 }
-                if (staffFail) continue; // 이번 시도 실패, 재시작
+                if (leaderFail) continue; // 실패시 재시도
 
-                // 4. 참가자 배치
-                let users = people.slice(3).sort(() => Math.random() - 0.5); // 랜덤 셔플
+                // 3. 참가자 배치 (나머지 16명)
+                let users = people.slice(3).sort(() => Math.random() - 0.5); 
                 let userFail = false;
 
                 for (let user of users) {
-                    // 들어갈 수 있는 후보 테이블 찾기
                     let candidates = [1, 2, 3, 4].filter(t => {
                         let limit = (t === 4) ? 4 : 5;
                         let hasSpace = tempTables[t].count < limit;
                         
-                        // ★핵심: 균등 모드일 때 색깔이 겹치면 후보 탈락!
+                        // 균등 모드면 색깔 체크 (black 포함해서 모든 색 체크됨)
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
                         
                         return hasSpace && colorOk;
                     });
 
-                    if (candidates.length === 0) {
-                        userFail = true; // 갈 곳이 없음 -> 이번 시도 망함 -> 다시 섞자!
-                        break;
-                    }
+                    if (candidates.length === 0) { userFail = true; break; }
 
-                    // 후보들 중에서 '이전 자리'가 아닌 곳을 우선 선택
                     let bestOptions = candidates.filter(t => t !== user.prev);
-                    
-                    // 만약 모든 후보가 이전 자리라면? (어쩔 수 없이 앉아야 함) -> candidates 사용
-                    // 이전 자리 피할 수 있으면 -> bestOptions 사용
                     let finalOptions = (bestOptions.length > 0) ? bestOptions : candidates;
                     
                     let selectedTable = finalOptions[Math.floor(Math.random() * finalOptions.length)];
 
-                    // 배치 확정 (메모리 상)
                     tempTables[selectedTable].count++;
                     tempTables[selectedTable].colors.push(user.role);
                     tempPlan.push({ person: user, table: selectedTable });
                 }
 
                 if (!userFail) {
-                    // 모든 참가자가 규칙을 지키며 앉았다!
                     success = true;
                     finalPlan = tempPlan;
-                    break; // 루프 종료
+                    break;
                 }
             }
 
-            // 결과 적용
             if (success) {
                 clearTables();
                 finalPlan.forEach(item => {
+                    item.person.prev = item.table; // 자리 기록 업데이트
                     assignRender(item.person, item.table);
                 });
             } else {
-                alert("⚠️ 조건에 딱 맞는 자리를 찾지 못했어요!\n다시 한 번 버튼을 눌러주세요.");
-                // 실패 시 그냥 1부 배치로 돌리거나, 아무것도 안 함
+                alert("⚠️ 배치 실패! 다시 시도해주세요.");
             }
         }
 
-        setPhase1(); // 초기 실행
+        setPhase1(); // 페이지 열리면 초기 상태 보여줌
     </script>
