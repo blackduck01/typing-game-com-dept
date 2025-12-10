@@ -3,189 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 BGM 박스 🎵</title>
+    <title>🎄 DJ 나쨩의 BGM 박스 🎵</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet"> 
     <style>
-        /* ❄️ 전체 페이지 스타일 (크리스마스 파티 밤) */
+        /* ❄️ 전체 페이지 스타일 */
         body {
-            background: linear-gradient(135deg, #020024, #090979, #2c003e); /* 딥한 파티 분위기 */
+            background: linear-gradient(135deg, #020024, #090979, #2c003e);
             font-family: 'Noto Sans KR', sans-serif;
             color: white;
             margin: 0;
-            padding: 20px;
+            padding: 30px 20px; /* 상하 패딩 조금 늘림 */
             min-height: 100vh;
             box-sizing: border-box;
             overflow-x: hidden;
             cursor: pointer;
         }
 
-        /* 눈송이 효과 */
-        .snowflake {
-            position: fixed;
-            top: -10px;
-            color: #fff;
-            font-size: 1em;
-            text-shadow: 0 0 5px #fff;
-            z-index: 1;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear infinite;
-        }
+        /* 눈송이 & 요정 가루 효과 (기존 유지) */
+        .snowflake { position: fixed; top: -10px; color: #fff; font-size: 1em; text-shadow: 0 0 5px #fff; z-index: 1; user-select: none; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
+        .magic-dust { position: absolute; width: 6px; height: 6px; background: #FFD700; border-radius: 50%; pointer-events: none; z-index: 9999; animation: fadeOut 0.8s forwards; box-shadow: 0 0 10px #FFD700, 0 0 20px #ff0000; }
+        @keyframes fadeOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0) translate(0, 20px); } }
 
-        /* 마우스 요정 가루 */
-        .magic-dust {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #FFD700;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            animation: fadeOut 0.8s forwards;
-            box-shadow: 0 0 10px #FFD700, 0 0 20px #ff0000;
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0) translate(0, 20px); }
-        }
-
+        /* 🎁 메인 컨테이너: 캔디케인(사탕 지팡이) 테두리 적용! */
         .container {
             max-width: 900px;
             margin: 0 auto;
             text-align: center;
             position: relative;
             z-index: 10;
+            padding: 40px; /* 내부 여백 추가 */
+            background: rgba(0, 0, 0, 0.3); /* 내용물 잘 보이게 배경 약간 어둡게 */
+            border-radius: 30px; /* 둥근 모서리 */
+
+            /* 핵심: 사탕 지팡이 스트라이프 테두리 */
+            border: 10px solid transparent; /* 테두리 두께 */
+            border-image: repeating-linear-gradient(
+                45deg,
+                #ff0055, /* 빨강 */
+                #ff0055 20px,
+                #ffffff 20px, /* 흰색 */
+                #ffffff 40px,
+                #00ff00 40px, /* 초록 */
+                #00ff00 60px,
+                #ffffff 60px, /* 흰색 반복 */
+                #ffffff 80px
+            ) 1;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.3); /* 붉은색 빛 번짐 */
         }
 
         h1 { 
-            color: #ff0055; 
-            font-size: 3rem; 
-            margin-bottom: 10px; 
-            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+            color: #ff0055; font-size: 3rem; margin-bottom: 10px; text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
             animation: neonPulse 1.5s infinite alternate;
         }
-        @keyframes neonPulse {
-            from { text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055; }
-            to { text-shadow: 0 0 20px #ff0055, 0 0 40px #ff0055, 0 0 60px #ff0055; }
-        }
+        @keyframes neonPulse { from { text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055; } to { text-shadow: 0 0 20px #ff0055, 0 0 40px #ff0055, 0 0 60px #ff0055; } }
+        p.subtitle { color: #ccc; font-size: 1.1rem; margin-bottom: 50px; }
 
-        p.subtitle { color: #ccc; font-size: 1.1rem; margin-bottom: 40px; }
-
-        /* 🎵 음악 카드 디자인 (LP판 컨셉) */
+        /* 🎵 음악 카드: 따뜻한 전구 빛 테두리로 변경 */
         .music-card {
-            background: rgba(255, 255, 255, 0.1); /* 반투명 유리 */
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 20px;
+            
+            /* 촌스러운 회색 선 제거 -> 따뜻한 금빛/붉은빛 테두리 */
+            border: 3px solid rgba(255, 215, 0, 0.4); /* 은은한 금빛 */
+            border-radius: 25px;
+            padding: 25px;
             margin-bottom: 40px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
+            display: flex; flex-wrap: wrap; align-items: center;
+            
+            /* 안팎으로 빛나는 효과 */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
         }
         .music-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(255, 0, 85, 0.3);
+            transform: translateY(-7px);
+            /* 호버 시 쨍한 루돌프 빨간색 테두리와 강한 빛 */
             border-color: #ff0055;
+            box-shadow: 0 20px 40px rgba(255, 0, 85, 0.4), inset 0 0 30px rgba(255, 215, 0, 0.3);
         }
 
-        /* LP판 애니메이션 */
-        .vinyl-wrapper {
-            flex: 0 0 150px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 20px;
-        }
-        .vinyl {
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(#111 30%, #333 31%, #111 32%, #333 45%, #111 46%, #333 60%, #111 61%);
-            border-radius: 50%;
-            border: 5px solid #111;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            position: relative;
-            animation: spin 5s linear infinite; /* 계속 돌아감 */
-        }
-        .music-card:hover .vinyl { animation-duration: 2s; } /* 호버시 빨리 돔 */
-
-        .vinyl::after { /* LP판 중앙 라벨 */
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px; height: 40px;
-            background: #ff0055;
-            border-radius: 50%;
-            border: 2px solid #fff;
-        }
-
+        /* 기존 LP판, 비디오 스타일 유지 */
+        .vinyl-wrapper { flex: 0 0 150px; display: flex; justify-content: center; align-items: center; margin-right: 30px; }
+        .vinyl { width: 130px; height: 130px; background: radial-gradient(#111 30%, #333 31%, #111 32%, #333 45%, #111 46%, #333 60%, #111 61%); border-radius: 50%; border: 5px solid #111; box-shadow: 0 0 15px rgba(0,0,0,0.7); position: relative; animation: spin 5s linear infinite; }
+        .music-card:hover .vinyl { animation-duration: 2s; }
+        .vinyl::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 45px; height: 45px; background: #ff0055; border-radius: 50%; border: 3px solid #fff; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* 텍스트 및 비디오 영역 */
         .content-wrapper { flex: 1; text-align: left; min-width: 300px; }
-        .content-wrapper h2 { margin: 0 0 10px 0; color: #ffd700; display: flex; align-items: center; gap: 10px; }
-        .content-wrapper p { margin: 0 0 15px 0; color: #ddd; font-size: 0.95rem; }
+        .content-wrapper h2 { margin: 0 0 15px 0; color: #ffd700; display: flex; align-items: center; gap: 15px; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .content-wrapper p { margin: 0 0 20px 0; color: #eee; font-size: 1rem; }
+        .video-box { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 15px; border: 3px solid #ff0055; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        .video-box {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 비율 */
-            height: 0;
-            overflow: hidden;
-            border-radius: 10px;
-            border: 2px solid #555;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .video-box iframe {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-        }
+        /* 이퀄라이저 & 홈 버튼 */
+        .equalizer { display: flex; gap: 4px; height: 25px; align-items: flex-end; margin-left: auto; }
+        .bar { width: 5px; background: #00ff00; animation: bounce 1s infinite ease-in-out; border-radius: 5px; }
+        @keyframes bounce { 0%, 100% { height: 5px; } 50% { height: 25px; } }
+        .home-btn { display: inline-block; margin-top: 40px; padding: 15px 50px; font-size: 1.3rem; font-weight: bold; color: white; text-decoration: none; background: linear-gradient(45deg, #ff0055, #ff0000); border-radius: 50px; box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4), 0 0 0 5px rgba(255, 255, 255, 0.2) inset; transition: transform 0.2s; }
+        .home-btn:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 10px 30px rgba(255, 0, 85, 0.6); }
 
-        /* 🎶 이퀄라이저 바 효과 */
-        .equalizer {
-            display: flex;
-            gap: 3px;
-            height: 20px;
-            align-items: flex-end;
-            margin-left: auto;
-        }
-        .bar {
-            width: 4px;
-            background: #00ff00;
-            animation: bounce 1s infinite ease-in-out;
-        }
-        @keyframes bounce {
-            0%, 100% { height: 5px; }
-            50% { height: 20px; }
-        }
-
-        /* 홈 버튼 */
-        .home-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-            background: linear-gradient(45deg, #ff0055, #ff0000);
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
-            transition: transform 0.2s;
-        }
-        .home-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(255, 0, 85, 0.6); }
-
-        @media (max-width: 600px) {
-            .music-card { display: block; text-align: center; }
-            .vinyl-wrapper { margin: 0 auto 20px auto; }
+        @media (max-width: 768px) {
+            .container { padding: 20px; border-width: 5px; } /* 모바일에서 테두리 두께 조정 */
+            .music-card { display: block; text-align: center; padding: 20px; }
+            .vinyl-wrapper { margin: 0 auto 25px auto; }
             .content-wrapper { text-align: center; }
-            .content-wrapper h2 { justify-content: center; }
+            .content-wrapper h2 { justify-content: center; flex-wrap: wrap; }
+            .equalizer { margin: 10px auto 0 auto; }
         }
     </style>
 </head>
@@ -194,17 +118,17 @@
     <div id="snow-container"></div>
 
     <div class="container">
-        <h1>🎧 BGM BOX 🎧</h1>
-        <p class="subtitle">오늘 딱 맞는 음악을 보여주겠어😎</p>
+        <h1>🎧 DJ 나쨩의 BGM BOX 🎧</h1>
+        <p class="subtitle">상황에 딱 맞는 음악을 골라 파티 분위기를 띄워보세요!</p>
         
         <div class="music-card">
             <div class="vinyl-wrapper"><div class="vinyl" style="animation-delay: 0s;"></div></div>
             <div class="content-wrapper">
                 <h2>
-                    🍕🍻 맛있는 식사 시간 🍻🍕
+                    🍷 우아한 식사 시간 
                     <div class="equalizer" id="eq-1"></div>
                 </h2>
-                <p>🎄재즈와 함께하는 맛있는 식사</p>
+                <p>재즈와 함께하는 고급진 저녁 식사</p>
                 <div class="video-box">
                     <iframe src="https://www.youtube.com/embed/z_WLELlE6HY" title="Mealtime Jazz" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
@@ -232,14 +156,14 @@
                     🧹 으랏차차! 노동요 (Cleanup)
                     <div class="equalizer" id="eq-3"></div>
                 </h2>
-                <p>청소도 빨리빨리! 어서 2차갑시다</p>
+                <p>청소도 신나게! 에너지가 솟아나는 비트</p>
                 <div class="video-box">
                     <iframe src="https://www.youtube.com/embed/uNEW_CzhpEc" title="Cleanup BGM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
         
-        <div class="music-card" style="border-color: #00ff00;">
+        <div class="music-card" style="border-color: rgba(0, 255, 0, 0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0, 255, 0, 0.1);">
             <div class="vinyl-wrapper">
                 <div class="vinyl" style="animation-delay: -3s;"></div>
             </div>
@@ -249,7 +173,7 @@
                     <div class="equalizer" id="eq-4"></div>
                 </h2>
                 <p>연말 분위기 100% 충전 완료!</p>
-                <div class="video-box">
+                <div class="video-box" style="border-color: #00ff00;">
                     <iframe src="https://www.youtube.com/embed/aAkMkVFwAoo" title="Christmas Carol" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
@@ -284,15 +208,12 @@
         document.addEventListener('mousemove', function(e) {
             const dust = document.createElement('div');
             dust.className = 'magic-dust';
-            // 색상 랜덤 (골드, 핑크, 그린)
             const colors = ['#FFD700', '#FF0055', '#00FF00', '#00FFFF'];
             dust.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             dust.style.boxShadow = `0 0 10px ${dust.style.backgroundColor}`;
-            
             dust.style.left = e.pageX + 'px';
             dust.style.top = e.pageY + 'px';
             document.body.appendChild(dust);
-            
             setTimeout(() => { dust.remove(); }, 800);
         });
 
@@ -300,14 +221,16 @@
         function createEqualizerBars() {
             const eqs = document.querySelectorAll('.equalizer');
             eqs.forEach(eq => {
-                // 바 5개 생성
                 for(let i=0; i<5; i++) {
                     const bar = document.createElement('div');
                     bar.className = 'bar';
-                    // 각 바마다 색상과 애니메이션 속도를 다르게
                     bar.style.animationDuration = (Math.random() * 0.5 + 0.3) + 's';
-                    // 크리스마스 컬러 (빨강/초록 번갈아가며)
-                    bar.style.backgroundColor = (i % 2 === 0) ? '#ff0055' : '#00ff00';
+                    // 캐롤 카드는 초록색 바, 나머지는 빨강/초록 믹스
+                    if (eq.id === 'eq-4') {
+                        bar.style.backgroundColor = '#00ff00';
+                    } else {
+                        bar.style.backgroundColor = (i % 2 === 0) ? '#ff0055' : '#00ff00';
+                    }
                     eq.appendChild(bar);
                 }
             });
