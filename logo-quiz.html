@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💻 로고 퀴즈: 이것은 무슨 언어인가 💻</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>
+        /* 사회자 모드 전용 스타일 (다크 테마) */
+        body {
+            overflow: hidden; /* 스크롤 방지 */
+            background-color: #1e1e1e; /* VS Code 같은 어두운 배경 */
+        }
+        .quiz-container {
+            background-color: #252526; 
+            color: #d4d4d4;
+            border: 3px solid #007acc; /* VS Code 파란색 */
+            max-width: 1000px; 
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        /* 로고 이미지 영역 */
+        #image-area {
+            position: relative;
+            width: 100%;
+            height: 50%; /* 이미지 공간 확보 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            background: #333; /* 로고 잘 보이게 배경 */
+            border-radius: 20px;
+            padding: 20px;
+        }
+        #logo-image {
+            max-width: 80%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+            transition: transform 0.3s;
+        }
+        /* 정답 공개 시 로고 살짝 커짐 */
+        .zoom-logo { transform: scale(1.1); }
+
+        /* 정답 텍스트 (처음엔 숨김) */
+        #answer-display {
+            font-family: 'Consolas', 'Courier New', monospace; /* 코딩 폰트 */
+            font-size: 4em;
+            font-weight: bold;
+            color: #4ec9b0; /* 코드 하이라이팅 색상 */
+            text-shadow: 0 0 10px rgba(78, 201, 176, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .show-answer {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* 컨트롤 패널 */
+        .control-panel {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+        }
+        .control-btn {
+            font-size: 1.5em;
+            padding: 15px 40px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            color: white;
+        }
+        .control-btn:active { transform: scale(0.95); }
+        
+        #btn-reveal { background-color: #007acc; } /* 파랑 */
+        #btn-next { background-color: #eaac1d; color: black; display: none; } /* 노랑 */
+        
+        #btn-home { 
+            position: absolute; top: 20px; right: 20px; 
+            background: #3c3c3c; font-size: 1em; padding: 10px 20px; 
+            border: 1px solid #555;
+        }
+
+        /* 문제 번호 */
+        .q-number {
+            position: absolute; top: 20px; left: 20px;
+            font-size: 1.5em; color: #858585; font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container quiz-container">
+        <div class="q-number" id="q-num">console.log("Q1");</div>
+        <a href="index.html" class="home-btn" id="btn-home">🏠 exit()</a>
+
+        <h1 style="color:white; margin-bottom:10px;">💻 이 로고의 주인은?</h1>
+
+        <div id="image-area">
+            <img id="logo-image" src="" alt="로고 이미지">
+        </div>
+
+        <div id="answer-display">Answer</div>
+
+        <div class="control-panel">
+            <button id="btn-reveal" class="control-btn" onclick="revealAnswer()">👀 정답 공개 (Space)</button>
+            <button id="btn-next" class="control-btn" onclick="nextQuestion()">👉 다음 문제 (Right)</button>
+        </div>
+    </div>
+
+    <script>
+        // ======================================================
+        // ★★★ [수정 구역] 로고 이미지 파일명과 정답 입력! ★★★
+        // ======================================================
+        const quizData = [
+            // 예시: image에 나쨩이 올린 파일명, answer에 정답 텍스트
+            { image: "logo_python.png", answer: "Python (파이썬)" },
+            { image: "logo_java.png", answer: "Java (자바)" },
+            { image: "logo_linux.png", answer: "Linux (리눅스)" },
+            { image: "logo_github.png", answer: "GitHub (깃허브)" },
+            { image: "logo_docker.png", answer: "Docker (도커)" }
+        ];
+        // ======================================================
+
+        let currentIndex = 0;
+        const imgElement = document.getElementById('logo-image');
+        const answerElement = document.getElementById('answer-display');
+        const revealBtn = document.getElementById('btn-reveal');
+        const nextBtn = document.getElementById('btn-next');
+        const qNumElement = document.getElementById('q-num');
+
+        function initGame() {
+            currentIndex = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= quizData.length) {
+                // 종료 화면
+                imgElement.style.display = 'none';
+                answerElement.innerHTML = "<span style='color:#ce9178'>'System.exit(0)'</span><br>퀴즈가 종료되었습니다!";
+                answerElement.classList.add('show-answer');
+                revealBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                qNumElement.textContent = "";
+                return;
+            }
+
+            const data = quizData[currentIndex];
+            
+            // 초기화
+            imgElement.src = data.image;
+            imgElement.classList.remove('zoom-logo');
+            answerElement.textContent = data.answer;
+            answerElement.classList.remove('show-answer'); // 정답 숨김
+            
+            revealBtn.style.display = 'inline-block';
+            nextBtn.style.display = 'none';
+            qNumElement.textContent = `console.log("Q${currentIndex + 1}");`;
+        }
+
+        function revealAnswer() {
+            imgElement.classList.add('zoom-logo'); // 로고 강조
+            answerElement.classList.add('show-answer'); // 정답 등장
+            
+            revealBtn.style.display = 'none';
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            loadQuestion();
+        }
+
+        // 키보드 단축키 (사회자용)
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                if (revealBtn.style.display !== 'none') revealAnswer();
+                else if (nextBtn.style.display !== 'none') nextQuestion();
+            }
+            if (e.code === 'ArrowRight') {
+                if (nextBtn.style.display !== 'none') nextQuestion();
+            }
+        });
+
+        initGame();
+    </script>
+</body>
+</html>
