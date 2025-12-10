@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 자리 배치 & 역할 분담 🎄</title>
+    <title>🎄 크리스마스 자리 배치 & 역할 분담 🎁</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* ❄️ 크리스마스 테마 CSS 시작 ❄️ */
@@ -63,12 +63,11 @@
 
         .tables-area {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 5개니까 3열로 변경해서 예쁘게 */
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
             margin-bottom: 40px;
             justify-content: center;
         }
-        /* 마지막 줄 가운데 정렬을 위한 처리 */
         .tables-area .table-group:last-child:nth-child(3n-1) {
             grid-column-end: -2;
         }
@@ -184,7 +183,7 @@
     <div id="snow-container"></div>
 
     <div class="seat-container">
-        <h1>🎄 자리 배치 🎄</h1>
+        <h1>🎅 크리스마스 자리 배치 🎄</h1>
         
         <div class="role-guide">
             <div class="role-item"><span class="dot bg-black"></span>⚫ 진행/스탭</div>
@@ -195,11 +194,11 @@
         </div>
 
         <div class="tables-area">
-            <div class="table-group" id="table-1"><div class="table-center">1조 (4명)</div></div>
-            <div class="table-group" id="table-2"><div class="table-center">2조 (4명)</div></div>
-            <div class="table-group" id="table-3"><div class="table-center">3조 (4명)</div></div>
-            <div class="table-group" id="table-4"><div class="table-center">4조 (4명)</div></div>
-            <div class="table-group" id="table-5"><div class="table-center">5조 (3명)</div></div>
+            <div class="table-group" id="table-1"><div class="table-center">1조</div></div>
+            <div class="table-group" id="table-2"><div class="table-center">2조</div></div>
+            <div class="table-group" id="table-3"><div class="table-center">3조</div></div>
+            <div class="table-group" id="table-4"><div class="table-center">4조</div></div>
+            <div class="table-group" id="table-5"><div class="table-center">5조</div></div>
         </div>
 
         <div class="btn-group">
@@ -260,30 +259,33 @@
             { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
         ];
 
-        // 1부 배치: 4명, 4명, 4명, 4명, 3명으로 나눔
+        // 1부 배치
         function setPhase1() {
             clearTables();
-            // 1조 (오리 포함 4명)
-            assignRender(people[0], 1); assignRender(people[3], 1); assignRender(people[4], 1); assignRender(people[5], 1);
-            // 2조 (옴뇸뇸 포함 4명)
-            assignRender(people[1], 2); assignRender(people[6], 2); assignRender(people[7], 2); assignRender(people[8], 2);
-            // 3조 (둘리 포함 4명)
-            assignRender(people[2], 3); assignRender(people[9], 3); assignRender(people[10], 3); assignRender(people[11], 3);
+            // 1조 (4명)
+            assignRender(people[0], 1, 4); assignRender(people[3], 1, 4); assignRender(people[4], 1, 4); assignRender(people[5], 1, 4);
+            // 2조 (4명)
+            assignRender(people[1], 2, 4); assignRender(people[6], 2, 4); assignRender(people[7], 2, 4); assignRender(people[8], 2, 4);
+            // 3조 (4명)
+            assignRender(people[2], 3, 4); assignRender(people[9], 3, 4); assignRender(people[10], 3, 4); assignRender(people[11], 3, 4);
             // 4조 (4명)
-            assignRender(people[12], 4); assignRender(people[13], 4); assignRender(people[14], 4); assignRender(people[15], 4);
-            // 5조 (3명)
-            assignRender(people[16], 5); assignRender(people[17], 5); assignRender(people[18], 5);
+            assignRender(people[12], 4, 4); assignRender(people[13], 4, 4); assignRender(people[14], 4, 4); assignRender(people[15], 4, 4);
+            // 5조 (3명) -> 초기 설정은 5번을 3명으로 고정
+            assignRender(people[16], 5, 3); assignRender(people[17], 5, 3); assignRender(people[18], 5, 3);
+            
+            updateTableLabels(5); // 초기엔 5번이 3명
         }
 
-        function assignRender(person, tableNum) {
+        // maxSeats 매개변수 추가하여 유동적으로 배치
+        function assignRender(person, tableNum, maxSeats) {
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
             el.innerHTML = `${person.name}`;
 
             const currentCount = table.querySelectorAll('.person').length;
-            const maxSeats = 4; // 테이블당 최대 4명으로 제한
             
+            // 시각적 배치를 위한 각도 계산
             const displayMax = Math.max(currentCount + 1, maxSeats);
             const angle = (360 / displayMax) * currentCount - 90; 
             const radius = 95; 
@@ -303,24 +305,32 @@
             });
         }
 
-        // 5개 테이블로 섞기 로직
+        // 라벨 업데이트 (몇 명인지 표시)
+        function updateTableLabels(smallTableNum) {
+            for(let i=1; i<=5; i++) {
+                let count = (i === smallTableNum) ? 3 : 4;
+                document.querySelector(`#table-${i} .table-center`).innerText = `${i}조 (${count}명)`;
+            }
+        }
+
+        // ★★★ 자리 섞기 수정 (3명 테이블은 1번 또는 5번만 가능) ★★★
         function shuffleSeats(mode) {
             const MAX_RETRIES = 500;
             let success = false;
             let finalPlan = [];
+            let chosenSmallTable = 5; // 나중에 라벨 업데이트용
 
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-                // 테이블 5개 초기화
+                
+                // 1. 3명 앉을 테이블 결정 (1번 또는 5번 중 하나 랜덤)
+                let smallTable = (Math.random() < 0.5) ? 1 : 5;
+                
                 let tempTables = { 
-                    1: {count:0,colors:[]}, 
-                    2: {count:0,colors:[]}, 
-                    3: {count:0,colors:[]}, 
-                    4: {count:0,colors:[]},
-                    5: {count:0,colors:[]} 
+                    1: {count:0,colors:[]}, 2: {count:0,colors:[]}, 3: {count:0,colors:[]}, 4: {count:0,colors:[]}, 5: {count:0,colors:[]} 
                 };
                 let tempPlan = []; 
                 
-                // 진행팀 3명 배치 (테이블 5개라 널널함)
+                // 진행팀 3명 배치
                 let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
                 let tableOptions = [1, 2, 3, 4, 5]; 
                 let leaderFail = false;
@@ -339,9 +349,12 @@
                 // 참가자 배치
                 let users = people.slice(3).sort(() => Math.random() - 0.5); 
                 let userFail = false;
+                
                 for (let user of users) {
                     let candidates = [1, 2, 3, 4, 5].filter(t => {
-                        let limit = 4; // 모든 테이블 정원 4명
+                        // ★핵심: 테이블마다 정원(limit)이 다름
+                        let limit = (t === smallTable) ? 3 : 4; 
+                        
                         let hasSpace = tempTables[t].count < limit;
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
                         return hasSpace && colorOk;
@@ -357,14 +370,23 @@
                     tempTables[selectedTable].colors.push(user.role);
                     tempPlan.push({ person: user, table: selectedTable });
                 }
-                if (!userFail) { success = true; finalPlan = tempPlan; break; }
+                
+                if (!userFail) { 
+                    success = true; 
+                    finalPlan = tempPlan; 
+                    chosenSmallTable = smallTable; // 성공한 배치의 3인 테이블 번호 저장
+                    break; 
+                }
             }
 
             if (success) {
                 clearTables();
+                updateTableLabels(chosenSmallTable); // 라벨 업데이트 (3명/4명 표시)
                 finalPlan.forEach(item => {
                     item.person.prev = item.table; 
-                    assignRender(item.person, item.table);
+                    // 렌더링 할 때 해당 테이블의 정원을 넘겨줌
+                    let maxSeats = (item.table === chosenSmallTable) ? 3 : 4;
+                    assignRender(item.person, item.table, maxSeats);
                 });
             } else {
                 alert("⚠️ 조건에 맞는 배치를 찾지 못했어요!\n다시 한 번 눌러주세요.");
