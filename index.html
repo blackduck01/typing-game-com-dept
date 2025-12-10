@@ -67,6 +67,14 @@
             background-color: #f9f9f9;
             min-height: 50px;
         }
+        
+        /* 버튼 스타일 그룹 */
+        .btn-group {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
         button {
             background-color: #006400; 
             color: white;
@@ -77,9 +85,16 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 15px;
         }
-        button:hover { background-color: #a00000; }
+        button:hover { background-color: #004d00; }
+        
+        /* 초기화 버튼 전용 스타일 (빨간색) */
+        .reset-rank-btn {
+            background-color: #dc3545;
+        }
+        .reset-rank-btn:hover {
+            background-color: #c82333;
+        }
 
         /* 랭킹 테이블 스타일 */
         #ranking-table {
@@ -121,7 +136,12 @@
         </div>
         
         <div id="result"></div>
-        <button onclick="resetTest()">다시 시작</button>
+        
+        <!-- 버튼 그룹 -->
+        <div class="btn-group">
+            <button onclick="resetTest()">다시 시작</button>
+            <button onclick="resetRanking()" class="reset-rank-btn">랭킹 초기화</button>
+        </div>
 
         <hr style="margin-top: 30px; border-color: #ccc;">
 
@@ -312,7 +332,7 @@
             }
         }
 
-        // 랭킹 불러오기 함수 (누락되었던 부분 추가)
+        // 랭킹 불러오기 함수
         function loadRanking() {
             const ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
             rankingBody.innerHTML = ''; // 기존 내용 초기화
@@ -342,6 +362,15 @@
                 `;
                 rankingBody.appendChild(row);
             });
+        }
+
+        // [추가됨] 랭킹 초기화 함수
+        function resetRanking() {
+            if (confirm("⚠️ 정말로 모든 랭킹 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.")) {
+                localStorage.removeItem('typingRanking');
+                loadRanking(); // 화면 갱신
+                alert("랭킹이 초기화되었습니다.");
+            }
         }
 
         // 페이지 로드 시 게임 초기화 실행
