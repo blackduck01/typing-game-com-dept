@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 방통대 컴과 타자왕 선발전 🎄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"> 
+    <style>
+        /* CSS: 크리스마스 테마 디자인 및 폰트 적용 */
+        body { 
+            font-family: 'Noto Sans KR', sans-serif;
+            text-align: center; 
+            padding: 20px; 
+            background-color: #f0f8ff; 
+        }
+        .container { 
+            max-width: 850px; 
+            margin: 20px auto; 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2); 
+            border: 5px dashed #a00000; 
+            border-image: repeating-linear-gradient(45deg, #a00000, #a00000 10px, #006400 10px, #006400 20px) 5;
+        }
+        h1 { 
+            color: #a00000; 
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px #006400; 
+        }
+        p, .info-panel p { 
+            color: #006400; 
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+        #target-text { 
+            font-size: 1.3em; 
+            border: 3px solid #006400; 
+            padding: 25px; 
+            margin-bottom: 20px; 
+            text-align: left; 
+            background-color: #ffeaea; 
+            line-height: 1.8; 
+            border-radius: 8px; 
+            min-height: 80px; /* 문장이 없을 때도 공간 유지 */
+        }
+        #typing-input { 
+            width: 90%; 
+            padding: 15px; 
+            font-size: 1.2em; 
+            border: 3px solid #a00000; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+        }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
+        .highlight-current { background-color: gold; } 
+        #result { 
+            margin-top: 30px; 
+            padding: 15px;
+            font-size: 1.5em; 
+            font-weight: bold; 
+            color: #a00000; 
+            border: 2px solid #006400;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            min-height: 50px;
+        }
+        
+        /* 버튼 스타일 그룹 */
+        .btn-group {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            background-color: #006400; 
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover { background-color: #004d00; }
+        
+        /* 초기화 버튼 전용 스타일 (빨간색) */
+        .reset-rank-btn {
+            background-color: #dc3545;
+        }
+        .reset-rank-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* 랭킹 테이블 스타일 */
+        #ranking-table {
+            width: 90%;
+            margin: 30px auto 0;
+            border-collapse: collapse;
+            font-size: 1em;
+        }
+        #ranking-table th, #ranking-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        #ranking-table th {
+            background-color: #a00000;
+            color: white;
+        }
+        #ranking-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .rank-1 { background-color: gold !important; color: black; font-weight: bold; }
+        .rank-2 { background-color: silver !important; color: black; font-weight: bold; }
+        .rank-3 { background-color: #cd7f32 !important; color: white; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎄 타자왕 선발전 🎄</h1>
+        <p>아래 문장을 정확하고 빠르게 입력해보세요! (다시 시작하면 문장이 바뀝니다)</p>
+
+        <div id="target-text"></div>
+        <textarea id="typing-input" rows="5" placeholder="여기에 입력을 시작하세요..."></textarea>
+        
+        <div class="info-panel">
+            <p>경과 시간: <span id="timer">0.00</span>초</p>
+            <p>현재 타수 (CPM): <span id="current-cpm">0</span>타</p> 
+            <p>정확도: <span id="accuracy">100</span>%</p>
+            <p>오타 수: <span id="error-count">0</span>개</p> 
+        </div>
+        
+        <div id="result"></div>
+        
+        <!-- 버튼 그룹 -->
+        <div class="btn-group">
+            <button onclick="resetTest()">다시 시작</button>
+            <button onclick="resetRanking()" class="reset-rank-btn">랭킹 초기화</button>
+        </div>
+
+        <hr style="margin-top: 30px; border-color: #ccc;">
+
+        <h2>👑 현재 랭킹 순위표 👑</h2>
+        <table id="ranking-table">
+            <thead>
+                <tr>
+                    <th>순위</th>
+                    <th>닉네임</th>
+                    <th>타수 (CPM)</th>
+                    <th>정확도 (%)</th>
+                    <th>시간 (초)</th>
+                    <th>오타 수</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-body">
+                <!-- 랭킹 데이터가 여기에 들어옵니다 -->
+            </tbody>
+        </table>
+
+    </div>
+
+    <script>
+        // JavaScript: 타자 측정 및 랭킹 로직
+        const targetTextElement = document.getElementById('target-text');
+        const typingInput = document.getElementById('typing-input');
+        const timerElement = document.getElementById('timer');
+        const accuracyElement = document.getElementById('accuracy');
+        const currentCpmElement = document.getElementById('current-cpm');
+        const errorCountElement = document.getElementById('error-count');
+        const resultElement = document.getElementById('result');
+        const rankingBody = document.getElementById('ranking-body');
+
+        // 대회에 사용할 문장
+        const targetSentences = [
+            "메리 크리스마스! 방통대 컴과 연말 모임에 오신 것을 환영합니다. 붉은색과 초록색 조명처럼 우리의 앞날도 빛나기를 바랍니다. 타자왕 상품은 무엇일까요!",
+            "올 한 해 컴퓨터과학과에서 열심히 코딩하고 공부하느라 수고 많았습니다. 이제 맛있는 음식과 함께 즐거운 휴식 시간을 가집시다. 산타가 코드를 버그 없이 주길 바라며!",
+            "프론트엔드, 백엔드, 데이터베이스의 조화가 완벽한 애플리케이션을 만듭니다. 우리는 융합 지식을 갖춘 자랑스러운 방통대 컴과 학생들입니다. 오늘 최고의 기록에 도전하세요!"
+        ];
+        
+        let targetText;
+        let startTime;
+        let timerInterval;
+        let isTypingStarted = false;
+
+        // 텍스트 초기화 함수
+        function initText() {
+            const randomIndex = Math.floor(Math.random() * targetSentences.length);
+            targetText = targetSentences[randomIndex];
+
+            targetTextElement.innerHTML = targetText.split('').map(char => `<span>${char}</span>`).join('');
+            typingInput.value = '';
+            timerElement.textContent = '0.00';
+            accuracyElement.textContent = '100';
+            currentCpmElement.textContent = '0';
+            errorCountElement.textContent = '0';
+            resultElement.textContent = '';
+            typingInput.disabled = false;
+            isTypingStarted = false;
+            
+            clearInterval(timerInterval);
+            
+            if (targetTextElement.children.length > 0) {
+                 targetTextElement.children[0].classList.add('highlight-current');
+            }
+            typingInput.focus();
+            loadRanking(); // 랭킹 로드
+        }
+
+        // 버튼 클릭 시 호출되는 함수 (이름 매칭)
+        function resetTest() {
+            initText();
+        }
+
+        // 타이머 시작 및 실시간 CPM 업데이트
+        function startTimer() {
+            startTime = new Date().getTime();
+            timerInterval = setInterval(() => {
+                const currentTime = new Date().getTime();
+                const elapsedTime = (currentTime - startTime) / 1000;
+                timerElement.textContent = elapsedTime.toFixed(2);
+                updateRealtimeCpm(elapsedTime); 
+            }, 100); 
+        }
+        
+        // 실시간 CPM 업데이트 함수
+        function updateRealtimeCpm(elapsedTimeInSeconds) {
+             const currentInput = typingInput.value;
+             
+             if (elapsedTimeInSeconds > 0 && currentInput.length > 0) {
+                const currentCpm = (currentInput.length / (elapsedTimeInSeconds / 60)).toFixed(0);
+                currentCpmElement.textContent = currentCpm;
+            } else {
+                 currentCpmElement.textContent = '0';
+            }
+        }
+
+        // 입력 이벤트 처리
+        typingInput.addEventListener('input', (e) => {
+            const currentInput = e.target.value;
+
+            // 1. 타이머 시작
+            if (!isTypingStarted) {
+                startTimer();
+                isTypingStarted = true;
+            }
+
+            // 2. 입력값 비교 및 스타일, 오타 카운트 적용
+            let correctChars = 0;
+            let currentErrors = 0;
+            const targetChars = targetTextElement.children;
+            
+            for (let i = 0; i < targetChars.length; i++) {
+                const targetCharSpan = targetChars[i];
+                
+                targetCharSpan.classList.remove('highlight-current');
+                if (i === currentInput.length && i < targetChars.length) {
+                     targetCharSpan.classList.add('highlight-current');
+                }
+                
+                if (i < currentInput.length) {
+                    if (currentInput[i] === targetText[i]) {
+                        targetCharSpan.className = 'correct';
+                        correctChars++;
+                    } else {
+                        targetCharSpan.className = 'incorrect';
+                        currentErrors++;
+                    }
+                } else {
+                    targetCharSpan.className = '';
+                }
+            }
+
+            // 3. 정확도 및 오타 카운트 표시
+            const accuracy = ((correctChars / currentInput.length) * 100) || 100;
+            accuracyElement.textContent = accuracy.toFixed(0);
+            errorCountElement.textContent = currentErrors;
+
+            // 4. 테스트 완료 체크 및 랭킹 저장
+            if (currentInput.length === targetText.length) {
+                clearInterval(timerInterval);
+                const finalTime = parseFloat(timerElement.textContent);
+                const totalChars = targetText.length;
+                const cpm = Math.floor(totalChars / (finalTime / 60)); // 타수는 정수로
+
+                resultElement.innerHTML = `
+                    🎉 **타자왕 등극!** 🎉<br>
+                    최종 타수 (CPM): **${cpm}타**<br>
+                    정확도: <strong>${accuracy.toFixed(0)}%</strong> (${currentErrors}개 오타)
+                `;
+                
+                typingInput.disabled = true;
+                
+                // 닉네임 입력 및 랭킹 저장!
+                // 약간의 지연을 주어 결과가 보인 뒤 알림창이 뜨게 함
+                setTimeout(() => {
+                    saveRanking(cpm, accuracy, finalTime, currentErrors);
+                }, 100);
+            }
+        });
+
+        // ===================================
+        // 랭킹 저장 및 로드 로직 (Local Storage)
+        // ===================================
+
+        // 랭킹 저장 함수
+        function saveRanking(cpm, accuracy, time, errors) {
+            const nickname = prompt("기록을 저장하시겠습니까? 닉네임을 입력해주세요:");
+            
+            if (nickname && nickname.trim() !== '') {
+                const score = {
+                    nickname: nickname.substring(0, 10), // 닉네임 10글자 제한
+                    cpm: cpm,
+                    accuracy: accuracy.toFixed(0),
+                    time: time.toFixed(2),
+                    errors: errors,
+                    date: new Date().toLocaleString()
+                };
+
+                let ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
+                ranking.push(score);
+                
+                // 타수 높은 순으로 정렬
+                ranking.sort((a, b) => b.cpm - a.cpm);
+
+                localStorage.setItem('typingRanking', JSON.stringify(ranking));
+                loadRanking(); // 테이블 갱신
+            }
+        }
+
+        // 랭킹 불러오기 함수
+        function loadRanking() {
+            const ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
+            rankingBody.innerHTML = ''; // 기존 내용 초기화
+
+            // 타수 높은 순, 타수가 같으면 정확도 높은 순 정렬
+            ranking.sort((a, b) => {
+                if (b.cpm !== a.cpm) return b.cpm - a.cpm;
+                return b.accuracy - a.accuracy;
+            });
+
+            ranking.forEach((score, index) => {
+                const row = document.createElement('tr');
+                
+                // 1, 2, 3등 강조 클래스 추가
+                let rankClass = '';
+                if (index === 0) rankClass = 'rank-1';
+                else if (index === 1) rankClass = 'rank-2';
+                else if (index === 2) rankClass = 'rank-3';
+
+                row.innerHTML = `
+                    <td class="${rankClass}">${index + 1}</td>
+                    <td>${score.nickname}</td>
+                    <td>${score.cpm}</td>
+                    <td>${score.accuracy}</td>
+                    <td>${score.time}</td>
+                    <td>${score.errors}</td>
+                `;
+                rankingBody.appendChild(row);
+            });
+        }
+
+        // [추가됨] 랭킹 초기화 함수
+        function resetRanking() {
+            if (confirm("⚠️ 정말로 모든 랭킹 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.")) {
+                localStorage.removeItem('typingRanking');
+                loadRanking(); // 화면 갱신
+                alert("랭킹이 초기화되었습니다.");
+            }
+        }
+
+        // 페이지 로드 시 게임 초기화 실행
+        window.onload = initText;
+
+    </script>
+</body>
+</html>
+
