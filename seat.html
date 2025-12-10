@@ -8,15 +8,14 @@
     <style>
         /* ❄️ 크리스마스 테마 CSS 시작 ❄️ */
         body { 
-            /* 배경: 깊은 크리스마스 밤 그라데이션 */
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            background-color: #1a472a; /* 혹시 그라데이션 안 먹을 때 대비 */
+            background-color: #1a472a;
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 20px;
             min-height: 100vh;
             box-sizing: border-box;
-            overflow-x: hidden; /* 눈송이 스크롤 방지 */
+            overflow-x: hidden;
         }
 
         .seat-container {
@@ -24,25 +23,22 @@
             margin: 0 auto;
             padding: 30px;
             text-align: center;
-            /* 메인 컨테이너 배경: 약간 투명한 하얀색 */
             background: rgba(255, 255, 255, 0.95);
             border-radius: 25px;
-            /* 🎁 사탕 지팡이 테두리 효과! */
             border: 8px solid transparent;
             border-image: repeating-linear-gradient(45deg, #d40000, #d40000 15px, #ffffff 15px, #ffffff 30px, #008000 30px, #008000 45px, #ffffff 45px, #ffffff 60px) 1;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); /* 금빛 광채 */
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
             position: relative;
             z-index: 10;
         }
 
         h1 { 
             margin-bottom: 25px; 
-            color: #d40000; /* 크리스마스 레드 */
+            color: #d40000;
             font-weight: 900;
             font-size: 2.5rem;
-            text-shadow: 2px 2px 0px #006400; /* 초록색 그림자 */
+            text-shadow: 2px 2px 0px #006400;
         }
-        h1 span { font-size: 3rem; }
 
         .role-guide {
             display: flex;
@@ -50,16 +46,15 @@
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 30px;
-            background: #fffaf0; /* 따뜻한 아이보리 */
+            background: #fffaf0;
             padding: 15px;
             border-radius: 15px;
-            border: 3px solid #c19a6b; /* 쿠키색 테두리 */
+            border: 3px solid #c19a6b;
             box-shadow: inset 0 0 10px rgba(212, 0, 0, 0.1);
         }
         .role-item { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: bold; color: #333; }
         .dot { width: 15px; height: 15px; border-radius: 50%; display: inline-block; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         
-        /* 색상 정의 유지 */
         .bg-black { background-color: #333; }
         .bg-blue { background-color: #007bff; }
         .bg-green { background-color: #28a745; }
@@ -74,15 +69,13 @@
         }
         @media (max-width: 768px) { .tables-area { grid-template-columns: 1fr; } }
 
-        /* 🎄 테이블 디자인 변경 */
         .table-group {
-            background: #f8f9fa; /* 밝은 테이블 배경 */
-            /* 금색 테두리와 붉은색 빛 번짐 */
+            background: #f8f9fa;
             border: 5px solid #FFD700; 
-            border-radius: 50%; /* 완전 원형 테이블 */
+            border-radius: 50%;
             padding: 20px;
             position: relative;
-            aspect-ratio: 1 / 1; /* 정사각형 비율 유지 (원형을 위해) */
+            aspect-ratio: 1 / 1;
             min-height: auto;
             display: flex;
             justify-content: center;
@@ -91,12 +84,12 @@
         }
         .table-center {
             position: absolute;
-            background: #d40000; /* 센터는 빨간색 */
+            background: #d40000;
             color: white;
             padding: 10px 15px;
             border-radius: 20px;
             font-weight: bold;
-            border: 3px solid #FFD700; /* 금색 테두리 */
+            border: 3px solid #FFD700;
             z-index: 1;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
@@ -113,7 +106,7 @@
             font-size: 0.75em;
             font-weight: bold;
             position: absolute;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* 튕기는 효과 추가 */
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             border: 3px solid white;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 10;
@@ -121,19 +114,7 @@
             line-height: 1.1;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
-        /* 호스트는 금색 왕관 느낌 */
-        .person.host { 
-            border: 4px solid #FFD700; 
-            transform: scale(1.15); 
-            z-index: 20; 
-            box-shadow: 0 0 20px #FFD700;
-        }
-        .person.host::after {
-            content: '👑';
-            position: absolute;
-            top: -20px;
-            font-size: 1.5em;
-        }
+        /* ★★★ 호스트(오리) 관련 스타일 모두 삭제됨! ★★★ */
         
         .btn-group {
             display: flex;
@@ -147,7 +128,7 @@
         button, .home-btn {
             border: none;
             padding: 15px 25px;
-            border-radius: 50px; /* 둥근 버튼 */
+            border-radius: 50px;
             color: white;
             font-weight: bold;
             cursor: pointer;
@@ -162,13 +143,11 @@
         button:hover, .home-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
         button:active { transform: scale(0.95); }
 
-        /* 버튼 색상 테마 강화 */
         .btn-blue { background: linear-gradient(145deg, #0056b3, #004494); }
         .btn-green { background: linear-gradient(145deg, #218838, #1e7e34); }
         .btn-orange { background: linear-gradient(145deg, #e06c00, #c86400); }
         .btn-red { background: linear-gradient(145deg, #c82333, #bd2130); }
 
-        /* 눈송이 스타일 */
         .snowflake {
             position: fixed;
             top: -10px;
@@ -231,12 +210,9 @@
     </div>
 
     <script>
-        // ==========================================
-        // ❄️ 눈 내리는 효과 스크립트 ❄️
-        // ==========================================
         function createSnowflakes() {
             const snowContainer = document.getElementById('snow-container');
-            const snowflakesCount = 50; // 눈송이 개수 조절
+            const snowflakesCount = 50;
             for (let i = 0; i < snowflakesCount; i++) {
                 const snowflake = document.createElement('div');
                 snowflake.className = 'snowflake';
@@ -249,13 +225,10 @@
         }
         createSnowflakes();
 
-        // ==========================================
-        // 🪑 자리 배치 스크립트 (기능은 그대로 유지!)
-        // ==========================================
         let people = [
-            { id: 1, name: "나쨩", role: "black", color: "bg-black", prev: 0 }, 
-            { id: 2, name: "스텝1", role: "black", color: "bg-black", prev: 0 },
-            { id: 3, name: "스텝2", role: "black", color: "bg-black", prev: 0 },
+            { id: 1, name: "오리", role: "black", color: "bg-black", prev: 0 }, 
+            { id: 2, name: "옴뇸뇸", role: "black", color: "bg-black", prev: 0 },
+            { id: 3, name: "둘리", role: "black", color: "bg-black", prev: 0 },
             { id: 4, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
             { id: 5, name: "참가2", role: "green", color: "bg-green", prev: 0 },
             { id: 6, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
@@ -286,14 +259,14 @@
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
-            if (person.id === 1) el.classList.add('host'); 
+            // ★★★ 오리(ID:1)에게 'host' 클래스 주는 부분 삭제함! ★★★
+            // if (person.id === 1) el.classList.add('host'); 
             el.innerHTML = `${person.name}`;
 
             const currentCount = table.querySelectorAll('.person').length;
             const maxSeats = (tableNum === 4) ? 4 : 5; 
             const displayMax = Math.max(currentCount + 1, maxSeats);
             const angle = (360 / displayMax) * currentCount - 90; 
-            // 테이블 크기가 커져서 반지름도 조금 키움
             const radius = 95; 
 
             const x = Math.cos(angle * Math.PI / 180) * radius;
