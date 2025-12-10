@@ -43,7 +43,7 @@
             background-color: #ffeaea; 
             line-height: 1.8; 
             border-radius: 8px; 
-            min-height: 80px; /* 문장이 없을 때도 공간 유지 */
+            min-height: 80px;
         }
         #typing-input { 
             width: 90%; 
@@ -118,11 +118,46 @@
         .rank-1 { background-color: gold !important; color: black; font-weight: bold; }
         .rank-2 { background-color: silver !important; color: black; font-weight: bold; }
         .rank-3 { background-color: #cd7f32 !important; color: white; font-weight: bold; }
+
+        /* 프로그램 링크 메뉴 스타일 */
+        .program-menu {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px solid #a00000;
+            border-radius: 10px;
+            background-color: #fff8f8;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .program-menu h3 {
+            color: #a00000;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .program-menu-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; 
+            gap: 15px;
+            list-style: none;
+            padding: 0;
+        }
+        .program-menu-list a {
+            text-decoration: none;
+            background-color: #006400;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .program-menu-list a:hover {
+            background-color: #a00000; 
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎄 타자왕 선발전 🎄</h1>
+        <h1>🎄 방통대 컴과 타자왕 선발전 🎁</h1>
         <p>아래 문장을 정확하고 빠르게 입력해보세요! (다시 시작하면 문장이 바뀝니다)</p>
 
         <div id="target-text"></div>
@@ -137,10 +172,22 @@
         
         <div id="result"></div>
         
-        <!-- 버튼 그룹 -->
         <div class="btn-group">
+            <a href="index.html" class="main-menu-btn" style="background-color: #a00000; color: white; padding: 10px 20px; font-size: 1.1em; font-weight: bold; border-radius: 5px; text-decoration: none;">
+                🏠 메인 화면
+            </a>
             <button onclick="resetTest()">다시 시작</button>
             <button onclick="resetRanking()" class="reset-rank-btn">랭킹 초기화</button>
+        </div>
+
+        <div class="program-menu">
+            <h3>🎉 연말 모임 다른 프로그램 바로가기 🎉</h3>
+            <ul class="program-menu-list">
+                <li><a href="https://example.com/quiz" target="_blank">📚 컴과 상식 퀴즈</a></li>
+                <li><a href="https://example.com/vote" target="_blank">🎤 베스트 드레서 투표</a></li>
+                <li><a href="https://example.com/photo" target="_blank">📸 추억의 포토존</a></li>
+                <li><a href="https://example.com/game" target="_blank">🎲 레크레이션 게임</a></li>
+            </ul>
         </div>
 
         <hr style="margin-top: 30px; border-color: #ccc;">
@@ -158,8 +205,7 @@
                 </tr>
             </thead>
             <tbody id="ranking-body">
-                <!-- 랭킹 데이터가 여기에 들어옵니다 -->
-            </tbody>
+                </tbody>
         </table>
 
     </div>
@@ -208,10 +254,9 @@
                  targetTextElement.children[0].classList.add('highlight-current');
             }
             typingInput.focus();
-            loadRanking(); // 랭킹 로드
+            loadRanking();
         }
 
-        // 버튼 클릭 시 호출되는 함수 (이름 매칭)
         function resetTest() {
             initText();
         }
@@ -285,7 +330,7 @@
                 clearInterval(timerInterval);
                 const finalTime = parseFloat(timerElement.textContent);
                 const totalChars = targetText.length;
-                const cpm = Math.floor(totalChars / (finalTime / 60)); // 타수는 정수로
+                const cpm = Math.floor(totalChars / (finalTime / 60));
 
                 resultElement.innerHTML = `
                     🎉 **타자왕 등극!** 🎉<br>
@@ -295,25 +340,20 @@
                 
                 typingInput.disabled = true;
                 
-                // 닉네임 입력 및 랭킹 저장!
-                // 약간의 지연을 주어 결과가 보인 뒤 알림창이 뜨게 함
                 setTimeout(() => {
                     saveRanking(cpm, accuracy, finalTime, currentErrors);
                 }, 100);
             }
         });
 
-        // ===================================
         // 랭킹 저장 및 로드 로직 (Local Storage)
-        // ===================================
 
-        // 랭킹 저장 함수
         function saveRanking(cpm, accuracy, time, errors) {
             const nickname = prompt("기록을 저장하시겠습니까? 닉네임을 입력해주세요:");
             
             if (nickname && nickname.trim() !== '') {
                 const score = {
-                    nickname: nickname.substring(0, 10), // 닉네임 10글자 제한
+                    nickname: nickname.substring(0, 10),
                     cpm: cpm,
                     accuracy: accuracy.toFixed(0),
                     time: time.toFixed(2),
@@ -324,29 +364,30 @@
                 let ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
                 ranking.push(score);
                 
-                // 타수 높은 순으로 정렬
                 ranking.sort((a, b) => b.cpm - a.cpm);
 
                 localStorage.setItem('typingRanking', JSON.stringify(ranking));
-                loadRanking(); // 테이블 갱신
+                loadRanking();
             }
         }
 
-        // 랭킹 불러오기 함수
         function loadRanking() {
             const ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
-            rankingBody.innerHTML = ''; // 기존 내용 초기화
+            rankingBody.innerHTML = '';
 
-            // 타수 높은 순, 타수가 같으면 정확도 높은 순 정렬
             ranking.sort((a, b) => {
                 if (b.cpm !== a.cpm) return b.cpm - a.cpm;
                 return b.accuracy - a.accuracy;
             });
 
+            if (ranking.length === 0) {
+                 rankingBody.innerHTML = '<tr><td colspan="6">아직 기록이 없습니다. 첫 번째 기록에 도전하세요!</td></tr>';
+                 return;
+            }
+
             ranking.forEach((score, index) => {
                 const row = document.createElement('tr');
                 
-                // 1, 2, 3등 강조 클래스 추가
                 let rankClass = '';
                 if (index === 0) rankClass = 'rank-1';
                 else if (index === 1) rankClass = 'rank-2';
@@ -364,19 +405,16 @@
             });
         }
 
-        // [추가됨] 랭킹 초기화 함수
+        // 랭킹 초기화 함수
         function resetRanking() {
             if (confirm("⚠️ 정말로 모든 랭킹 기록을 삭제하시겠습니까?\n삭제된 기록은 복구할 수 없습니다.")) {
                 localStorage.removeItem('typingRanking');
-                loadRanking(); // 화면 갱신
+                loadRanking();
                 alert("랭킹이 초기화되었습니다.");
             }
         }
 
-        // 페이지 로드 시 게임 초기화 실행
         window.onload = initText;
-
     </script>
 </body>
 </html>
-
