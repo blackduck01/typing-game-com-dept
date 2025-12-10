@@ -1,3 +1,16 @@
+작성해주신 코드를 살펴보니 **스크립트의 뒷부분이 잘려 있어서(Syntax Error)** 자바스크립트가 아예 실행되지 않는 상태입니다. 또한, `다시 시작` 버튼이 호출하는 함수 이름(`resetTest`)과 실제 정의된 초기화 함수(`initText`)가 연결되지 않은 문제도 있습니다.
+
+이 문제를 모두 해결하고, **랭킹 시스템(저장/불러오기)까지 완벽하게 작동하도록 수정한 전체 코드**를 드립니다. 이 코드를 그대로 복사해서 덮어쓰시면 됩니다.
+
+### 🛠️ 수정된 주요 내용
+1.  **코드 끊김 해결**: 잘려있던 `saveRanking` 함수를 완성하고, 누락된 `loadRanking` 함수를 추가했습니다.
+2.  **초기화 문제 해결**: 페이지가 로드될 때 문장이 바로 나오도록 `initText()`를 실행하게 했습니다.
+3.  **버튼 연결**: `resetTest()` 함수를 추가하여 `다시 시작` 버튼이 정상 작동하도록 했습니다.
+4.  **랭킹 정렬**: 타수(CPM)가 높은 순서대로 랭킹이 정렬되도록 로직을 추가했습니다.
+
+### ✅ 수정된 전체 코드 (복사해서 사용하세요)
+
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -43,6 +56,7 @@
             background-color: #ffeaea; 
             line-height: 1.8; 
             border-radius: 8px; 
+            min-height: 80px; /* 문장이 없을 때도 공간 유지 */
         }
         #typing-input { 
             width: 90%; 
@@ -64,6 +78,7 @@
             border: 2px solid #006400;
             border-radius: 5px;
             background-color: #f9f9f9;
+            min-height: 50px;
         }
         button {
             background-color: #006400; 
@@ -136,7 +151,8 @@
                 </tr>
             </thead>
             <tbody id="ranking-body">
-                </tbody>
+                <!-- 랭킹 데이터가 여기에 들어옵니다 -->
+            </tbody>
         </table>
 
     </div>
@@ -186,6 +202,11 @@
             }
             typingInput.focus();
             loadRanking(); // 랭킹 로드
+        }
+
+        // 버튼 클릭 시 호출되는 함수 (이름 매칭)
+        function resetTest() {
+            initText();
         }
 
         // 타이머 시작 및 실시간 CPM 업데이트
@@ -268,7 +289,10 @@
                 typingInput.disabled = true;
                 
                 // 닉네임 입력 및 랭킹 저장!
-                saveRanking(cpm, accuracy, finalTime, currentErrors);
+                // 약간의 지연을 주어 결과가 보인 뒤 알림창이 뜨게 함
+                setTimeout(() => {
+                    saveRanking(cpm, accuracy, finalTime, currentErrors);
+                }, 100);
             }
         });
 
@@ -278,7 +302,7 @@
 
         // 랭킹 저장 함수
         function saveRanking(cpm, accuracy, time, errors) {
-            const nickname = prompt("타자 기록이 저장됩니다! 닉네임을 입력해주세요:");
+            const nickname = prompt("기록을 저장하시겠습니까? 닉네임을 입력해주세요:");
             
             if (nickname && nickname.trim() !== '') {
                 const score = {
@@ -292,3 +316,51 @@
 
                 let ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
                 ranking.push(score);
+                
+                // 타수 높은 순으로 정렬
+                ranking.sort((a, b) => b.cpm - a.cpm);
+
+                localStorage.setItem('typingRanking', JSON.stringify(ranking));
+                loadRanking(); // 테이블 갱신
+            }
+        }
+
+        // 랭킹 불러오기 함수 (누락되었던 부분 추가)
+        function loadRanking() {
+            const ranking = JSON.parse(localStorage.getItem('typingRanking')) || [];
+            rankingBody.innerHTML = ''; // 기존 내용 초기화
+
+            // 타수 높은 순, 타수가 같으면 정확도 높은 순 정렬
+            ranking.sort((a, b) => {
+                if (b.cpm !== a.cpm) return b.cpm - a.cpm;
+                return b.accuracy - a.accuracy;
+            });
+
+            ranking.forEach((score, index) => {
+                const row = document.createElement('tr');
+                
+                // 1, 2, 3등 강조 클래스 추가
+                let rankClass = '';
+                if (index === 0) rankClass = 'rank-1';
+                else if (index === 1) rankClass = 'rank-2';
+                else if (index === 2) rankClass = 'rank-3';
+
+                row.innerHTML = `
+                    <td class="${rankClass}">${index + 1}</td>
+                    <td>${score.nickname}</td>
+                    <td>${score.cpm}</td>
+                    <td>${score.accuracy}</td>
+                    <td>${score.time}</td>
+                    <td>${score.errors}</td>
+                `;
+                rankingBody.appendChild(row);
+            });
+        }
+
+        // 페이지 로드 시 게임 초기화 실행
+        window.onload = initText;
+
+    </script>
+</body>
+</html>
+```
