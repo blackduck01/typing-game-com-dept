@@ -3,61 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎄 방통대 컴과 연말 모임 🎁</title>
+    <title>🎄 방통대 컴과 크리스마스 파티 🎅</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet"> 
     
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="script.js" defer></script>
+    <style>
+        /* ❄️ 크리스마스 배경 스타일 */
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* 차분한 겨울 밤 */
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+            text-align: center;
+            overflow-x: hidden;
+            cursor: pointer; /* 마법봉 느낌 */
+        }
+
+        /* 눈송이 효과 */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1em;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        /* ✨ 마우스 요정 가루 파티클 */
+        .magic-dust {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fadeOut 0.8s forwards;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1) translate(0, 0); }
+            100% { opacity: 0; transform: scale(0) translate(var(--tx), var(--ty)); }
+        }
+
+        /* 메인 컨테이너 */
+        .intro-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            padding-bottom: 50px;
+        }
+
+        /* 타이틀 디자인 (클릭 가능하게 변경) */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.1s;
+            user-select: none;
+        }
+        h1:active { transform: scale(0.95); }
+        h1 .red { color: #ff4d4d; }
+        h1 .green { color: #2ecc71; }
+        h1 .gold { color: #ffd700; }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #ddd;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        /* 버튼 그리드 */
+        .menu-grid {
+            display: grid;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* 공통 버튼 스타일 */
+        .menu-btn {
+            display: block;
+            padding: 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            
+            /* JS 등장 애니메이션용 초기 상태 */
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-5px) !important; /* !important로 JS 인라인 스타일 덮어쓰기 방지 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .menu-btn span {
+            display: block;
+            font-size: 0.75em;
+            font-weight: normal;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        /* 🔴 빨간색 버튼 (산타) */
+        .btn-red {
+            background: linear-gradient(145deg, #d32f2f, #b71c1c);
+            border-color: #ff6659;
+        }
+
+        /* 🟢 초록색 버튼 (트리) */
+        .btn-green {
+            background: linear-gradient(145deg, #2e7d32, #1b5e20);
+            border-color: #60ad5e;
+        }
+
+        /* 폭죽 파티클 스타일 */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+    </style>
 </head>
 <body>
+
+    <div id="snow-container"></div>
+
     <div class="intro-container">
-        <h1>🎉 방통대 컴과 연말 모임 🎉</h1>
-        <p>원하는 프로그램을 선택해주세요!</p>
+        <h1 onclick="explodeConfetti(event)">
+            <span class="red">M</span><span class="green">e</span><span class="red">r</span><span class="green">r</span><span class="red">y</span>
+            <span class="gold">Christmas</span>
+            🎄
+        </h1>
+        <p class="subtitle">방통대 컴과 연말 파티에 오신 걸 환영합니다!</p>
         
-        <div class="menu-grid" style="display: grid; gap: 15px; justify-content: center;">
-            <a href="typing-game.html" class="menu-btn">
+        <div class="menu-grid">
+            
+            <a href="typing-game.html" class="menu-btn btn-red">
                 ⌨️ 타자왕 선발전
-                <span style="display:block; font-size:0.8em; font-weight:normal;">나의 타자 실력은 몇 위?</span>
+                <span>나의 타자 실력은 몇 위?</span>
             </a>
 
-            <a href="bgm.html" class="menu-btn" style="background: linear-gradient(145deg, #6a0dad, #4b0082);">
+            <a href="bgm.html" class="menu-btn btn-green">
                 🎧 BGM 플레이어
-                <span style="display:block; font-size:0.8em; font-weight:normal;">식사 & 게임 분위기 메이커!</span>
+                <span>식사 & 게임 분위기 메이커!</span>
             </a>
             
-            <a href="photo.html" class="menu-btn" style="background: linear-gradient(145deg, #e83e8c, #d63384);">
+            <a href="photo.html" class="menu-btn btn-red">
                 📸 추억의 포토존
-                <span style="display:block; font-size:0.8em; font-weight:normal;">오늘의 베스트 컷 공유하기!</span>
+                <span>오늘의 베스트 컷 공유하기!</span>
             </a>
 
-            <a href="pinball.html" class="menu-btn" style="background: linear-gradient(145deg, #ff8c00, #ff4500);">
+            <a href="pinball.html" class="menu-btn btn-green">
                 🎰 행운의 핀볼 추첨
-                <span style="display:block; font-size:0.8em; font-weight:normal;">오늘의 경품 주인공은?!</span>
+                <span>오늘의 경품 주인공은?!</span>
             </a>
 
-            <a href="professor-quiz.html" class="menu-btn" style="background: linear-gradient(145deg, #ff69b4, #c71585);"> 
-                🎅 인물 맞추기 (대반전 주의!)
-                <span style="display:block; font-size:0.8em; font-weight:normal;">설마... 그분들이 나오실 줄이야?!</span>
+            <a href="professor-quiz.html" class="menu-btn btn-red"> 
+                🎅 인물 맞추기 (대반전)
+                <span>설마... 그분들이 나오실 줄이야?!</span>
             </a>
 
-            <a href="seat.html" class="menu-btn" style="background: linear-gradient(145deg, #20c997, #198754);">
+            <a href="nonsense.html" class="menu-btn btn-green">
+                🧸 넌센스 퀴즈
+                <span>"소금이 죽으면?" 두뇌 풀기!</span>
+            </a>
+
+            <a href="seat.html" class="menu-btn btn-red">
                 🪑 자리 배치도 보기
-                <span style="display:block; font-size:0.8em; font-weight:normal;">1부 & 2부 자리 섞기</span>
+                <span>1부 & 2부 자리 섞기</span>
             </a>
 
-            <a href="logo-quiz.html" class="menu-btn" style="background: linear-gradient(145deg, #007bff, #0056b3);">
+            <a href="logo-quiz.html" class="menu-btn btn-green">
                 💻 로고 퀴즈
-                <span style="display:block; font-size:0.8em; font-weight:normal;">컴과생의 자존심 대결!</span>
+                <span>컴과생의 자존심 대결!</span>
             </a>
 
-            <a href="qna.html" class="menu-btn" style="background: linear-gradient(145deg, #ffd700, #ffcc00); color: black;">
+            <a href="qna.html" class="menu-btn btn-red">
                 📝 익명 질문 포스트잇
-                <span style="display:block; font-size:0.8em; font-weight:normal;">"보안 어때요?" 무엇이든 물어보세요!</span>
+                <span>무엇이든 물어보세요!</span>
             </a>
 
         </div>
     </div>
+
+    <script>
+        // ==========================================
+        // 1. 눈 내리는 효과
+        // ==========================================
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const count = 50; 
+            for(let i=0; i<count; i++){
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = '❄';
+                snow.style.left = Math.random() * 100 + 'vw';
+                snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
+                snow.style.opacity = Math.random() * 0.5 + 0.3;
+                snow.style.fontSize = Math.random() * 15 + 5 + 'px';
+                container.appendChild(snow);
+            }
+        }
+        createSnow();
+
+        // ==========================================
+        // 2. 마우스 요정 가루 효과 (크리스마스 컬러)
+        // ==========================================
+        document.addEventListener('mousemove', function(e) {
+            const dust = document.createElement('div');
+            dust.className = 'magic-dust';
+            // 빨강, 초록, 골드, 흰색 랜덤
+            const colors = ['#ff4d4d', '#2ecc71', '#ffd700', '#ffffff'];
+            dust.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 랜덤한 방향으로 흩날리게
+            const tx = (Math.random() - 0.5) * 50 + 'px';
+            const ty = (Math.random() - 0.5) * 50 + 20 + 'px';
+            dust.style.setProperty('--tx', tx);
+            dust.style.setProperty('--ty', ty);
+
+            dust.style.left = e.pageX + 'px';
+            dust.style.top = e.pageY + 'px';
+            document.body.appendChild(dust);
+            
+            setTimeout(() => { dust.remove(); }, 800);
+        });
+
+        // ==========================================
+        // 3. 버튼 순차 등장 애니메이션
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            const buttons = document.querySelectorAll('.menu-btn');
+            buttons.forEach((btn, index) => {
+                setTimeout(() => {
+                    btn.style.transition = "all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+                    btn.style.opacity = "1";
+                    btn.style.transform = "translateY(0)";
+                }, index * 100); // 0.1초 간격으로 하나씩 등장
+            });
+        });
+
+        // ==========================================
+        // 4. 타이틀 클릭 폭죽 효과
+        // ==========================================
+        function explodeConfetti(e) {
+            const colors = ['#ff0000', '#00ff00', '#ffd700', '#ffffff'];
+            const x = e.clientX;
+            const y = e.clientY;
+
+            for(let i=0; i<30; i++) {
+                const p = document.createElement('div');
+                p.classList.add('confetti');
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(p);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 150 + 50;
+                
+                p.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 800,
+                    easing: 'ease-out'
+                }).onfinish = () => p.remove();
+            }
+        }
+    </script>
 </body>
 </html>
