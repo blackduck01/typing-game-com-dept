@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🏆 서바이벌 핀볼 🏆</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;700;900&display=swap" rel="stylesheet"> 
     <style>
@@ -29,46 +29,50 @@
         }
         @keyframes fall { to { transform: translateY(110vh); } }
 
-        /* 상태창 (상단 고정) */
+        /* 상태창 (모바일 대응) */
         #status-board {
             position: fixed;
-            top: 20px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 12px 30px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
             border-radius: 50px;
             font-weight: 700;
-            font-size: 1.1rem;
-            color: #FFD700; /* 골드 */
+            font-size: 1rem; /* 모바일 기본 폰트 줄임 */
+            color: #FFD700; 
             z-index: 1000;
             border: 1px solid rgba(255, 215, 0, 0.5);
             backdrop-filter: blur(5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            width: 80%;
+            width: 90%; /* 모바일에선 더 넓게 */
             max-width: 400px;
             text-align: center;
+            white-space: nowrap; /* 줄바꿈 방지 */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .container {
+            width: 95%; /* 모바일에서 꽉 차게 */
             max-width: 550px;
-            margin: 80px auto 50px auto;
+            margin: 70px auto 50px auto; /* 상단 여백 조정 */
             text-align: center;
             position: relative;
             z-index: 10;
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 1.8rem; /* 모바일 타이틀 크기 조정 */
             color: #FFD700;
             font-weight: 300;
             margin-bottom: 5px;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
         h1 span { font-weight: 900; color: white; }
 
-        /* 캔버스 스타일 (고급 프레임) */
+        /* 캔버스 스타일 (반응형 적용!) */
         canvas {
             background-color: rgba(0, 0, 0, 0.4);
             border-radius: 15px;
@@ -77,15 +81,20 @@
             display: block;
             margin: 0 auto;
             
+            /* ★ 핵심: 화면 크기에 맞춰 자동 조절 ★ */
+            width: 100%; 
+            height: auto;
+            max-width: 450px; /* PC에서는 너무 커지지 않게 */
+            
             /* 골드 라인 테두리 */
             border: 2px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
         /* 입력 영역 */
         .input-area {
             background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
+            padding: 15px;
             border-radius: 20px;
             margin-bottom: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -104,14 +113,16 @@
             resize: none;
             outline: none;
         }
-        textarea::placeholder { color: #aaa; }
+        textarea::placeholder { color: #aaa; font-size: 0.9rem; }
 
-        /* 버튼 스타일 (럭셔리) */
+        /* 버튼 스타일 */
         button, .home-btn {
             background: linear-gradient(135deg, #FFD700, #B8860B);
             color: #000;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 0; /* 좌우 패딩 대신 width 사용 */
+            width: 100%; /* 버튼 꽉 차게 */
+            max-width: 250px;
             font-size: 1rem;
             font-weight: bold;
             border-radius: 50px;
@@ -122,7 +133,7 @@
             text-decoration: none;
             display: inline-block;
         }
-        button:hover, .home-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+        button:hover, .home-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
         
         .btn-reset { 
             background: transparent; 
@@ -134,6 +145,14 @@
         
         .home-btn { background: #333; color: white; border: 1px solid #555; }
 
+        /* 미디어 쿼리: PC 화면일 때 조정 */
+        @media (min-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            #status-board { font-size: 1.2rem; top: 20px; padding: 12px 30px; }
+            .container { margin-top: 80px; }
+            button, .home-btn { width: auto; padding: 12px 40px; }
+        }
+
     </style>
 </head>
 <body>
@@ -143,34 +162,33 @@
 
     <div class="container">
         <h1>SURVIVAL <span>PINBALL</span></h1>
-        <p style="color:#888; font-size: 0.9em; margin-bottom: 30px;">Last One Standing Wins</p>
+        <p style="color:#888; font-size: 0.9em; margin-bottom: 20px;">Last One Standing Wins</p>
         
         <div class="input-area" id="setup-area">
-            <p style="margin-top:0; font-size:0.9em; color:#aaa;">💡 팁: <strong>이름*숫자</strong> (예: 꽤액*50, 오리*30)</p>
-            <textarea id="names" placeholder="예: 컴과*50, 맹고*30, 철수, 영희"></textarea>
+            <p style="margin-top:0; font-size:0.85em; color:#aaa; margin-bottom: 10px;">💡 팁: <strong>이름*숫자</strong> (예: 꽤액*50, 오리*30)</p>
+            <textarea id="names" placeholder="예: 맹고*50, 컴과*30, 철수, 영희"></textarea>
             <button onclick="startGame()">GAME START</button>
         </div>
 
         <canvas id="gameCanvas" width="450" height="2000"></canvas>
         
-        <div style="margin-top: 30px; padding-bottom: 50px;">
+        <div style="margin-top: 20px; padding-bottom: 50px;">
             <button onclick="resetGame()" class="btn-reset">Reset Game</button>
-            <a href="index.html" class="home-btn">Main Menu</a>
+            <br>
+            <a href="index.html" class="home-btn" style="margin-top: 10px;">Main Menu</a>
         </div>
     </div>
 
     <script>
-        // 페이지 로드 시 실행 (안전장치)
         window.onload = function() {
             createSnow();
             initMap();
-            drawStaticMap(); // 게임 시작 전에도 맵을 보여줌
+            drawStaticMap(); 
         };
 
-        // 1. 눈송이 효과
         function createSnow() {
             const container = document.getElementById('snow-container');
-            const count = 40; 
+            const count = 30; // 모바일 성능 위해 눈송이 수 약간 조절
             for(let i=0; i<count; i++){
                 const snow = document.createElement('div');
                 snow.className = 'snowflake';
@@ -183,7 +201,6 @@
             }
         }
 
-        // 2. 게임 변수
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const namesInput = document.getElementById('names');
@@ -197,16 +214,13 @@
         let isPlaying = false;
         let animationId;
         
-        // 물리 설정 (중력 강화로 멈춤 방지)
         const gravity = 0.25; 
         const friction = 0.99;
         const pegRadius = 3;
         const ballRadius = 5; 
 
-        // 오너먼트 색상 (메탈릭 느낌)
         const colors = ['#FFD700', '#C0C0C0', '#FF4500', '#00FF7F', '#1E90FF', '#FF69B4'];
 
-        // 3. 맵 생성 (끼임 방지 확장을 적용)
         function initMap() {
             pegs = [];
             spinners = [];
@@ -226,19 +240,18 @@
                     
                     pegs.push({ 
                         x: x, y: 180 + r * 40, r: pegRadius, 
-                        color: 'rgba(255, 255, 255, 0.8)' // 화이트 골드 핀
+                        color: 'rgba(255, 255, 255, 0.8)'
                     });
                 }
             }
 
-            // 구역 2: 굴뚝 (뻥 뚫린 고속도로) (900 ~ 1300px)
+            // 구역 2: 굴뚝 (뻥 뚫린 고속도로)
             for (let y = 1000; y < 1400; y += 30) { 
-                // 벽만 존재, 가운데 장애물 없음
                 pegs.push({x: 70, y: y, r: pegRadius, color: '#555'}); 
                 pegs.push({x: canvas.width - 70, y: y, r: pegRadius, color: '#555'}); 
             }
 
-            // 구역 3: 회전 장애물 (1400 ~ 1800px)
+            // 구역 3: 회전 장애물
             spinners.push({ x: 130, y: 1550, length: 110, angle: 0, speed: 0.08 });
             spinners.push({ x: canvas.width - 130, y: 1550, length: 110, angle: 1, speed: -0.08 });
             spinners.push({ x: canvas.width / 2, y: 1800, length: 160, angle: 0, speed: 0.12 });
@@ -254,7 +267,6 @@
             }
         }
 
-        // 4. 게임 시작
         function startGame() {
             const rawText = namesInput.value;
             if (!rawText.trim()) { alert("참가자를 입력해주세요!"); return; }
@@ -283,7 +295,7 @@
             setupArea.style.display = 'none';
             statusBoard.innerHTML = `🎄 생존: ${players.length}명`;
             
-            initMap(); // 맵 재생성
+            initMap();
             spawnBalls(players);
             isPlaying = true;
             animate();
@@ -304,7 +316,6 @@
             });
         }
 
-        // 파티클(불꽃) 생성
         function createParticles(x, y, color) {
             for(let i=0; i<3; i++) {
                 particles.push({
@@ -317,7 +328,6 @@
             }
         }
 
-        // 정지 상태 맵 그리기 (게임 시작 전)
         function drawStaticMap() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             pegs.forEach(peg => {
@@ -326,37 +336,35 @@
                 ctx.fillStyle = peg.color;
                 ctx.fill();
             });
-            // 텍스트 안내
             ctx.fillStyle = "rgba(255,255,255,0.2)";
             ctx.font = "30px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Waiting for Start...", canvas.width/2, 400);
+            ctx.fillText("Waiting...", canvas.width/2, 400);
         }
 
-        // 5. 애니메이션 루프
         function animate() {
             if (!isPlaying) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 핀 그리기
+            // 핀
             pegs.forEach(peg => {
                 ctx.beginPath();
                 ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2);
                 ctx.fillStyle = peg.color;
-                ctx.shadowBlur = 5; ctx.shadowColor = "white"; // 은은한 발광
+                ctx.shadowBlur = 5; ctx.shadowColor = "white"; 
                 ctx.fill();
                 ctx.shadowBlur = 0;
             });
 
-            // 회전 장애물
+            // 회전체
             spinners.forEach(spinner => {
                 spinner.angle += spinner.speed;
                 ctx.save();
                 ctx.translate(spinner.x, spinner.y);
                 ctx.rotate(spinner.angle);
                 
-                ctx.strokeStyle = "#FFD700"; // 골드바
+                ctx.strokeStyle = "#FFD700"; 
                 ctx.lineWidth = 8;
                 ctx.lineCap = "round";
                 
@@ -372,7 +380,7 @@
             let activeBalls = [];
             let avgY = 0; 
 
-            // 공 물리 엔진
+            // 공 업데이트
             balls.forEach(ball => {
                 if (!ball.active) return;
 
@@ -381,7 +389,6 @@
                 ball.x += ball.vx;
                 ball.y += ball.vy;
 
-                // 벽 충돌
                 if (ball.x < ballRadius) { ball.x = ballRadius; ball.vx *= -0.7; }
                 if (ball.x > canvas.width - ballRadius) { ball.x = canvas.width - ballRadius; ball.vx *= -0.7; }
 
@@ -393,7 +400,7 @@
                     if (dist < ballRadius + peg.r) {
                         const angle = Math.atan2(dy, dx);
                         const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                        const bounce = 0.65; // 탄성
+                        const bounce = 0.65;
                         ball.vx = Math.cos(angle) * speed * bounce + (Math.random()-0.5);
                         ball.vy = Math.sin(angle) * speed * bounce;
                         ball.x += Math.cos(angle) * (ballRadius + peg.r - dist);
@@ -414,7 +421,6 @@
                     }
                 });
 
-                // 탈락 체크
                 if (ball.y > canvas.height + 100) {
                     ball.active = false;
                 } else {
@@ -422,7 +428,7 @@
                     avgY += ball.y;
                 }
 
-                // 공 그리기 (3D 효과)
+                // 공 그리기
                 let grad = ctx.createRadialGradient(ball.x - 2, ball.y - 2, 1, ball.x, ball.y, ballRadius);
                 grad.addColorStop(0, "white");
                 grad.addColorStop(0.3, ball.color);
@@ -433,7 +439,6 @@
                 ctx.fillStyle = grad;
                 ctx.fill();
                 
-                // 이름
                 ctx.fillStyle = "white";
                 ctx.font = "bold 10px sans-serif";
                 ctx.textAlign = "center";
@@ -460,7 +465,6 @@
                 window.scrollTo({ top: targetScroll, behavior: 'auto' });
             }
 
-            // 상태 업데이트
             if (activeBalls.length > 1) {
                 statusBoard.innerHTML = `🎄 생존: ${activeBalls.length}명`;
                 animationId = requestAnimationFrame(animate);
@@ -474,24 +478,19 @@
             }
         }
         
-        // 우승자 화면
         function drawWinner(winner) {
             window.scrollTo({ top: canvas.height, behavior: 'smooth' });
-            
             ctx.fillStyle = "rgba(0,0,0,0.6)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             const cx = canvas.width / 2;
             const cy = canvas.height - 300;
             
-            // 골드 후광
             let grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 120);
             grad.addColorStop(0, "rgba(255, 215, 0, 0.8)");
             grad.addColorStop(1, "rgba(0, 0, 0, 0)");
             ctx.fillStyle = grad;
             ctx.beginPath(); ctx.arc(cx, cy, 120, 0, Math.PI*2); ctx.fill();
 
-            // 우승자 공
             let ballGrad = ctx.createRadialGradient(cx-15, cy-15, 5, cx, cy, 60);
             ballGrad.addColorStop(0, "white");
             ballGrad.addColorStop(0.3, winner.color);
@@ -502,7 +501,6 @@
             ctx.font = "900 40px Noto Sans KR";
             ctx.textAlign = "center";
             ctx.fillText("WINNER", cx, cy - 90);
-            
             ctx.fillStyle = "white";
             ctx.font = "700 30px Noto Sans KR";
             ctx.fillText(winner.name, cx, cy + 100);
