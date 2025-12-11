@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎄 넌센스 파티 🍪</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        /* 🍭 전체 배경: 파스텔 핑크 & 민트 그라데이션 */
+        body {
+            background: linear-gradient(180deg, #ffe4e1, #e0f7fa);
+            margin: 0;
+            padding: 0;
+            color: #5d4037; /* 글씨는 따뜻한 초코색 */
+            font-family: 'Jua', sans-serif; /* 동글동글 폰트 */
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* 눈송이 (파스텔 톤) */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: #fff;
+            text-shadow: 0 0 3px #ffc1cc; /* 핑크색 그림자 */
+            font-size: 1.2em;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall { 
+            0% { transform: translateY(-10px) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); } 
+        }
+
+        /* 🍪 메인 컨테이너: 쿠키 상자 느낌 */
+        .container {
+            width: 85%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 40px 20px;
+            
+            /* 따뜻한 크림색 배경 */
+            background: #fff9e6; 
+            border-radius: 40px; /* 완전 둥글게 */
+            
+            /* 스티치(바느질) 느낌 테두리 */
+            border: 6px dashed #ffb7b2; 
+            box-shadow: 0 10px 0 #ffdac1, 0 15px 20px rgba(0,0,0,0.1); /* 입체감 */
+        }
+
+        /* 장식 아이콘 (진저브레드, 사탕) */
+        .deco-icon {
+            position: absolute;
+            font-size: 3rem;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        .deco-left { top: -30px; left: -20px; transform: rotate(-15deg); }
+        .deco-right { top: -30px; right: -20px; transform: rotate(15deg); }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+            50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
+        }
+
+        /* 타이틀 */
+        h1 {
+            color: #ff6f61;
+            font-size: 2.8rem;
+            margin: 10px 0;
+            text-shadow: 2px 2px 0 #fff;
+        }
+        h1 span { color: #4db6ac; }
+
+        .progress {
+            color: #8d6e63;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            background: #fff;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 2px solid #ffb7b2;
+        }
+
+        /* 문제 영역 */
+        .quiz-box {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 4px solid #b2ebf2; /* 민트색 테두리 */
+        }
+
+        .question {
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            word-break: keep-all;
+            color: #5d4037;
+        }
+
+        .answer {
+            font-size: 2.2rem;
+            color: #ff4081; /* 쨍한 핑크 */
+            margin-bottom: 20px;
+            display: none;
+            text-shadow: 2px 2px 0 #ffe4e1;
+            animation: jelly 0.6s; /* 정답 나올 때 젤리 효과 */
+        }
+
+        /* 🍬 젤리 버튼 스타일 */
+        .btn {
+            background: #ff8a80; /* 코랄 핑크 */
+            color: white;
+            border: none;
+            border-bottom: 6px solid #c05d55; /* 입체감 바닥 */
+            padding: 15px 40px;
+            font-size: 1.4rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Jua', sans-serif;
+            transition: all 0.1s;
+            margin: 10px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .btn:active {
+            transform: translateY(4px); /* 눌리는 느낌 */
+            border-bottom: 2px solid #c05d55;
+        }
+
+        /* 젤리처럼 튕기는 애니메이션 */
+        .btn:hover { animation: jelly 0.5s; }
+
+        @keyframes jelly {
+            0% { transform: scale(1, 1); }
+            30% { transform: scale(1.1, 0.9); }
+            40% { transform: scale(0.9, 1.1); }
+            50% { transform: scale(1.05, 0.95); }
+            65% { transform: scale(0.98, 1.02); }
+            75% { transform: scale(1.02, 0.98); }
+            100% { transform: scale(1, 1); }
+        }
+        
+        .btn-next { background: #4db6ac; border-bottom: 6px solid #287b72; display: none; }
+        
+        .btn-home { 
+            background: #ffd54f; 
+            border-bottom: 6px solid #c6a700; 
+            color: #5d4037;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            padding: 10px 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="snow-container"></div>
+
+    <div class="container">
+        <div class="deco-icon deco-left" style="--r: -15deg;">🍪</div>
+        <div class="deco-icon deco-right" style="--r: 15deg;">🍭</div>
+
+        <h1>넌센스 <span>퀴즈</span></h1>
+        <div class="progress" id="progress">문제 1 / 5</div>
+
+        <div class="quiz-box">
+            <div class="question" id="question-text">문제가 로딩중...</div>
+            <div class="answer" id="answer-text">정답</div>
+        </div>
+
+        <button class="btn" id="btn-reveal" onclick="showAnswer()">정답 확인! 🍧</button>
+        <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">다음 문제 🍩</button>
+        
+        <br>
+        <button class="btn btn-home" onclick="location.href='index.html'">🏠 메인으로</button>
+    </div>
+
+    <script>
+        // 1. 파스텔 눈송이 효과
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const colors = ['#FFC1CC', '#B2EBF2', '#FFF9C4', '#FFFFFF']; // 핑크, 민트, 옐로우, 화이트
+            
+            for(let i=0; i<30; i++){
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = '❄'; // 원하면 🧸, ⭐ 로 바꿔도 됨
+                snow.style.left = Math.random() * 100 + 'vw';
+                snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
+                snow.style.opacity = Math.random() * 0.7 + 0.3;
+                snow.style.color = colors[Math.floor(Math.random() * colors.length)];
+                snow.style.fontSize = Math.random() * 15 + 10 + 'px';
+                container.appendChild(snow);
+            }
+        }
+        createSnow();
+
+        // 2. 넌센스 퀴즈 데이터
+        const quizData = [
+            { q: "🧂 소금이 죽으면?", a: "죽염!" },
+            { q: "🥜 아몬드가 죽으면?", a: "다이아몬드💎" },
+            { q: "👑 왕이 넘어지면?", a: "킹콩🦍" },
+            { q: "🔥 불이 4개면?", a: "사파이어💠" },
+            { q: "🍌 바나나가 웃으면?", a: "바나나킥😆" }
+        ];
+
+        let currentIdx = 0;
+        
+        const questionEl = document.getElementById('question-text');
+        const answerEl = document.getElementById('answer-text');
+        const progressEl = document.getElementById('progress');
+        const btnReveal = document.getElementById('btn-reveal');
+        const btnNext = document.getElementById('btn-next');
+
+        function loadQuestion() {
+            if (currentIdx >= quizData.length) {
+                questionEl.innerHTML = "퀴즈 끝!<br>참 잘했어요! 🧸💕";
+                answerEl.style.display = "none";
+                btnReveal.style.display = "none";
+                btnNext.style.display = "none";
+                progressEl.innerText = "Finish!";
+                launchPastelConfetti(); 
+                return;
+            }
+
+            questionEl.innerText = quizData[currentIdx].q;
+            answerEl.innerText = quizData[currentIdx].a;
+            answerEl.style.display = "none";
+            
+            btnReveal.style.display = "inline-block";
+            btnNext.style.display = "none";
+            
+            progressEl.innerText = `문제 ${currentIdx + 1} / ${quizData.length}`;
+        }
+
+        function showAnswer() {
+            answerEl.style.display = "block";
+            btnReveal.style.display = "none";
+            btnNext.style.display = "inline-block";
+            launchPastelConfetti();
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            loadQuestion();
+        }
+
+        // 파스텔톤 폭죽 효과
+        function launchPastelConfetti() {
+            const colors = ['#FFB7B2', '#B5EAD7', '#E2F0CB', '#FFDAC1', '#E0BBE4']; // 파스텔 팔레트
+            for(let i=0; i<60; i++) {
+                const p = document.createElement('div');
+                p.style.position = 'fixed';
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.width = '10px';
+                p.style.height = '10px';
+                p.style.borderRadius = '50%'; // 동그란 폭죽
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.zIndex = '9999';
+                document.body.appendChild(p);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 200 + 50;
+                
+                p.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                }).onfinish = () => p.remove();
+            }
+        }
+
+        loadQuestion();
+
+    </script>
+</body>
+</html>
