@@ -20,13 +20,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ❄️ 눈송이 효과 */
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
         .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
 
-        /* 🎄 타이틀 디자인 */
         h1 { 
             font-family: 'Jua', sans-serif;
             font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; 
@@ -38,81 +36,59 @@
         
         .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
 
-        /* 📂 가나다순 탭 (가로 스크롤) */
+        /* 가나다순 탭 */
         .category-scroll-wrapper {
-            overflow-x: auto;
-            white-space: nowrap;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+            overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch; scrollbar-width: none;
         }
         .category-scroll-wrapper::-webkit-scrollbar { display: none; }
 
         .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
 
         .cat-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ccc; padding: 8px 14px; border-radius: 20px;
             font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
             font-family: 'Jua', sans-serif;
         }
-
-        /* ❤️ 선택된 탭: 산타 레드 */
         .cat-btn.active {
-            background: #d32f2f; /* 빨강 */
-            color: #fff;
-            border-color: #ff5252;
-            box-shadow: 0 0 10px rgba(255, 82, 82, 0.5);
-            transform: scale(1.05);
+            background: #d32f2f; color: #fff; border-color: #ff5252;
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05);
         }
 
-        .review-list { display: flex; flex-direction: column; gap: 20px; min-height: 300px; }
+        .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 300px; }
 
-        /* 🎁 카드 디자인 */
+        /* 카드 디자인 */
         .review-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 16px; padding: 20px;
-            text-align: left;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            border-radius: 16px; padding: 20px; text-align: left;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-            animation: fadeIn 0.3s ease-out;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
+            animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden;
         }
-        /* 카드 상단 장식바 (빨강/초록 번갈아 나오면 좋겠지만 심플하게 골드) */
-        .review-card::top {
-            content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700;
-        }
-
+        .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .review-card.voted { border: 2px solid #69f0ae; background: rgba(46, 204, 113, 0.15); }
 
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        
         .subject-tag { 
-            font-size: 0.75rem; color: #fff; background: #d32f2f; /* 태그도 빨강 */
-            padding: 3px 8px; border-radius: 10px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            font-size: 0.8rem; color: #fff; background: #d32f2f;
+            padding: 4px 8px; border-radius: 8px; margin-right: 8px; font-weight: bold;
         }
-        .subject-name { font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.3; vertical-align: middle;}
-        .prof-name { font-size: 0.85rem; color: #bbb; margin-top: 4px; font-weight: 300; }
+        .subject-name { font-size: 1.2rem; font-weight: 700; color: #fff; }
         
         .badge { font-size: 0.75rem; background: #69f0ae; color: #004d40; padding: 4px 8px; border-radius: 12px; font-weight: bold; display: none; }
         .voted .badge { display: inline-block; }
 
-        /* ⭐ 별점 */
         .star-rating {
             display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px;
             margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 50px;
         }
         .star-rating input { display: none; }
         .star-rating label { font-size: 2rem; color: #555; cursor: pointer; transition: color 0.2s; }
-        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { 
-            color: #FFD700; text-shadow: 0 0 15px #FFD700; 
-        }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
 
         .comment-input {
             width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px;
@@ -120,11 +96,9 @@
             color: white; margin-bottom: 12px; box-sizing: border-box; outline: none;
         }
 
-        /* 💚 제출 버튼: 크리스마스 트리 그린 */
         .submit-btn {
             width: 100%; padding: 14px; font-size: 1rem; border: none; border-radius: 12px;
-            background: linear-gradient(135deg, #2e7d32, #1b5e20); /* 초록 그라데이션 */
-            color: #fff; font-weight: bold; font-family: 'Jua', sans-serif; letter-spacing: 1px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; font-weight: bold; font-family: 'Jua', sans-serif;
             cursor: pointer; box-shadow: 0 4px 10px rgba(27, 94, 32, 0.4); transition: active 0.1s;
         }
         .submit-btn:active { transform: scale(0.98); }
@@ -144,7 +118,7 @@
             <span class="red">H</span><span class="green">a</span><span class="red">p</span><span class="green">p</span><span class="red">y</span>
             <span class="gold">Vote</span> 🗳️
         </h1>
-        <p class="subtitle">🎄 첫 글자를 눌러 과목을 찾아보세요! 🎅</p>
+        <p class="subtitle">🎄 과목을 선택해 투표해주세요! 🎅</p>
 
         <div class="category-scroll-wrapper">
             <div class="category-nav" id="category-nav">
@@ -161,7 +135,6 @@
     </div>
 
     <script>
-        // 1. 눈송이
         function createSnow() {
             const container = document.getElementById('snow-container');
             for(let i=0; i<40; i++){
@@ -177,43 +150,17 @@
         }
         createSnow();
 
-        // 2. 과목 데이터 (초성 분류용)
-        const subjects = [
-            // ㄱ
-            { id: 'com_intro', name: '컴퓨터의이해', prof: '1학년' },
-            { id: 'com_arch', name: '컴퓨터구조', prof: '3학년' },
-            { id: 'graphics', name: '컴퓨터그래픽스', prof: '4학년' },
-            { id: 'compiler', name: '컴파일러구성', prof: '3학년' },
-            { id: 'cloud', name: '클라우드컴퓨팅', prof: '4학년' },
-            // ㄷ
-            { id: 'data_st', name: '자료구조', prof: '2학년' },
-            { id: 'db', name: '데이터베이스시스템', prof: '3학년' },
-            { id: 'logic', name: '디지털논리회로', prof: '2학년' },
-            // ㅁ
-            { id: 'multi_intro', name: '멀티미디어개론', prof: '1학년' },
-            // ㅂ
-            { id: 'bigdata', name: '빅데이터의이해', prof: '4학년' },
-            // ㅅ
-            { id: 'sw_eng', name: '소프트웨어공학', prof: '3학년' },
-            { id: 'simulation', name: '시뮬레이션', prof: '4학년' },
-            // ㅇ
-            { id: 'os', name: '운영체제', prof: '3학년' },
-            { id: 'algo', name: '알고리즘', prof: '3학년' },
-            { id: 'web_prog', name: '웹프로그래밍', prof: '2학년' },
-            { id: 'ubi_com', name: '유비쿼터스컴퓨팅개론', prof: '1학년' },
-            { id: 'discrete', name: '이산수학', prof: '2학년' },
-            { id: 'ai', name: '인공지능', prof: '4학년' },
-            { id: 'unix', name: 'UNIX시스템', prof: '3학년' },
-            // ㅈ
-            { id: 'network', name: '정보통신망', prof: '4학년' },
-            { id: 'java', name: 'Java프로그래밍', prof: '2학년' },
-            // ㅍ
-            { id: 'python', name: '파이썬프로그래밍', prof: '1학년' },
-            { id: 'prog_lang', name: '프로그래밍언어론', prof: '2학년' },
-            // A-Z
-            { id: 'c_prog', name: 'C프로그래밍', prof: '1학년' },
-            { id: 'html_css', name: 'HTML5', prof: '3학년' }, 
-            { id: 'r_computing', name: 'R컴퓨팅', prof: '4학년' }
+        // ==========================================================
+        // ★ 나쨩! 여기만 수정하면 돼! ★
+        // 과목 이름만 쭉~ 적으면 알아서 가나다순으로 분류해줄게!
+        // ==========================================================
+        const rawSubjects = [
+            // 여기에 실제 과목명만 넣으면 끝!
+            { id: 'sub_1', name: '과목명을_입력하세요' }, 
+            { id: 'sub_2', name: 'HTML웹프로그래밍' },
+            { id: 'sub_3', name: '자료구조' },
+            { id: 'sub_4', name: '운영체제' }
+            // ... 계속 추가 가능
         ];
 
         // 3. 한글 초성 추출
@@ -227,8 +174,7 @@
             return chosung[Math.floor(code / 588)];
         }
 
-        // 데이터에 초성 추가
-        subjects.forEach(sub => { sub.chosung = getChosung(sub.name); });
+        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
         // 4. 카테고리 탭 생성
         const navContainer = document.getElementById('category-nav');
@@ -293,10 +239,9 @@
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div class="subject-info">
+                        <div>
                             <span class="subject-tag">${sub.chosung}</span>
                             <span class="subject-name">${sub.name}</span>
-                            <div class="prof-name">${sub.prof}</div>
                         </div>
                         <span class="badge">완료</span>
                     </div>
@@ -328,9 +273,9 @@
             renderCards();
         }
 
-        // 8. 폭죽 (크리스마스 컬러)
+        // 8. 폭죽
         function launchConfetti() {
-            const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff']; // 빨강, 초록, 골드, 흰색
+            const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff'];
             for(let i=0; i<50; i++) {
                 const p = document.createElement('div');
                 p.className = 'confetti';
