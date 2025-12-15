@@ -67,7 +67,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩의 키가 여기에도 적용되어 있어! 수정 X
+        // ✅ 나쨩의 키 적용 완료!
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -82,16 +82,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ==========================================================
-        // ★ 중요: vote.html과 똑같은 과목 리스트를 넣어야 함! ★
-        // ==========================================================
+        // ==========================================
+        // ★ 2025학년도 전공 과목 데이터 탑재! ★
+        // ==========================================
         const rawSubjects = [
-             { id: 'sub_1', name: '예시_과목명_지우고_쓰세요' },
-             { id: 'sub_2', name: '여기에_과목명_입력' },
-             // ...
+             { id: 's1', name: '컴퓨터의이해' }, { id: 's2', name: '유비쿼터스컴퓨팅개론' }, { id: 's3', name: '파이썬프로그래밍기초' }, { id: 's4', name: '데이터정보처리입문' },
+             { id: 's5', name: '이산수학' }, { id: 's6', name: 'Java프로그래밍' }, { id: 's7', name: 'HTML5웹프로그래밍' },
+             { id: 's8', name: '그래픽커뮤니케이션' }, { id: 's9', name: '데이터베이스시스템' }, { id: 's10', name: '디지털논리회로' }, { id: 's11', name: '운영체제' }, { id: 's12', name: '인공지능' }, { id: 's13', name: '알고리즘' },
+             { id: 's14', name: '컴퓨터그래픽스' }, { id: 's15', name: '모바일앱프로그래밍' }, { id: 's16', name: '컴퓨터보안' }, { id: 's17', name: '소프트웨어공학' }, { id: 's18', name: '정보통신망' },
+             { id: 's19', name: '컴퓨터과학개론' }, { id: 's20', name: '멀티미디어시스템' }, { id: 's21', name: 'C프로그래밍' },
+             { id: 's22', name: '대학수학의이해' }, { id: 's23', name: '오픈소스기반데이터분석' }, { id: 's24', name: '자료구조' }, { id: 's25', name: '선형대수' }, { id: 's26', name: '프로그래밍언어론' },
+             { id: 's27', name: '컴퓨터구조' }, { id: 's28', name: 'JSP프로그래밍' }, { id: 's29', name: 'UNIX시스템' }, { id: 's30', name: '시뮬레이션' }, { id: 's31', name: '머신러닝' },
+             { id: 's32', name: '클라우드컴퓨팅' }, { id: 's33', name: '컴파일러구성' }, { id: 's34', name: '딥러닝' }, { id: 's35', name: '빅데이터의이해와활용' }
         ];
 
-        // ... 이하 로직 ...
         function getChosung(str) {
             const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
             const code = str.charCodeAt(0) - 44032;
@@ -228,8 +232,6 @@
                 snow.innerHTML = '❄';
                 snow.style.left = Math.random() * 100 + 'vw';
                 snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
-                snow.style.opacity = Math.random() * 0.5 + 0.3;
-                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
                 container.appendChild(snow);
             }
         }
