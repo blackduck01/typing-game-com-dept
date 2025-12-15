@@ -10,100 +10,35 @@
 
     <style>
         /* 🎨 배경: 눈 내리는 겨울 밤 */
-        body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            margin: 0; padding: 20px 10px;
-            color: #fff;
-            font-family: 'Noto Sans KR', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
-
         .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
-
-        h1 { 
-            font-family: 'Jua', sans-serif;
-            font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; 
-            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        h1 .red { color: #ff5252; }
-        h1 .green { color: #69f0ae; }
-        h1 .gold { color: #FFD700; }
-        
+        h1 { font-family: 'Jua', sans-serif; font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        h1 .red { color: #ff5252; } h1 .green { color: #69f0ae; } h1 .gold { color: #FFD700; }
         .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
-
-        /* 가나다순 탭 */
-        .category-scroll-wrapper {
-            overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px;
-            -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        }
+        
+        .category-scroll-wrapper { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .category-scroll-wrapper::-webkit-scrollbar { display: none; }
-
         .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc; padding: 8px 14px; border-radius: 20px;
-            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-            font-family: 'Jua', sans-serif;
-        }
-        .cat-btn.active {
-            background: #d32f2f; color: #fff; border-color: #ff5252;
-            box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05);
-        }
+        .cat-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-family: 'Jua', sans-serif; }
+        .cat-btn.active { background: #d32f2f; color: #fff; border-color: #ff5252; box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05); }
 
         .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 300px; }
-
-        /* 카드 디자인 */
-        .review-card {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            border-radius: 16px; padding: 20px; text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
-            animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden;
-        }
+        .review-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s; animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden; }
         .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .review-card.voted { border: 2px solid #69f0ae; background: rgba(46, 204, 113, 0.15); }
-
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        
-        .subject-tag { 
-            font-size: 0.8rem; color: #fff; background: #d32f2f;
-            padding: 4px 8px; border-radius: 8px; margin-right: 8px; font-weight: bold;
-        }
+        .subject-tag { font-size: 0.8rem; color: #fff; background: #d32f2f; padding: 4px 8px; border-radius: 8px; margin-right: 8px; font-weight: bold; }
         .subject-name { font-size: 1.2rem; font-weight: 700; color: #fff; }
-        
-        .badge { font-size: 0.75rem; background: #69f0ae; color: #004d40; padding: 4px 8px; border-radius: 12px; font-weight: bold; display: none; }
-        .voted .badge { display: inline-block; }
-
-        .star-rating {
-            display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px;
-            margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 50px;
-        }
+        .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px; margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 50px; }
         .star-rating input { display: none; }
         .star-rating label { font-size: 2rem; color: #555; cursor: pointer; transition: color 0.2s; }
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
-
-        .comment-input {
-            width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);
-            color: white; margin-bottom: 12px; box-sizing: border-box; outline: none;
-        }
-
-        .submit-btn {
-            width: 100%; padding: 14px; font-size: 1rem; border: none; border-radius: 12px;
-            background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; font-weight: bold; font-family: 'Jua', sans-serif;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(27, 94, 32, 0.4); transition: active 0.1s;
-        }
+        .submit-btn { width: 100%; padding: 14px; font-size: 1rem; border: none; border-radius: 12px; background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; font-weight: bold; font-family: 'Jua', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(27, 94, 32, 0.4); transition: active 0.1s; }
         .submit-btn:active { transform: scale(0.98); }
-        .voted .submit-btn { background: #546e7a; color: #cfd8dc; box-shadow: none; }
-
+        .voted .submit-btn { background: #546e7a; color: #cfd8dc; box-shadow: none; pointer-events: none; }
         .footer-msg { margin-top: 40px; font-size: 0.8rem; color: #888; line-height: 1.6; padding: 20px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .confetti { position: absolute; width: 6px; height: 6px; z-index: 99; pointer-events: none; border-radius: 50%; }
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
@@ -134,7 +69,139 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // ✅ 나쨩이 준 키로 업데이트 완료!
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
+            authDomain: "review-class-28dda.firebaseapp.com",
+            databaseURL: "https://review-class-28dda-default-rtdb.firebaseio.com",
+            projectId: "review-class-28dda",
+            storageBucket: "review-class-28dda.firebasestorage.app",
+            messagingSenderId: "256031114562",
+            appId: "1:256031114562:web:f6d8a80f0aabd77cea34db",
+            measurementId: "G-L56ETZH2RE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ==========================================
+        // ★ 여기에 과목을 입력하세요! (비워둠) ★
+        // ==========================================
+        const rawSubjects = [
+             { id: 'sub_1', name: '예시_과목명' },
+             // 여기에 추가...
+        ];
+
+        // ... 이하 로직은 동일 ...
+        function getChosung(str) {
+            const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+            const code = str.charCodeAt(0) - 44032;
+            if (code < 0 || code > 11171) {
+                if (/[a-zA-Z]/.test(str[0])) return 'A-Z';
+                return '기타';
+            }
+            return chosung[Math.floor(code / 588)];
+        }
+        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
+
+        const navContainer = document.getElementById('category-nav');
+        const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
+        if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+
+        activeCategories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'cat-btn';
+            btn.innerText = cat;
+            btn.onclick = () => filterCategory(cat);
+            navContainer.appendChild(btn);
+        });
+
+        const listContainer = document.getElementById('review-list');
+        let currentCategory = 'all';
+
+        window.filterCategory = function(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            renderCards();
+        }
+
+        function renderCards() {
+            listContainer.innerHTML = '';
+            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory).sort((a, b) => a.name.localeCompare(b.name));
+
+            if(filtered.length === 0) {
+                listContainer.innerHTML = '<div class="no-result">해당하는 과목이 없습니다.</div>';
+                return;
+            }
+
+            filtered.forEach(sub => {
+                const isVoted = localStorage.getItem(`voted_${sub.id}`);
+                const btnText = isVoted ? '투표 완료 ✅' : '제출하기 🎄';
+                const btnClass = isVoted ? 'voted' : '';
+                
+                const card = document.createElement('div');
+                card.className = `review-card ${btnClass}`;
+                
+                let starHtml = '';
+                for(let i=5; i>=1; i--) {
+                    starHtml += `<input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_${i}" value="${i}"><label for="rate_${sub.id}_${i}">★</label>`;
+                }
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div><span class="subject-tag">${sub.chosung}</span><span class="subject-name">${sub.name}</span></div>
+                    </div>
+                    <div class="star-rating">${starHtml}</div>
+                    <button class="submit-btn" id="btn-${sub.id}">${btnText}</button>
+                `;
+                listContainer.appendChild(card);
+
+                card.querySelector(`#btn-${sub.id}`).addEventListener('click', () => {
+                    if(localStorage.getItem(`voted_${sub.id}`)) return;
+                    
+                    const radios = document.getElementsByName(`rate_${sub.id}`);
+                    let score = 0;
+                    for (const r of radios) if (r.checked) score = parseInt(r.value);
+
+                    if (score === 0) { alert("별을 눌러주세요! ⭐"); return; }
+
+                    // 🔥 DB 전송
+                    const scoreRef = ref(db, 'votes/' + sub.id);
+                    runTransaction(scoreRef, (currentData) => {
+                        if (currentData === null) return { total: score, count: 1 };
+                        return { total: currentData.total + score, count: currentData.count + 1 };
+                    }).then(() => {
+                        alert("투표가 반영되었습니다! 🎄");
+                        if(score===5) launchConfetti();
+                        localStorage.setItem(`voted_${sub.id}`, 'true');
+                        renderCards();
+                    }).catch(err => { console.error(err); alert("오류가 발생했습니다!"); });
+                });
+            });
+        }
+
+        function launchConfetti() {
+            const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff'];
+            for(let i=0; i<50; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = '50%'; 
+                p.style.top = (window.scrollY + window.innerHeight / 2) + 'px';
+                document.body.appendChild(p);
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 150 + 50;
+                p.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
+            }
+        }
+
         function createSnow() {
             const container = document.getElementById('snow-container');
             for(let i=0; i<40; i++){
@@ -149,151 +216,6 @@
             }
         }
         createSnow();
-
-        // ==========================================================
-        // ★ 나쨩! 여기만 수정하면 돼! ★
-        // 과목 이름만 쭉~ 적으면 알아서 가나다순으로 분류해줄게!
-        // ==========================================================
-        const rawSubjects = [
-            // 여기에 실제 과목명만 넣으면 끝!
-            { id: 'sub_1', name: '과목명을_입력하세요' }, 
-            { id: 'sub_2', name: 'HTML웹프로그래밍' },
-            { id: 'sub_3', name: '자료구조' },
-            { id: 'sub_4', name: '운영체제' }
-            // ... 계속 추가 가능
-        ];
-
-        // 3. 한글 초성 추출
-        function getChosung(str) {
-            const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
-            const code = str.charCodeAt(0) - 44032;
-            if (code < 0 || code > 11171) {
-                if (/[a-zA-Z]/.test(str[0])) return 'A-Z';
-                return '기타';
-            }
-            return chosung[Math.floor(code / 588)];
-        }
-
-        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
-
-        // 4. 카테고리 탭 생성
-        const navContainer = document.getElementById('category-nav');
-        const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
-        if(activeCategories.includes('A-Z')) {
-             activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
-        }
-
-        activeCategories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = 'cat-btn';
-            btn.innerText = cat;
-            btn.onclick = () => filterCategory(cat);
-            navContainer.appendChild(btn);
-        });
-
-        const listContainer = document.getElementById('review-list');
-        let currentCategory = 'all';
-
-        // 5. 필터링 함수
-        function filterCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            renderCards();
-        }
-
-        // 6. 렌더링 함수
-        function renderCards() {
-            listContainer.innerHTML = '';
-            
-            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory)
-                                     .sort((a, b) => a.name.localeCompare(b.name));
-
-            if(filtered.length === 0) {
-                listContainer.innerHTML = '<div class="no-result">해당하는 과목이 없습니다.</div>';
-                return;
-            }
-
-            filtered.forEach(sub => {
-                const myVote = JSON.parse(localStorage.getItem(`my_vote_${sub.id}`));
-                const isVoted = myVote ? 'voted' : '';
-                const btnText = myVote ? '수정하기 ✏️' : '제출하기 🎄';
-                const commentVal = myVote ? myVote.text : "";
-                
-                const card = document.createElement('div');
-                card.className = `review-card ${isVoted}`;
-                
-                let starHtml = '';
-                for(let i=5; i>=1; i--) {
-                    const checked = (myVote && myVote.score == i) ? 'checked' : '';
-                    starHtml += `
-                        <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_${i}" value="${i}" ${checked}>
-                        <label for="rate_${sub.id}_${i}">★</label>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div>
-                            <span class="subject-tag">${sub.chosung}</span>
-                            <span class="subject-name">${sub.name}</span>
-                        </div>
-                        <span class="badge">완료</span>
-                    </div>
-                    
-                    <div class="star-rating">${starHtml}</div>
-
-                    <input type="text" class="comment-input" id="comment-${sub.id}" placeholder="한 줄 평 (선택)" value="${commentVal}">
-                    <button class="submit-btn" onclick="submitReview('${sub.id}')">${btnText}</button>
-                `;
-                listContainer.appendChild(card);
-            });
-        }
-
-        // 7. 제출 함수
-        function submitReview(id) {
-            const radios = document.getElementsByName(`rate_${id}`);
-            let score = 0;
-            for (const radio of radios) { if (radio.checked) { score = parseInt(radio.value); break; } }
-
-            if (score === 0) { alert("별을 눌러 점수를 주세요! ⭐"); return; }
-
-            const commentInput = document.getElementById(`comment-${id}`);
-            const commentText = commentInput.value.trim() || "";
-
-            const voteData = { score: score, text: commentText };
-            localStorage.setItem(`my_vote_${id}`, JSON.stringify(voteData));
-
-            if (score === 5) launchConfetti();
-            renderCards();
-        }
-
-        // 8. 폭죽
-        function launchConfetti() {
-            const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff'];
-            for(let i=0; i<50; i++) {
-                const p = document.createElement('div');
-                p.className = 'confetti';
-                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                p.style.left = '50%'; 
-                p.style.top = (window.scrollY + window.innerHeight / 2) + 'px';
-                document.body.appendChild(p);
-                
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 150 + 50;
-                
-                p.animate([
-                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
-                    { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }
-                ], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
-            }
-        }
-
         renderCards();
     </script>
 </body>
