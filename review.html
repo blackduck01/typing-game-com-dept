@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* 🎨 배경: 투표 페이지와 같은 크리스마스 밤 */
+        /* 🎨 배경 */
         body {
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             margin: 0; padding: 20px 10px;
@@ -144,13 +144,35 @@
         createSnow();
 
         // ==========================================================
-        // ★ 여기도 똑같이 과목 리스트를 넣어주세요! ★
+        // ★ 방통대 컴과 전공 과목 리스트 (학년 정보 삭제됨) ★
         // ==========================================================
         const rawSubjects = [
-            { id: 'sub_1', name: '과목명을_입력하세요' }, 
-            { id: 'sub_2', name: 'HTML웹프로그래밍' },
-            { id: 'sub_3', name: '자료구조' },
-            { id: 'sub_4', name: '운영체제' }
+            { id: 'com_intro', name: '컴퓨터의이해' },
+            { id: 'c_prog', name: 'C프로그래밍' },
+            { id: 'ubi_com', name: '유비쿼터스컴퓨팅개론' },
+            { id: 'python', name: '파이썬프로그래밍' },
+            { id: 'multi_intro', name: '멀티미디어개론' },
+            { id: 'discrete', name: '이산수학' },
+            { id: 'java', name: 'Java프로그래밍' },
+            { id: 'data_st', name: '자료구조' },
+            { id: 'web_prog', name: '웹프로그래밍' },
+            { id: 'logic', name: '디지털논리회로' },
+            { id: 'prog_lang', name: '프로그래밍언어론' },
+            { id: 'db', name: '데이터베이스시스템' },
+            { id: 'os', name: '운영체제' },
+            { id: 'algo', name: '알고리즘' },
+            { id: 'sw_eng', name: '소프트웨어공학' },
+            { id: 'unix', name: 'UNIX시스템' },
+            { id: 'com_arch', name: '컴퓨터구조' },
+            { id: 'compiler', name: '컴파일러구성' },
+            { id: 'network', name: '정보통신망' },
+            { id: 'graphics', name: '컴퓨터그래픽스' },
+            { id: 'ai', name: '인공지능' },
+            { id: 'bigdata', name: '빅데이터의이해' },
+            { id: 'simulation', name: '시뮬레이션' },
+            { id: 'cloud', name: '클라우드컴퓨팅' },
+            { id: 'html_css', name: 'HTML5' }, 
+            { id: 'r_computing', name: 'R컴퓨팅' }
         ];
 
         function getChosung(str) {
@@ -288,7 +310,7 @@
             clickCount++;
             if (clickCount === 5) {
                 clickCount = 0;
-                const nameInput = prompt("🎅 관리자 모드: 수정할 과목명 일부를 입력하세요");
+                const nameInput = prompt("🎅 관리자 모드: 수정할 과목명 일부를 입력하세요\n(예: 자료)");
                 if(!nameInput) return;
 
                 const target = subjects.find(s => s.name.includes(nameInput));
