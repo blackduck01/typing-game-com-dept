@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
     <style>
-        /* 🎨 배경: 눈 내리는 겨울 밤 */
+        /* 🎨 크리스마스 테마 스타일 */
         body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
@@ -17,13 +17,11 @@
         h1 { font-family: 'Jua', sans-serif; font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         h1 .red { color: #ff5252; } h1 .green { color: #69f0ae; } h1 .gold { color: #FFD700; }
         .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
-        
         .category-scroll-wrapper { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .category-scroll-wrapper::-webkit-scrollbar { display: none; }
         .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
         .cat-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-family: 'Jua', sans-serif; }
         .cat-btn.active { background: #d32f2f; color: #fff; border-color: #ff5252; box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05); }
-
         .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 300px; }
         .review-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s; animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden; }
         .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700; }
@@ -73,7 +71,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩이 준 키로 업데이트 완료!
+        // ✅ 나쨩이 준 키가 여기에 이미 들어가 있어! 수정 X
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -89,14 +87,15 @@
         const db = getDatabase(app);
 
         // ==========================================
-        // ★ 여기에 과목을 입력하세요! (비워둠) ★
+        // ★ 나쨩! 여기에 과목을 채워넣으면 돼! ★
         // ==========================================
         const rawSubjects = [
-             { id: 'sub_1', name: '예시_과목명' },
-             // 여기에 추가...
+             { id: 'sub_1', name: '예시_과목명_지우고_쓰세요' },
+             { id: 'sub_2', name: '여기에_과목명_입력' },
+             // ...
         ];
 
-        // ... 이하 로직은 동일 ...
+        // 3. 한글 초성 추출
         function getChosung(str) {
             const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
             const code = str.charCodeAt(0) - 44032;
@@ -106,11 +105,15 @@
             }
             return chosung[Math.floor(code / 588)];
         }
+
         const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
+        // 4. 카테고리 탭 생성
         const navContainer = document.getElementById('category-nav');
         const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
-        if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+        if(activeCategories.includes('A-Z')) {
+             activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+        }
 
         activeCategories.forEach(cat => {
             const btn = document.createElement('button');
@@ -123,18 +126,24 @@
         const listContainer = document.getElementById('review-list');
         let currentCategory = 'all';
 
+        // 5. 필터링 함수 (전역)
         window.filterCategory = function(cat) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) btn.classList.add('active');
-                else btn.classList.remove('active');
+                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
             });
             renderCards();
         }
 
+        // 6. 카드 렌더링
         function renderCards() {
             listContainer.innerHTML = '';
-            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory).sort((a, b) => a.name.localeCompare(b.name));
+            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory)
+                                     .sort((a, b) => a.name.localeCompare(b.name));
 
             if(filtered.length === 0) {
                 listContainer.innerHTML = '<div class="no-result">해당하는 과목이 없습니다.</div>';
@@ -156,13 +165,17 @@
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div><span class="subject-tag">${sub.chosung}</span><span class="subject-name">${sub.name}</span></div>
+                        <div>
+                            <span class="subject-tag">${sub.chosung}</span>
+                            <span class="subject-name">${sub.name}</span>
+                        </div>
                     </div>
                     <div class="star-rating">${starHtml}</div>
                     <button class="submit-btn" id="btn-${sub.id}">${btnText}</button>
                 `;
                 listContainer.appendChild(card);
 
+                // 버튼 클릭 이벤트
                 card.querySelector(`#btn-${sub.id}`).addEventListener('click', () => {
                     if(localStorage.getItem(`voted_${sub.id}`)) return;
                     
@@ -170,23 +183,30 @@
                     let score = 0;
                     for (const r of radios) if (r.checked) score = parseInt(r.value);
 
-                    if (score === 0) { alert("별을 눌러주세요! ⭐"); return; }
+                    if (score === 0) { alert("별을 눌러 점수를 주세요! ⭐"); return; }
 
                     // 🔥 DB 전송
                     const scoreRef = ref(db, 'votes/' + sub.id);
                     runTransaction(scoreRef, (currentData) => {
-                        if (currentData === null) return { total: score, count: 1 };
-                        return { total: currentData.total + score, count: currentData.count + 1 };
+                        if (currentData === null) {
+                            return { total: score, count: 1 };
+                        } else {
+                            return { total: currentData.total + score, count: currentData.count + 1 };
+                        }
                     }).then(() => {
                         alert("투표가 반영되었습니다! 🎄");
-                        if(score===5) launchConfetti();
+                        if(score === 5) launchConfetti();
                         localStorage.setItem(`voted_${sub.id}`, 'true');
                         renderCards();
-                    }).catch(err => { console.error(err); alert("오류가 발생했습니다!"); });
+                    }).catch((err) => {
+                        console.error(err);
+                        alert("오류가 발생했습니다!");
+                    });
                 });
             });
         }
 
+        // 폭죽 효과
         function launchConfetti() {
             const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff'];
             for(let i=0; i<50; i++) {
