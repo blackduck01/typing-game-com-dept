@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏆 2025 어워즈 결과 발표 🏆</title>
+    <title>🎄 2025 어워즈 결과 발표 🎅</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* 🎨 배경: 투표 페이지와 통일감 있는 딥 네이비 */
+        /* 🎨 배경: 투표 페이지와 같은 크리스마스 밤 */
         body {
-            background: linear-gradient(135deg, #141e30, #243b55);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             margin: 0; padding: 20px 10px;
             color: #fff;
             font-family: 'Noto Sans KR', sans-serif;
@@ -19,20 +20,23 @@
             overflow-x: hidden;
         }
 
-        .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.3); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
+        .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
-        .container { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
+        .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
 
-        /* 🤫 비밀 버튼이 숨겨진 타이틀 */
+        /* 🤫 비밀 버튼 타이틀 */
         h1 {
-            font-size: 1.8rem; color: #FFD700; margin: 20px 0 10px 0;
-            font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            user-select: none; /* 드래그 방지 */
+            font-family: 'Jua', sans-serif;
+            font-size: 1.8rem; margin: 20px 0 5px 0;
+            font-weight: 400; text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            user-select: none;
         }
-        h1 span { cursor: pointer; } /* 클릭 가능 표시 */
+        h1 .red { color: #ff5252; }
+        h1 .green { color: #69f0ae; }
+        h1 .gold { color: #FFD700; cursor: pointer; } /* 2025 클릭 가능 */
         
-        .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 30px; font-weight: 300; }
+        .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
 
         /* 📊 차트 컨테이너 */
         .chart-box {
@@ -40,45 +44,72 @@
             backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 15px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            height: 350px;
+            height: 300px;
             position: relative;
         }
 
-        /* 리스트 그리드 */
-        .review-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px;
+        /* 📂 가나다순 탭 */
+        .category-scroll-wrapper {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+        .category-scroll-wrapper::-webkit-scrollbar { display: none; }
+
+        .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
+
+        .cat-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc; padding: 8px 14px; border-radius: 20px;
+            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+            font-family: 'Jua', sans-serif;
+        }
+        .cat-btn.active {
+            background: #d32f2f; color: #fff; border-color: #ff5252;
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05);
+        }
+
+        /* 리스트 */
+        .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 200px; }
 
         /* 🎁 결과 카드 */
         .review-card {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; padding: 15px 20px;
+            text-align: left; border: 1px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
+            animation: fadeIn 0.3s ease-out;
+            position: relative; overflow: hidden;
         }
-        
+        /* 카드 상단 장식 */
+        .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 3px; background: linear-gradient(90deg, #d32f2f, #2e7d32); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* 1,2,3등 강조 */
-        .review-card.rank-1 { border: 2px solid #FFD700; background: rgba(255, 215, 0, 0.1); }
-        .review-card.rank-2 { border: 1px solid #C0C0C0; }
-        .review-card.rank-3 { border: 1px solid #CD7F32; }
+        .review-card.rank-1 { border: 2px solid #FFD700; background: rgba(255, 215, 0, 0.15); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        .review-card.rank-2 { border: 1px solid #C0C0C0; background: rgba(192, 192, 192, 0.1); }
+        .review-card.rank-3 { border: 1px solid #CD7F32; background: rgba(205, 127, 50, 0.1); }
 
         .card-info { flex: 1; }
-        .subject-name { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
-        .prof-name { font-size: 0.8rem; color: #aaa; }
+        .subject-tag { 
+            font-size: 0.7rem; color: #fff; background: #2e7d32; /* 태그 초록 */
+            padding: 2px 6px; border-radius: 6px; margin-right: 5px; vertical-align: middle; 
+        }
+        .subject-name { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2px; vertical-align: middle; }
+        .prof-name { font-size: 0.8rem; color: #aaa; margin-top: 2px; }
         
-        .card-score { text-align: right; }
-        .score-big { font-size: 1.5rem; font-weight: 900; color: #FFD700; }
-        .score-sub { font-size: 0.8rem; color: #aaa; display: block; }
+        .card-score { text-align: right; min-width: 80px; }
+        .score-big { font-size: 1.4rem; font-weight: 900; color: #FFD700; display: block; }
+        .score-sub { font-size: 0.75rem; color: #888; display: block; margin-top: 2px; }
 
         .home-btn {
             display: inline-block; margin-top: 50px; padding: 12px 30px;
@@ -86,6 +117,8 @@
             color: #ccc; text-decoration: none; transition: all 0.3s;
         }
         .home-btn:hover { background: rgba(255,255,255,0.2); color: white; border-color: #fff; }
+        
+        .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
 
     </style>
 </head>
@@ -94,11 +127,20 @@
     <div id="snow-container"></div>
 
     <div class="container">
-        <h1><span id="secret-btn">2025</span> Lecture Awards 🏆</h1>
-        <p class="subtitle">대망의 투표 결과를 공개합니다!</p>
+        <h1>
+            <span class="red">The</span> <span class="gold" id="secret-btn">2025</span>
+            <span class="green">Awards</span> 🏆
+        </h1>
+        <p class="subtitle">🎄 대망의 투표 결과를 공개합니다! 🎅</p>
 
         <div class="chart-box">
             <canvas id="rankingChart"></canvas>
+        </div>
+
+        <div class="category-scroll-wrapper">
+            <div class="category-nav" id="category-nav">
+                <button class="cat-btn active" onclick="filterCategory('all')">전체</button>
+            </div>
         </div>
 
         <div class="review-list" id="review-list"></div>
@@ -110,107 +152,170 @@
         // 1. 눈송이
         function createSnow() {
             const container = document.getElementById('snow-container');
-            for(let i=0; i<30; i++){
+            for(let i=0; i<40; i++){
                 const snow = document.createElement('div');
                 snow.className = 'snowflake';
                 snow.innerHTML = '❄';
                 snow.style.left = Math.random() * 100 + 'vw';
                 snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
-                snow.style.opacity = Math.random() * 0.5 + 0.1;
-                snow.style.fontSize = Math.random() * 8 + 4 + 'px';
+                snow.style.opacity = Math.random() * 0.5 + 0.3;
+                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
                 container.appendChild(snow);
             }
         }
         createSnow();
 
-        // 2. 강의 데이터 (가나다순 정렬)
+        // 2. 과목 데이터 (투표 페이지와 동일)
         const rawSubjects = [
-            { id: 'c_prog', name: 'C 프로그래밍', prof: '기초부터 탄탄하게' },
-            { id: 'data_st', name: '자료구조', prof: '스택, 큐, 트리...' },
-            { id: 'os', name: '운영체제', prof: '데드락과 프로세스' },
-            { id: 'network', name: '컴퓨터 네트워크', prof: 'OSI 7계층' },
-            { id: 'db', name: '데이터베이스', prof: 'SQL의 마법사' },
-            { id: 'algo', name: '알고리즘', prof: '시간복잡도의 늪' },
-            { id: 'com_arch', name: '컴퓨터 구조', prof: 'CPU의 비밀' },
-            { id: 'web_prog', name: '웹 프로그래밍', prof: 'HTML/CSS/JS' }
+            // ㄱ
+            { id: 'com_intro', name: '컴퓨터의이해', prof: '1학년' },
+            { id: 'com_arch', name: '컴퓨터구조', prof: '3학년' },
+            { id: 'graphics', name: '컴퓨터그래픽스', prof: '4학년' },
+            { id: 'compiler', name: '컴파일러구성', prof: '3학년' },
+            { id: 'cloud', name: '클라우드컴퓨팅', prof: '4학년' },
+            // ㄷ
+            { id: 'data_st', name: '자료구조', prof: '2학년' },
+            { id: 'db', name: '데이터베이스시스템', prof: '3학년' },
+            { id: 'logic', name: '디지털논리회로', prof: '2학년' },
+            // ㅁ
+            { id: 'multi_intro', name: '멀티미디어개론', prof: '1학년' },
+            // ㅂ
+            { id: 'bigdata', name: '빅데이터의이해', prof: '4학년' },
+            // ㅅ
+            { id: 'sw_eng', name: '소프트웨어공학', prof: '3학년' },
+            { id: 'simulation', name: '시뮬레이션', prof: '4학년' },
+            // ㅇ
+            { id: 'os', name: '운영체제', prof: '3학년' },
+            { id: 'algo', name: '알고리즘', prof: '3학년' },
+            { id: 'web_prog', name: '웹프로그래밍', prof: '2학년' },
+            { id: 'ubi_com', name: '유비쿼터스컴퓨팅개론', prof: '1학년' },
+            { id: 'discrete', name: '이산수학', prof: '2학년' },
+            { id: 'ai', name: '인공지능', prof: '4학년' },
+            { id: 'unix', name: 'UNIX시스템', prof: '3학년' },
+            // ㅈ
+            { id: 'network', name: '정보통신망', prof: '4학년' },
+            { id: 'java', name: 'Java프로그래밍', prof: '2학년' },
+            // ㅍ
+            { id: 'python', name: '파이썬프로그래밍', prof: '1학년' },
+            { id: 'prog_lang', name: '프로그래밍언어론', prof: '2학년' },
+            // A-Z
+            { id: 'c_prog', name: 'C프로그래밍', prof: '1학년' },
+            { id: 'html_css', name: 'HTML5', prof: '3학년' }, 
+            { id: 'r_computing', name: 'R컴퓨팅', prof: '4학년' }
         ];
-        
-        // ★ 가나다순 정렬 (투표 페이지랑 순서 맞춤)
-        const subjects = rawSubjects.sort((a, b) => a.name.localeCompare(b.name));
 
+        // 3. 초성 추출
+        function getChosung(str) {
+            const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+            const code = str.charCodeAt(0) - 44032;
+            if (code < 0 || code > 11171) {
+                if (/[a-zA-Z]/.test(str[0])) return 'A-Z';
+                return '기타';
+            }
+            return chosung[Math.floor(code / 588)];
+        }
+
+        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
+
+        // 4. 카테고리 탭 생성
+        const navContainer = document.getElementById('category-nav');
+        const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
+        if(activeCategories.includes('A-Z')) {
+             activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+        }
+
+        activeCategories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'cat-btn';
+            btn.innerText = cat;
+            btn.onclick = () => filterCategory(cat);
+            navContainer.appendChild(btn);
+        });
+
+        // 5. 데이터 처리 및 렌더링
         const listContainer = document.getElementById('review-list');
+        let currentCategory = 'all';
         let myChart = null;
 
-        // 3. 카드 & 차트 그리기
         function render() {
             listContainer.innerHTML = '';
             
-            // 점수 계산 및 랭킹 정렬용 배열 생성
-            let rankingData = subjects.map(sub => {
+            // 1) 전체 과목 점수 계산
+            let allData = subjects.map(sub => {
                 const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
                 const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(2);
                 return { ...sub, avg: parseFloat(avg), count: savedData.count };
             });
 
-            // 점수 높은 순으로 정렬 (랭킹 매기기용)
-            rankingData.sort((a, b) => b.avg - a.avg);
+            // 2) 점수 높은 순으로 정렬 (전체 랭킹)
+            allData.sort((a, b) => b.avg - a.avg);
 
-            // 화면 그리기 (원래 가나다순인 subjects 순서대로 카드를 그릴지, 랭킹순으로 그릴지 선택)
-            // -> 여기선 가나다순으로 그리고, 1등 표시를 해주는 게 보기 좋음.
-            
-            // 랭킹 정보를 Map으로 저장 (ID -> Rank)
+            // 3) 랭킹 Map 생성
             const rankMap = {};
-            rankingData.forEach((item, index) => {
-                rankMap[item.id] = index + 1; // 1등부터 시작
+            allData.forEach((item, index) => {
+                rankMap[item.id] = index + 1;
             });
 
-            // 카드 생성 (가나다순 배치)
-            subjects.forEach(sub => {
-                const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
-                const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(1);
-                const rank = rankMap[sub.id];
+            // 4) 카테고리 필터링 (결과 화면에서는 점수 높은 순으로 표시)
+            const filtered = allData.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory);
+            
+            if(filtered.length === 0) {
+                listContainer.innerHTML = '<div class="no-result">데이터가 없습니다.</div>';
+            } else {
+                filtered.forEach(sub => {
+                    const rank = rankMap[sub.id];
+                    let rankClass = '';
+                    let badge = '';
 
-                let rankClass = '';
-                let badge = '';
-                if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
-                else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
-                else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
+                    // 1,2,3등 뱃지
+                    if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
+                    else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
+                    else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
 
-                const card = document.createElement('div');
-                card.className = `review-card ${rankClass}`;
-                card.innerHTML = `
-                    <div class="card-info">
-                        <div class="subject-name">${badge} ${sub.name}</div>
-                        <div class="prof-name">${sub.prof}</div>
-                    </div>
-                    <div class="card-score">
-                        <span class="score-big">⭐ ${avg}</span>
-                        <span class="score-sub">(${savedData.count}명)</span>
-                    </div>
-                `;
-                listContainer.appendChild(card);
-            });
+                    const card = document.createElement('div');
+                    card.className = `review-card ${rankClass}`;
+                    card.innerHTML = `
+                        <div class="card-info">
+                            <div>
+                                <span class="subject-tag">${sub.chosung}</span>
+                                <span class="subject-name">${badge} ${sub.name}</span>
+                            </div>
+                            <div class="prof-name">${sub.prof}</div>
+                        </div>
+                        <div class="card-score">
+                            <span class="score-big">⭐ ${sub.avg}</span>
+                            <span class="score-sub">(${sub.count}명)</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }
 
-            updateChart();
+            updateChart(allData); // 차트는 항상 전체 상위권 보여줌
         }
 
-        // 4. 차트 업데이트 (Chart.js)
-        function updateChart() {
-            const ctx = document.getElementById('rankingChart').getContext('2d');
-            
-            // 가나다순 라벨 & 데이터 준비
-            const labels = subjects.map(s => s.name);
-            const dataPoints = subjects.map(s => {
-                const d = JSON.parse(localStorage.getItem(`review_${s.id}`)) || { total: 0, count: 0 };
-                return d.count === 0 ? 0 : (d.total / d.count).toFixed(2);
+        // 6. 필터링 함수
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
             });
+            render();
+        }
 
-            // 색상 (점수 높으면 골드)
-            const bgColors = dataPoints.map(score => {
-                if(score >= 4.5) return 'rgba(255, 215, 0, 0.8)';
-                if(score >= 3.5) return 'rgba(46, 204, 113, 0.8)';
-                return 'rgba(255, 99, 132, 0.8)';
-            });
+        // 7. 차트 그리기 (Top 7)
+        function updateChart(allData) {
+            const ctx = document.getElementById('rankingChart').getContext('2d');
+            const topData = allData.slice(0, 7);
+            
+            const labels = topData.map(s => s.name);
+            const dataPoints = topData.map(s => s.avg);
+            // 크리스마스 차트 컬러 (빨강/초록/골드 반복)
+            const colors = ['#FFD700', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c'];
 
             if(myChart) myChart.destroy();
 
@@ -219,19 +324,20 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: '평균 평점',
+                        label: '평점',
                         data: dataPoints,
-                        backgroundColor: bgColors,
+                        backgroundColor: colors,
                         borderColor: 'rgba(255,255,255,0.3)',
                         borderWidth: 1,
-                        borderRadius: 6
+                        borderRadius: 8,
+                        barThickness: 15
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // 가로 막대
+                    indexAxis: 'y',
                     scales: {
-                        x: { beginAtZero: true, max: 5, ticks: { color: '#aaa' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        y: { ticks: { color: '#fff', font: { size: 12 } }, grid: { display: false } }
+                        x: { beginAtZero: true, max: 5, ticks: { color: '#aaa', font: {size:10} }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#fff', font: { size: 11 }, autoSkip: false }, grid: { display: false } }
                     },
                     plugins: { legend: { display: false } },
                     maintainAspectRatio: false,
@@ -240,34 +346,29 @@
             });
         }
 
-        // ★★★ 5. 관리자 시크릿 모드 ★★★
-        // "2025"를 5번 터치하면 실행
+        // ★★★ 8. 관리자 시크릿 모드 ★★★
         let clickCount = 0;
         document.getElementById('secret-btn').addEventListener('click', () => {
             clickCount++;
             if (clickCount === 5) {
                 clickCount = 0;
-                // 가나다순 리스트 보여주고 입력 받기
-                let msg = "관리자 모드 (점수 조작)\n\n";
-                subjects.forEach((s, i) => msg += `${i+1}. ${s.name}\n`);
-                msg += "\n수정할 번호와 점수를 입력 (예: 1,4.8)";
-                
-                const input = prompt(msg);
-                if (input) {
-                    const [idx, score] = input.split(',');
-                    const subjectIndex = parseInt(idx) - 1;
-                    const newScore = parseFloat(score);
-                    
-                    if (subjects[subjectIndex] && !isNaN(newScore)) {
-                        const targetId = subjects[subjectIndex].id;
-                        // 10명이 투표한 것으로 가정하고 데이터 저장
-                        const fakeData = { total: newScore * 10, count: 10, comments: [] };
-                        localStorage.setItem(`review_${targetId}`, JSON.stringify(fakeData));
-                        alert(`${subjects[subjectIndex].name} → ${newScore}점 적용 완료!`);
-                        render(); // 화면 갱신
-                    } else {
-                        alert("입력이 올바르지 않습니다.");
+                // 이름으로 찾기
+                const nameInput = prompt("🎅 관리자 모드: 점수를 수정할 과목명 일부를 입력하세요\n(예: 자료)");
+                if(!nameInput) return;
+
+                const target = subjects.find(s => s.name.includes(nameInput));
+                if(target) {
+                    const newScore = prompt(`'${target.name}'의 새 점수를 입력하세요 (0~5)`);
+                    if(newScore) {
+                        const scoreNum = parseFloat(newScore);
+                        // 10명 투표 가정
+                        const fakeData = { total: scoreNum * 10, count: 10, comments: [] };
+                        localStorage.setItem(`review_${target.id}`, JSON.stringify(fakeData));
+                        alert("수정 완료! 🎄");
+                        render();
                     }
+                } else {
+                    alert("과목을 찾을 수 없습니다.");
                 }
             }
         });
