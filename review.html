@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* 스타일 (투표 페이지와 동일) */
+        /* 🎨 기본 스타일 (투표 페이지와 통일) */
         body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
@@ -25,18 +25,49 @@
         .cat-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-family: 'Jua', sans-serif; }
         .cat-btn.active { background: #d32f2f; color: #fff; border-color: #ff5252; box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05); }
         .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 200px; }
-        .review-card { background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.2s; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden; }
+        
+        /* 카드 스타일 */
+        .review-card { background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.2s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
         .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 3px; background: linear-gradient(90deg, #d32f2f, #2e7d32); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 카드 내부 레이아웃 */
+        .card-main { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        
+        /* 랭킹 강조 */
         .review-card.rank-1 { border: 2px solid #FFD700; background: rgba(255, 215, 0, 0.15); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         .review-card.rank-2 { border: 1px solid #C0C0C0; background: rgba(192, 192, 192, 0.1); }
         .review-card.rank-3 { border: 1px solid #CD7F32; background: rgba(205, 127, 50, 0.1); }
+
         .card-info { flex: 1; }
         .subject-tag { font-size: 0.7rem; color: #fff; background: #2e7d32; padding: 2px 6px; border-radius: 6px; margin-right: 5px; vertical-align: middle; }
         .subject-name { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2px; vertical-align: middle; }
         .card-score { text-align: right; min-width: 80px; }
         .score-big { font-size: 1.4rem; font-weight: 900; color: #FFD700; display: block; }
         .score-sub { font-size: 0.75rem; color: #888; display: block; margin-top: 2px; }
+
+        /* 👇 한줄평 영역 스타일 (새로 추가됨!) */
+        .comments-btn {
+            background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #ccc;
+            border-radius: 20px; padding: 5px 12px; font-size: 0.8rem; margin-top: 10px;
+            cursor: pointer; align-self: flex-start; transition: all 0.2s;
+        }
+        .comments-btn:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: #fff; }
+        
+        .comments-section {
+            display: none; /* 기본 숨김 */
+            margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;
+            animation: slideDown 0.3s ease-out; width: 100%;
+        }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .comment-item {
+            background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px;
+            margin-bottom: 6px; font-size: 0.9rem; color: #eee;
+            display: flex; justify-content: space-between;
+        }
+        .comment-score { color: #FFD700; font-weight: bold; margin-left: 10px; font-size: 0.8rem; }
+        .no-comments { color: #888; font-size: 0.8rem; font-style: italic; }
+
         .home-btn { display: inline-block; margin-top: 50px; padding: 12px 30px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; color: #ccc; text-decoration: none; transition: all 0.3s; }
         .home-btn:hover { background: rgba(255,255,255,0.2); color: white; border-color: #fff; }
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
@@ -67,7 +98,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩의 키 적용 완료!
+        // ✅ 나쨩 키
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -83,7 +114,7 @@
         const db = getDatabase(app);
 
         // ==========================================
-        // ★ 2025학년도 전공 과목 데이터 탑재! ★
+        // ★ 과목 리스트 (투표 페이지와 동일) ★
         // ==========================================
         const rawSubjects = [
              { id: 's1', name: '컴퓨터의이해' }, { id: 's2', name: '유비쿼터스컴퓨팅개론' }, { id: 's3', name: '파이썬프로그래밍기초' }, { id: 's4', name: '데이터정보처리입문' },
@@ -105,7 +136,6 @@
             }
             return chosung[Math.floor(code / 588)];
         }
-
         const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
         const navContainer = document.getElementById('category-nav');
@@ -113,7 +143,6 @@
         if(activeCategories.includes('A-Z')) {
              activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
         }
-
         activeCategories.forEach(cat => {
             const btn = document.createElement('button');
             btn.className = 'cat-btn';
@@ -125,16 +154,17 @@
         const listContainer = document.getElementById('review-list');
         let currentCategory = 'all';
         let myChart = null;
-        let dbData = {}; 
+        let dbVotes = {}; 
+        let dbComments = {};
 
         function render() {
             listContainer.innerHTML = '';
             
             let allData = subjects.map(sub => {
                 let total = 0, count = 0;
-                if(dbData[sub.id]) {
-                    total = dbData[sub.id].total;
-                    count = dbData[sub.id].count;
+                if(dbVotes[sub.id]) {
+                    total = dbVotes[sub.id].total;
+                    count = dbVotes[sub.id].count;
                 }
                 const avg = count === 0 ? 0 : (total / count).toFixed(2);
                 return { ...sub, avg: parseFloat(avg), count: count };
@@ -153,26 +183,55 @@
                 filtered.forEach(sub => {
                     const rank = rankMap[sub.id];
                     let rankClass = '', badge = '';
-
                     if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
                     else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
                     else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
 
                     const card = document.createElement('div');
                     card.className = `review-card ${rankClass}`;
+                    
+                    // 한줄평 가져오기
+                    const commentsObj = dbComments[sub.id] || {};
+                    const commentsArr = Object.values(commentsObj).reverse(); // 최신순
+                    const commentCount = commentsArr.length;
+
                     card.innerHTML = `
-                        <div class="card-info">
-                            <div><span class="subject-tag">${sub.chosung}</span><span class="subject-name">${badge} ${sub.name}</span></div>
+                        <div class="card-main">
+                            <div class="card-info">
+                                <div><span class="subject-tag">${sub.chosung}</span><span class="subject-name">${badge} ${sub.name}</span></div>
+                            </div>
+                            <div class="card-score">
+                                <span class="score-big">⭐ ${sub.avg}</span>
+                                <span class="score-sub">(${sub.count}명)</span>
+                            </div>
                         </div>
-                        <div class="card-score">
-                            <span class="score-big">⭐ ${sub.avg}</span>
-                            <span class="score-sub">(${sub.count}명)</span>
+                        
+                        <button class="comments-btn" onclick="toggleComments('${sub.id}')">💬 한줄평 보기 (${commentCount})</button>
+                        
+                        <div id="comments-${sub.id}" class="comments-section">
+                            ${ commentsArr.length > 0 
+                                ? commentsArr.map(c => `
+                                    <div class="comment-item">
+                                        <span>${c.text}</span>
+                                        <span class="comment-score">★${c.score}</span>
+                                    </div>`).join('') 
+                                : '<div class="no-comments">아직 등록된 한줄평이 없습니다.</div>' 
+                            }
                         </div>
                     `;
                     listContainer.appendChild(card);
                 });
             }
             updateChart(allData);
+        }
+
+        window.toggleComments = function(id) {
+            const el = document.getElementById(`comments-${id}`);
+            if (el.style.display === "block") {
+                el.style.display = "none";
+            } else {
+                el.style.display = "block";
+            }
         }
 
         window.filterCategory = function(cat) {
@@ -199,12 +258,21 @@
             });
         }
 
+        // 🔥 DB 실시간 감지 (점수)
         const votesRef = ref(db, 'votes');
         onValue(votesRef, (snapshot) => {
-            dbData = snapshot.val() || {};
+            dbVotes = snapshot.val() || {};
             render();
         });
 
+        // 🔥 DB 실시간 감지 (한줄평) - 여기가 추가됨!
+        const commentsRef = ref(db, 'comments');
+        onValue(commentsRef, (snapshot) => {
+            dbComments = snapshot.val() || {};
+            render(); // 코멘트 업데이트 시 화면 갱신
+        });
+
+        // 비밀 버튼
         let clickCount = 0;
         document.getElementById('secret-btn').addEventListener('click', () => {
             clickCount++;
