@@ -71,7 +71,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩이 준 키가 여기에 이미 들어가 있어! 수정 X
+        // ✅ 나쨩의 키 적용 완료!
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -87,15 +87,19 @@
         const db = getDatabase(app);
 
         // ==========================================
-        // ★ 나쨩! 여기에 과목을 채워넣으면 돼! ★
+        // ★ 2025학년도 전공 과목 데이터 탑재! ★
         // ==========================================
         const rawSubjects = [
-             { id: 'sub_1', name: '예시_과목명_지우고_쓰세요' },
-             { id: 'sub_2', name: '여기에_과목명_입력' },
-             // ...
+             { id: 's1', name: '컴퓨터의이해' }, { id: 's2', name: '유비쿼터스컴퓨팅개론' }, { id: 's3', name: '파이썬프로그래밍기초' }, { id: 's4', name: '데이터정보처리입문' },
+             { id: 's5', name: '이산수학' }, { id: 's6', name: 'Java프로그래밍' }, { id: 's7', name: 'HTML5웹프로그래밍' },
+             { id: 's8', name: '그래픽커뮤니케이션' }, { id: 's9', name: '데이터베이스시스템' }, { id: 's10', name: '디지털논리회로' }, { id: 's11', name: '운영체제' }, { id: 's12', name: '인공지능' }, { id: 's13', name: '알고리즘' },
+             { id: 's14', name: '컴퓨터그래픽스' }, { id: 's15', name: '모바일앱프로그래밍' }, { id: 's16', name: '컴퓨터보안' }, { id: 's17', name: '소프트웨어공학' }, { id: 's18', name: '정보통신망' },
+             { id: 's19', name: '컴퓨터과학개론' }, { id: 's20', name: '멀티미디어시스템' }, { id: 's21', name: 'C프로그래밍' },
+             { id: 's22', name: '대학수학의이해' }, { id: 's23', name: '오픈소스기반데이터분석' }, { id: 's24', name: '자료구조' }, { id: 's25', name: '선형대수' }, { id: 's26', name: '프로그래밍언어론' },
+             { id: 's27', name: '컴퓨터구조' }, { id: 's28', name: 'JSP프로그래밍' }, { id: 's29', name: 'UNIX시스템' }, { id: 's30', name: '시뮬레이션' }, { id: 's31', name: '머신러닝' },
+             { id: 's32', name: '클라우드컴퓨팅' }, { id: 's33', name: '컴파일러구성' }, { id: 's34', name: '딥러닝' }, { id: 's35', name: '빅데이터의이해와활용' }
         ];
 
-        // 3. 한글 초성 추출
         function getChosung(str) {
             const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
             const code = str.charCodeAt(0) - 44032;
@@ -105,15 +109,11 @@
             }
             return chosung[Math.floor(code / 588)];
         }
-
         const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
-        // 4. 카테고리 탭 생성
         const navContainer = document.getElementById('category-nav');
         const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
-        if(activeCategories.includes('A-Z')) {
-             activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
-        }
+        if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
 
         activeCategories.forEach(cat => {
             const btn = document.createElement('button');
@@ -126,24 +126,18 @@
         const listContainer = document.getElementById('review-list');
         let currentCategory = 'all';
 
-        // 5. 필터링 함수 (전역)
         window.filterCategory = function(cat) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) btn.classList.add('active');
+                else btn.classList.remove('active');
             });
             renderCards();
         }
 
-        // 6. 카드 렌더링
         function renderCards() {
             listContainer.innerHTML = '';
-            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory)
-                                     .sort((a, b) => a.name.localeCompare(b.name));
+            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory).sort((a, b) => a.name.localeCompare(b.name));
 
             if(filtered.length === 0) {
                 listContainer.innerHTML = '<div class="no-result">해당하는 과목이 없습니다.</div>';
@@ -165,17 +159,13 @@
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div>
-                            <span class="subject-tag">${sub.chosung}</span>
-                            <span class="subject-name">${sub.name}</span>
-                        </div>
+                        <div><span class="subject-tag">${sub.chosung}</span><span class="subject-name">${sub.name}</span></div>
                     </div>
                     <div class="star-rating">${starHtml}</div>
                     <button class="submit-btn" id="btn-${sub.id}">${btnText}</button>
                 `;
                 listContainer.appendChild(card);
 
-                // 버튼 클릭 이벤트
                 card.querySelector(`#btn-${sub.id}`).addEventListener('click', () => {
                     if(localStorage.getItem(`voted_${sub.id}`)) return;
                     
@@ -183,30 +173,22 @@
                     let score = 0;
                     for (const r of radios) if (r.checked) score = parseInt(r.value);
 
-                    if (score === 0) { alert("별을 눌러 점수를 주세요! ⭐"); return; }
+                    if (score === 0) { alert("별을 눌러주세요! ⭐"); return; }
 
-                    // 🔥 DB 전송
                     const scoreRef = ref(db, 'votes/' + sub.id);
                     runTransaction(scoreRef, (currentData) => {
-                        if (currentData === null) {
-                            return { total: score, count: 1 };
-                        } else {
-                            return { total: currentData.total + score, count: currentData.count + 1 };
-                        }
+                        if (currentData === null) return { total: score, count: 1 };
+                        return { total: currentData.total + score, count: currentData.count + 1 };
                     }).then(() => {
                         alert("투표가 반영되었습니다! 🎄");
-                        if(score === 5) launchConfetti();
+                        if(score===5) launchConfetti();
                         localStorage.setItem(`voted_${sub.id}`, 'true');
                         renderCards();
-                    }).catch((err) => {
-                        console.error(err);
-                        alert("오류가 발생했습니다!");
-                    });
+                    }).catch(err => { console.error(err); alert("오류가 발생했습니다!"); });
                 });
             });
         }
 
-        // 폭죽 효과
         function launchConfetti() {
             const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff'];
             for(let i=0; i<50; i++) {
@@ -230,8 +212,6 @@
                 snow.innerHTML = '❄';
                 snow.style.left = Math.random() * 100 + 'vw';
                 snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
-                snow.style.opacity = Math.random() * 0.5 + 0.3;
-                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
                 container.appendChild(snow);
             }
         }
