@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🏆 2025 컴과 강의 어워즈 🏆</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ❄️ 배경: 고급스러운 겨울 밤 */
+        body {
+            background: radial-gradient(circle at 50% 0%, #1b2735 0%, #090a0f 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* 눈송이 효과 */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1em;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding-bottom: 50px;
+        }
+
+        /* 타이틀 */
+        h1 {
+            font-size: 2.2rem;
+            color: #FFD700;
+            margin: 30px 0 10px 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        h1 span { color: #fff; font-weight: 900; }
+        .subtitle { color: #aaa; font-weight: 300; margin-bottom: 40px; }
+
+        /* 과목 카드 리스트 */
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* 🎁 리뷰 카드 디자인 */
+        .review-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: left;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #FFD700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .subject-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .prof-name { font-size: 0.9rem; color: #888; margin-bottom: 15px; }
+
+        /* ⭐ 별점 스타일 */
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse; /* CSS로 별 채우기 쉽게 반전 */
+            justify-content: flex-end;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .star-rating input { display: none; }
+        
+        .star-rating label {
+            font-size: 2rem;
+            color: #444;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* 호버하거나 체크되면 별 색칠 */
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+
+        /* 평균 점수 표시 */
+        .score-display {
+            font-size: 0.9rem;
+            color: #2ecc71; /* 초록색 */
+            font-weight: bold;
+            float: right;
+            background: rgba(46, 204, 113, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* 한줄평 입력 */
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin-bottom: 10px;
+        }
+        .comment-input::placeholder { color: #666; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #FFD700, #B8860B);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .submit-btn:active { transform: scale(0.98); }
+
+        /* 홈 버튼 */
+        .home-btn {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 12px 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .home-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
+
+        /* 폭죽 파티클 */
+        .confetti {
+            position: absolute;
+            width: 8px; height: 8px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="snow-container"></div>
+
+    <div class="container">
+        <h1>2025 <span>Lecture Awards</span></h1>
+        <p class="subtitle">올해의 강의를 여러분의 손으로 직접 평가해주세요!</p>
+
+        <div class="review-grid" id="review-list">
+            </div>
+
+        <a href="index.html" class="home-btn">메인으로 돌아가기</a>
+    </div>
+
+    <script>
+        // 1. 눈송이 효과
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            for(let i=0; i<40; i++){
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = '❄';
+                snow.style.left = Math.random() * 100 + 'vw';
+                snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
+                snow.style.opacity = Math.random() * 0.5 + 0.1;
+                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
+                container.appendChild(snow);
+            }
+        }
+        createSnow();
+
+        // 2. 강의 데이터 (원하는 과목으로 수정 가능!)
+        const subjects = [
+            { id: 'c_prog', name: 'C 프로그래밍', prof: '기초부터 탄탄하게' },
+            { id: 'data_st', name: '자료구조', prof: '스택, 큐, 그리고 트리...' },
+            { id: 'os', name: '운영체제', prof: '프로세스와 스레드의 늪' },
+            { id: 'network', name: '컴퓨터 네트워크', prof: 'OSI 7계층의 비밀' },
+            { id: 'db', name: '데이터베이스', prof: 'SQL 쿼리의 마법사' },
+            { id: 'algo', name: '알고리즘', prof: '코딩테스트 필수 코스' }
+        ];
+
+        const grid = document.getElementById('review-list');
+
+        // 초기 렌더링
+        subjects.forEach(sub => {
+            // 저장된 점수 불러오기 (없으면 0점, 0명 참여)
+            const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
+            const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(1);
+
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div class="subject-name">
+                    ${sub.name}
+                    <span class="score-display" id="score-${sub.id}">⭐ ${avg} (${savedData.count}명)</span>
+                </div>
+                <div class="prof-name">${sub.prof}</div>
+                
+                <div class="star-rating">
+                    <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_5" value="5"><label for="rate_${sub.id}_5">★</label>
+                    <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_4" value="4"><label for="rate_${sub.id}_4">★</label>
+                    <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_3" value="3"><label for="rate_${sub.id}_3">★</label>
+                    <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_2" value="2"><label for="rate_${sub.id}_2">★</label>
+                    <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_1" value="1"><label for="rate_${sub.id}_1">★</label>
+                </div>
+
+                <input type="text" class="comment-input" id="comment-${sub.id}" placeholder="한 줄 평을 남겨주세요...">
+                <button class="submit-btn" onclick="submitReview('${sub.id}')">평가 제출</button>
+            `;
+            grid.appendChild(card);
+        });
+
+        // 평가 제출 함수
+        function submitReview(id) {
+            const radios = document.getElementsByName(`rate_${id}`);
+            let score = 0;
+            for (const radio of radios) {
+                if (radio.checked) {
+                    score = parseInt(radio.value);
+                    break;
+                }
+            }
+
+            if (score === 0) {
+                alert("별점을 선택해주세요! ⭐");
+                return;
+            }
+
+            // 로컬 스토리지에 저장 (누적)
+            const savedData = JSON.parse(localStorage.getItem(`review_${id}`)) || { total: 0, count: 0 };
+            savedData.total += score;
+            savedData.count += 1;
+            localStorage.setItem(`review_${id}`, JSON.stringify(savedData));
+
+            // 화면 업데이트
+            const avg = (savedData.total / savedData.count).toFixed(1);
+            document.getElementById(`score-${id}`).innerText = `⭐ ${avg} (${savedData.count}명)`;
+
+            // 코멘트 초기화 및 라디오 해제
+            document.getElementById(`comment-${id}`).value = "";
+            for (const radio of radios) radio.checked = false;
+
+            // 5점 만점이면 폭죽 효과!
+            if (score === 5) {
+                launchConfetti();
+                alert(`[${id}] 과목에 5점 만점을 주셨군요! 🎉`);
+            } else {
+                alert("소중한 평가 감사합니다! 👍");
+            }
+        }
+
+        // 폭죽 효과
+        function launchConfetti() {
+            const colors = ['#FFD700', '#FF4500', '#00FF7F', '#FFFFFF'];
+            for(let i=0; i<50; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.borderRadius = '50%';
+                document.body.appendChild(p);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 200 + 50;
+                
+                p.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 1000,
+                    easing: 'ease-out'
+                }).onfinish = () => p.remove();
+            }
+        }
+    </script>
+</body>
+</html>
