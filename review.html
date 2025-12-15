@@ -3,173 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏆 2025 컴과 강의 어워즈 🏆</title>
+    <title>🏆 2025 어워즈 결과 발표 🏆</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* ❄️ 배경: 고급스러운 겨울 밤 */
+        /* 🎨 배경: 투표 페이지와 통일감 있는 딥 네이비 */
         body {
-            background: radial-gradient(circle at 50% 0%, #1b2735 0%, #090a0f 100%);
-            margin: 0;
-            padding: 20px;
-            color: white;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            margin: 0; padding: 20px 10px;
+            color: #fff;
             font-family: 'Noto Sans KR', sans-serif;
-            overflow-x: hidden;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* 눈송이 효과 */
-        .snowflake {
-            position: fixed;
-            top: -10px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 1em;
-            z-index: 1;
-            pointer-events: none;
-            animation: fall linear infinite;
-        }
+        .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.3); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
-        /* 컨테이너 */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            padding-bottom: 50px;
-        }
+        .container { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
 
+        /* 🤫 비밀 버튼이 숨겨진 타이틀 */
         h1 {
-            font-size: 2.2rem;
-            color: #FFD700;
-            margin: 30px 0 10px 0;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            font-size: 1.8rem; color: #FFD700; margin: 20px 0 10px 0;
+            font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            user-select: none; /* 드래그 방지 */
         }
-        h1 span { color: #fff; font-weight: 900; }
-        .subtitle { color: #aaa; font-weight: 300; margin-bottom: 40px; }
+        h1 span { cursor: pointer; } /* 클릭 가능 표시 */
+        
+        .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 30px; font-weight: 300; }
 
-        /* 과목 카드 리스트 */
-        .review-grid {
+        /* 📊 차트 컨테이너 */
+        .chart-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            height: 350px;
+            position: relative;
+        }
+
+        /* 리스트 그리드 */
+        .review-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 50px;
+            gap: 15px;
         }
 
-        /* 🎁 리뷰 카드 디자인 */
+        /* 🎁 결과 카드 */
         .review-card {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 20px;
             text-align: left;
-            position: relative;
-            transition: transform 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(10px);
-        }
-        .review-card:hover {
-            transform: translateY(-5px);
-            border-color: #FFD700;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .subject-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .prof-name { font-size: 0.9rem; color: #888; margin-bottom: 15px; }
+        /* 1,2,3등 강조 */
+        .review-card.rank-1 { border: 2px solid #FFD700; background: rgba(255, 215, 0, 0.1); }
+        .review-card.rank-2 { border: 1px solid #C0C0C0; }
+        .review-card.rank-3 { border: 1px solid #CD7F32; }
 
-        /* ⭐ 별점 스타일 */
-        .star-rating {
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: flex-end;
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-        .star-rating input { display: none; }
-        .star-rating label {
-            font-size: 2rem; color: #444; cursor: pointer; transition: color 0.2s;
-        }
-        .star-rating label:hover,
-        .star-rating label:hover ~ label,
-        .star-rating input:checked ~ label {
-            color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-        }
-
-        /* 점수 표시 */
-        .score-display {
-            font-size: 0.9rem;
-            color: #2ecc71;
-            font-weight: bold;
-            float: right;
-            background: rgba(46, 204, 113, 0.1);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        /* 입력창 & 버튼 */
-        .comment-input {
-            width: 100%; padding: 10px; box-sizing: border-box;
-            border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3); color: white;
-            font-family: 'Noto Sans KR', sans-serif; margin-bottom: 10px;
-        }
-        .submit-btn {
-            width: 100%; padding: 10px; border: none; border-radius: 10px;
-            background: linear-gradient(135deg, #FFD700, #B8860B);
-            color: #000; font-weight: bold; cursor: pointer; transition: transform 0.1s;
-        }
-        .submit-btn:active { transform: scale(0.98); }
-
-        /* 💬 리뷰 목록 영역 (숨김/보임) */
-        .review-list-area {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed rgba(255,255,255,0.2);
-            display: none; /* 기본 숨김 */
-        }
-        .toggle-btn {
-            background: transparent; border: none; color: #aaa;
-            font-size: 0.9rem; cursor: pointer; width: 100%; margin-top: 10px;
-            text-decoration: underline;
-        }
-        .toggle-btn:hover { color: #fff; }
+        .card-info { flex: 1; }
+        .subject-name { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .prof-name { font-size: 0.8rem; color: #aaa; }
         
-        .user-comment {
-            font-size: 0.9rem; background: rgba(0,0,0,0.3);
-            padding: 8px; border-radius: 8px; margin-bottom: 5px;
-            color: #ddd;
-        }
-        .user-comment span { color: #FFD700; font-weight: bold; margin-right: 5px; }
-
-        /* 📊 그래프 섹션 */
-        .chart-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 50px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .card-score { text-align: right; }
+        .score-big { font-size: 1.5rem; font-weight: 900; color: #FFD700; }
+        .score-sub { font-size: 0.8rem; color: #aaa; display: block; }
 
         .home-btn {
-            display: inline-block; margin-top: 40px; padding: 12px 30px;
+            display: inline-block; margin-top: 50px; padding: 12px 30px;
             border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
             color: #ccc; text-decoration: none; transition: all 0.3s;
         }
-        .home-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
-
-        /* 폭죽 */
-        .confetti { position: absolute; width: 8px; height: 8px; z-index: 9999; pointer-events: none; }
+        .home-btn:hover { background: rgba(255,255,255,0.2); color: white; border-color: #fff; }
 
     </style>
 </head>
@@ -178,173 +94,125 @@
     <div id="snow-container"></div>
 
     <div class="container">
-        <h1>2025 <span>Lecture Awards</span></h1>
-        <p class="subtitle">별점과 한줄평을 남기고 실시간 랭킹을 확인하세요!</p>
+        <h1><span id="secret-btn">2025</span> Lecture Awards 🏆</h1>
+        <p class="subtitle">대망의 투표 결과를 공개합니다!</p>
 
-        <div class="review-grid" id="review-list"></div>
-
-        <div class="chart-container">
-            <h2 style="color:#FFD700; margin-bottom:20px;">📊 실시간 인기(?! ) 강의 랭킹</h2>
+        <div class="chart-box">
             <canvas id="rankingChart"></canvas>
         </div>
 
-        <a href="index.html" class="home-btn">메인으로 돌아가기</a>
+        <div class="review-list" id="review-list"></div>
+
+        <a href="index.html" class="home-btn">🏠 메인으로</a>
     </div>
 
     <script>
-        // 1. 눈송이 효과
+        // 1. 눈송이
         function createSnow() {
             const container = document.getElementById('snow-container');
-            for(let i=0; i<40; i++){
+            for(let i=0; i<30; i++){
                 const snow = document.createElement('div');
                 snow.className = 'snowflake';
                 snow.innerHTML = '❄';
                 snow.style.left = Math.random() * 100 + 'vw';
                 snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
                 snow.style.opacity = Math.random() * 0.5 + 0.1;
-                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
+                snow.style.fontSize = Math.random() * 8 + 4 + 'px';
                 container.appendChild(snow);
             }
         }
         createSnow();
 
-        // 2. 강의 데이터
-        const subjects = [
+        // 2. 강의 데이터 (가나다순 정렬)
+        const rawSubjects = [
             { id: 'c_prog', name: 'C 프로그래밍', prof: '기초부터 탄탄하게' },
-            { id: 'data_st', name: '자료구조', prof: '스택, 큐, 그리고 트리' },
-            { id: 'os', name: '운영체제', prof: '데드락이냐 기아상태냐' },
-            { id: 'network', name: '컴퓨터 네트워크', prof: '패킷의 여행' },
+            { id: 'data_st', name: '자료구조', prof: '스택, 큐, 트리...' },
+            { id: 'os', name: '운영체제', prof: '데드락과 프로세스' },
+            { id: 'network', name: '컴퓨터 네트워크', prof: 'OSI 7계층' },
             { id: 'db', name: '데이터베이스', prof: 'SQL의 마법사' },
-            { id: 'algo', name: '알고리즘', prof: '시간복잡도의 늪' }
+            { id: 'algo', name: '알고리즘', prof: '시간복잡도의 늪' },
+            { id: 'com_arch', name: '컴퓨터 구조', prof: 'CPU의 비밀' },
+            { id: 'web_prog', name: '웹 프로그래밍', prof: 'HTML/CSS/JS' }
         ];
+        
+        // ★ 가나다순 정렬 (투표 페이지랑 순서 맞춤)
+        const subjects = rawSubjects.sort((a, b) => a.name.localeCompare(b.name));
 
-        const grid = document.getElementById('review-list');
-        let myChart = null; // 차트 객체
+        const listContainer = document.getElementById('review-list');
+        let myChart = null;
 
-        // 3. 카드 생성 및 초기화
-        function initCards() {
-            grid.innerHTML = ''; // 초기화
+        // 3. 카드 & 차트 그리기
+        function render() {
+            listContainer.innerHTML = '';
+            
+            // 점수 계산 및 랭킹 정렬용 배열 생성
+            let rankingData = subjects.map(sub => {
+                const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
+                const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(2);
+                return { ...sub, avg: parseFloat(avg), count: savedData.count };
+            });
+
+            // 점수 높은 순으로 정렬 (랭킹 매기기용)
+            rankingData.sort((a, b) => b.avg - a.avg);
+
+            // 화면 그리기 (원래 가나다순인 subjects 순서대로 카드를 그릴지, 랭킹순으로 그릴지 선택)
+            // -> 여기선 가나다순으로 그리고, 1등 표시를 해주는 게 보기 좋음.
+            
+            // 랭킹 정보를 Map으로 저장 (ID -> Rank)
+            const rankMap = {};
+            rankingData.forEach((item, index) => {
+                rankMap[item.id] = index + 1; // 1등부터 시작
+            });
+
+            // 카드 생성 (가나다순 배치)
             subjects.forEach(sub => {
-                // 데이터 불러오기: { total: 점수합, count: 인원, comments: ["평가1", "평가2"] }
-                const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0, comments: [] };
+                const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
                 const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(1);
+                const rank = rankMap[sub.id];
 
-                // 댓글 리스트 HTML 생성
-                let commentsHtml = '';
-                if(savedData.comments && savedData.comments.length > 0) {
-                    savedData.comments.forEach(c => {
-                        commentsHtml += `<div class="user-comment"><span>⭐${c.score}</span> ${c.text}</div>`;
-                    });
-                } else {
-                    commentsHtml = '<div style="color:#666; font-size:0.8rem;">아직 리뷰가 없습니다. 첫 리뷰를 남겨주세요!</div>';
-                }
+                let rankClass = '';
+                let badge = '';
+                if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
+                else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
+                else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
 
                 const card = document.createElement('div');
-                card.className = 'review-card';
+                card.className = `review-card ${rankClass}`;
                 card.innerHTML = `
-                    <div class="subject-name">
-                        ${sub.name}
-                        <span class="score-display" id="score-${sub.id}">⭐ ${avg} (${savedData.count}명)</span>
+                    <div class="card-info">
+                        <div class="subject-name">${badge} ${sub.name}</div>
+                        <div class="prof-name">${sub.prof}</div>
                     </div>
-                    <div class="prof-name">${sub.prof}</div>
-                    
-                    <div class="star-rating">
-                        <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_5" value="5"><label for="rate_${sub.id}_5">★</label>
-                        <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_4" value="4"><label for="rate_${sub.id}_4">★</label>
-                        <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_3" value="3"><label for="rate_${sub.id}_3">★</label>
-                        <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_2" value="2"><label for="rate_${sub.id}_2">★</label>
-                        <input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_1" value="1"><label for="rate_${sub.id}_1">★</label>
-                    </div>
-
-                    <input type="text" class="comment-input" id="comment-${sub.id}" placeholder="한 줄 평 (선택)">
-                    <button class="submit-btn" onclick="submitReview('${sub.id}')">평가 제출</button>
-
-                    <button class="toggle-btn" onclick="toggleComments('${sub.id}')">💬 리뷰 보기 / 닫기</button>
-                    
-                    <div class="review-list-area" id="list-${sub.id}">
-                        ${commentsHtml}
+                    <div class="card-score">
+                        <span class="score-big">⭐ ${avg}</span>
+                        <span class="score-sub">(${savedData.count}명)</span>
                     </div>
                 `;
-                grid.appendChild(card);
+                listContainer.appendChild(card);
             });
-            updateChart(); // 차트 그리기
+
+            updateChart();
         }
 
-        // 4. 리뷰 토글 기능
-        function toggleComments(id) {
-            const area = document.getElementById(`list-${id}`);
-            if (area.style.display === 'block') {
-                area.style.display = 'none';
-            } else {
-                area.style.display = 'block';
-            }
-        }
-
-        // 5. 평가 제출 함수
-        function submitReview(id) {
-            const radios = document.getElementsByName(`rate_${id}`);
-            let score = 0;
-            for (const radio of radios) {
-                if (radio.checked) {
-                    score = parseInt(radio.value);
-                    break;
-                }
-            }
-
-            if (score === 0) {
-                alert("별점을 선택해주세요! ⭐");
-                return;
-            }
-
-            const commentInput = document.getElementById(`comment-${id}`);
-            const commentText = commentInput.value.trim() || "코멘트 없음";
-
-            // 데이터 저장
-            const savedData = JSON.parse(localStorage.getItem(`review_${id}`)) || { total: 0, count: 0, comments: [] };
-            savedData.total += score;
-            savedData.count += 1;
-            // 코멘트 배열 없으면 생성 (구버전 호환)
-            if(!savedData.comments) savedData.comments = [];
-            savedData.comments.push({ score: score, text: commentText }); // 점수와 텍스트 함께 저장
-            
-            localStorage.setItem(`review_${id}`, JSON.stringify(savedData));
-
-            // UI 새로고침 (간단하게 전체 리로드 대신 해당 카드만 갱신하면 좋지만, 코드가 길어지니 전체 초기화)
-            initCards();
-            
-            // 해당 리뷰창 열어주기 (사용자 경험 위해)
-            document.getElementById(`list-${id}`).style.display = 'block';
-
-            if (score === 5) {
-                launchConfetti();
-                alert(`[${id}] 과목에 5점 만점을 주셨군요! 🎉`);
-            } else {
-                alert("평가가 등록되었습니다! 그래프가 갱신됩니다. 📊");
-            }
-        }
-
-        // 6. 차트 그리기 (Chart.js)
+        // 4. 차트 업데이트 (Chart.js)
         function updateChart() {
             const ctx = document.getElementById('rankingChart').getContext('2d');
             
-            // 데이터 준비
-            const labels = [];
-            const dataPoints = [];
-            const bgColors = [];
-
-            subjects.forEach(sub => {
-                const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
-                const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(2);
-                
-                labels.push(sub.name);
-                dataPoints.push(avg);
-                // 점수에 따라 색상 다르게 (높을수록 골드)
-                if(avg >= 4.5) bgColors.push('rgba(255, 215, 0, 0.8)'); // Gold
-                else if(avg >= 3.5) bgColors.push('rgba(46, 204, 113, 0.8)'); // Green
-                else bgColors.push('rgba(255, 99, 132, 0.8)'); // Red
+            // 가나다순 라벨 & 데이터 준비
+            const labels = subjects.map(s => s.name);
+            const dataPoints = subjects.map(s => {
+                const d = JSON.parse(localStorage.getItem(`review_${s.id}`)) || { total: 0, count: 0 };
+                return d.count === 0 ? 0 : (d.total / d.count).toFixed(2);
             });
 
-            if(myChart) myChart.destroy(); // 기존 차트 삭제
+            // 색상 (점수 높으면 골드)
+            const bgColors = dataPoints.map(score => {
+                if(score >= 4.5) return 'rgba(255, 215, 0, 0.8)';
+                if(score >= 3.5) return 'rgba(46, 204, 113, 0.8)';
+                return 'rgba(255, 99, 132, 0.8)';
+            });
+
+            if(myChart) myChart.destroy();
 
             myChart = new Chart(ctx, {
                 type: 'bar',
@@ -354,57 +222,57 @@
                         label: '평균 평점',
                         data: dataPoints,
                         backgroundColor: bgColors,
-                        borderColor: 'rgba(255, 255, 255, 0.5)',
+                        borderColor: 'rgba(255,255,255,0.3)',
                         borderWidth: 1,
-                        borderRadius: 5
+                        borderRadius: 6
                     }]
                 },
                 options: {
-                    indexAxis: 'y', // 가로 막대 그래프 (이름 잘 보이게)
+                    indexAxis: 'y', // 가로 막대
                     scales: {
-                        x: { beginAtZero: true, max: 5, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        y: { ticks: { color: 'white', font: { size: 14, weight: 'bold' } }, grid: { display: false } }
+                        x: { beginAtZero: true, max: 5, ticks: { color: '#aaa' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#fff', font: { size: 12 } }, grid: { display: false } }
                     },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { callbacks: { label: (ctx) => `평점: ${ctx.raw}점` } }
-                    },
+                    plugins: { legend: { display: false } },
                     maintainAspectRatio: false,
                     responsive: true
                 }
             });
-            // 차트 높이 조절 (모바일 대응)
-            document.getElementById('rankingChart').style.height = '300px';
         }
 
-        // 7. 폭죽 효과
-        function launchConfetti() {
-            const colors = ['#FFD700', '#FF4500', '#00FF7F', '#FFFFFF'];
-            for(let i=0; i<50; i++) {
-                const p = document.createElement('div');
-                p.className = 'confetti';
-                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                p.style.left = '50%';
-                p.style.top = '50%';
-                p.style.borderRadius = '50%';
-                document.body.appendChild(p);
+        // ★★★ 5. 관리자 시크릿 모드 ★★★
+        // "2025"를 5번 터치하면 실행
+        let clickCount = 0;
+        document.getElementById('secret-btn').addEventListener('click', () => {
+            clickCount++;
+            if (clickCount === 5) {
+                clickCount = 0;
+                // 가나다순 리스트 보여주고 입력 받기
+                let msg = "관리자 모드 (점수 조작)\n\n";
+                subjects.forEach((s, i) => msg += `${i+1}. ${s.name}\n`);
+                msg += "\n수정할 번호와 점수를 입력 (예: 1,4.8)";
                 
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = Math.random() * 200 + 50;
-                
-                p.animate([
-                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
-                    { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }
-                ], {
-                    duration: 1000,
-                    easing: 'ease-out'
-                }).onfinish = () => p.remove();
+                const input = prompt(msg);
+                if (input) {
+                    const [idx, score] = input.split(',');
+                    const subjectIndex = parseInt(idx) - 1;
+                    const newScore = parseFloat(score);
+                    
+                    if (subjects[subjectIndex] && !isNaN(newScore)) {
+                        const targetId = subjects[subjectIndex].id;
+                        // 10명이 투표한 것으로 가정하고 데이터 저장
+                        const fakeData = { total: newScore * 10, count: 10, comments: [] };
+                        localStorage.setItem(`review_${targetId}`, JSON.stringify(fakeData));
+                        alert(`${subjects[subjectIndex].name} → ${newScore}점 적용 완료!`);
+                        render(); // 화면 갱신
+                    } else {
+                        alert("입력이 올바르지 않습니다.");
+                    }
+                }
             }
-        }
+        });
 
-        // 시작
-        initCards();
-
+        render();
     </script>
 </body>
 </html>
