@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏆 강의 평가 투표소 🏆</title>
+    <title>🎄 강의 평가 투표소 🎅</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
     <style>
-        /* 🎨 배경 */
+        /* 🎨 배경: 눈 내리는 겨울 밤 */
         body {
-            background: linear-gradient(135deg, #141e30, #243b55);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             margin: 0; padding: 20px 10px;
             color: #fff;
             font-family: 'Noto Sans KR', sans-serif;
@@ -19,110 +20,118 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.3); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
+        /* ❄️ 눈송이 효과 */
+        .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
 
         .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
 
-        h1 { font-size: 1.8rem; color: #FFD700; margin: 20px 0 5px 0; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        /* 🎄 타이틀 디자인 */
+        h1 { 
+            font-family: 'Jua', sans-serif;
+            font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; 
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h1 .red { color: #ff5252; }
+        h1 .green { color: #69f0ae; }
+        h1 .gold { color: #FFD700; }
+        
         .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
 
-        /* 📂 가나다순 카테고리 탭 (가로 스크롤 가능) */
+        /* 📂 가나다순 탭 (가로 스크롤) */
         .category-scroll-wrapper {
             overflow-x: auto;
             white-space: nowrap;
             padding-bottom: 10px;
             margin-bottom: 20px;
-            -webkit-overflow-scrolling: touch; /* 부드러운 스크롤 */
-            scrollbar-width: none; /* 스크롤바 숨김 (파이어폭스) */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
-        .category-scroll-wrapper::-webkit-scrollbar { display: none; } /* 스크롤바 숨김 (크롬) */
+        .category-scroll-wrapper::-webkit-scrollbar { display: none; }
 
-        .category-nav {
-            display: inline-flex;
-            gap: 8px;
-            padding: 0 5px;
-        }
+        .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
 
         .cat-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc;
-            padding: 8px 14px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex-shrink: 0; /* 버튼 줄어듦 방지 */
+            color: #ccc; padding: 8px 14px; border-radius: 20px;
+            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+            font-family: 'Jua', sans-serif;
         }
 
+        /* ❤️ 선택된 탭: 산타 레드 */
         .cat-btn.active {
-            background: #FFD700;
-            color: #1a1a1a;
-            font-weight: bold;
-            border-color: #FFD700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            background: #d32f2f; /* 빨강 */
+            color: #fff;
+            border-color: #ff5252;
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.5);
+            transform: scale(1.05);
         }
 
-        /* 리스트 영역 */
         .review-list { display: flex; flex-direction: column; gap: 20px; min-height: 300px; }
 
-        /* 카드 디자인 */
+        /* 🎁 카드 디자인 */
         .review-card {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 16px;
-            padding: 20px;
+            backdrop-filter: blur(10px);
+            border-radius: 16px; padding: 20px;
             text-align: left;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: transform 0.2s;
             animation: fadeIn 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
         }
+        /* 카드 상단 장식바 (빨강/초록 번갈아 나오면 좋겠지만 심플하게 골드) */
+        .review-card::top {
+            content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .review-card.voted { border: 1px solid #2ecc71; background: rgba(46, 204, 113, 0.1); }
+        .review-card.voted { border: 2px solid #69f0ae; background: rgba(46, 204, 113, 0.15); }
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .subject-info { flex: 1; }
         .subject-tag { 
-            font-size: 0.75rem; color: #aaa; background: rgba(0,0,0,0.3);
-            padding: 3px 6px; border-radius: 6px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            font-size: 0.75rem; color: #fff; background: #d32f2f; /* 태그도 빨강 */
+            padding: 3px 8px; border-radius: 10px; margin-right: 5px; vertical-align: middle; font-weight: bold;
         }
         .subject-name { font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.3; vertical-align: middle;}
-        .prof-name { font-size: 0.85rem; color: #aaa; margin-top: 4px; font-weight: 300; }
+        .prof-name { font-size: 0.85rem; color: #bbb; margin-top: 4px; font-weight: 300; }
         
-        .badge { font-size: 0.75rem; background: #2ecc71; color: #fff; padding: 4px 8px; border-radius: 12px; font-weight: bold; display: none; }
+        .badge { font-size: 0.75rem; background: #69f0ae; color: #004d40; padding: 4px 8px; border-radius: 12px; font-weight: bold; display: none; }
         .voted .badge { display: inline-block; }
 
-        /* 별점 */
+        /* ⭐ 별점 */
         .star-rating {
             display: flex; flex-direction: row-reverse; justify-content: center; gap: 8px;
             margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 50px;
         }
         .star-rating input { display: none; }
         .star-rating label { font-size: 2rem; color: #555; cursor: pointer; transition: color 0.2s; }
-        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
+        .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { 
+            color: #FFD700; text-shadow: 0 0 15px #FFD700; 
+        }
 
         .comment-input {
             width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);
             color: white; margin-bottom: 12px; box-sizing: border-box; outline: none;
         }
-        .comment-input::placeholder { color: #bbb; font-size: 0.9rem; }
 
+        /* 💚 제출 버튼: 크리스마스 트리 그린 */
         .submit-btn {
             width: 100%; padding: 14px; font-size: 1rem; border: none; border-radius: 12px;
-            background: linear-gradient(90deg, #FFD700, #ffb347); color: #1a1a1a; font-weight: 800;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3); transition: active 0.1s;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20); /* 초록 그라데이션 */
+            color: #fff; font-weight: bold; font-family: 'Jua', sans-serif; letter-spacing: 1px;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(27, 94, 32, 0.4); transition: active 0.1s;
         }
         .submit-btn:active { transform: scale(0.98); }
-        .voted .submit-btn { background: #444; color: #aaa; box-shadow: none; }
+        .voted .submit-btn { background: #546e7a; color: #cfd8dc; box-shadow: none; }
 
         .footer-msg { margin-top: 40px; font-size: 0.8rem; color: #888; line-height: 1.6; padding: 20px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .confetti { position: absolute; width: 6px; height: 6px; z-index: 99; pointer-events: none; border-radius: 50%; }
-        
-        /* 검색 결과 없음 */
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
     </style>
 </head>
@@ -131,8 +140,11 @@
     <div id="snow-container"></div>
 
     <div class="container">
-        <h1>강의 평가 투표소 🗳️</h1>
-        <p class="subtitle">첫 글자를 눌러 과목을 찾아보세요!</p>
+        <h1>
+            <span class="red">H</span><span class="green">a</span><span class="red">p</span><span class="green">p</span><span class="red">y</span>
+            <span class="gold">Vote</span> 🗳️
+        </h1>
+        <p class="subtitle">🎄 첫 글자를 눌러 과목을 찾아보세요! 🎅</p>
 
         <div class="category-scroll-wrapper">
             <div class="category-nav" id="category-nav">
@@ -143,8 +155,8 @@
         <div class="review-list" id="review-list"></div>
 
         <div class="footer-msg">
-            여러분의 소중한 의견 감사합니다.<br>
-            결과는 파티 현장에서 공개됩니다! 🎉
+            투표해주셔서 감사합니다 ☃️<br>
+            결과는 파티 현장에서 공개됩니다!
         </div>
     </div>
 
@@ -152,22 +164,20 @@
         // 1. 눈송이
         function createSnow() {
             const container = document.getElementById('snow-container');
-            for(let i=0; i<30; i++){
+            for(let i=0; i<40; i++){
                 const snow = document.createElement('div');
                 snow.className = 'snowflake';
                 snow.innerHTML = '❄';
                 snow.style.left = Math.random() * 100 + 'vw';
                 snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
-                snow.style.opacity = Math.random() * 0.5 + 0.1;
-                snow.style.fontSize = Math.random() * 8 + 4 + 'px';
+                snow.style.opacity = Math.random() * 0.5 + 0.3;
+                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
                 container.appendChild(snow);
             }
         }
         createSnow();
 
-        // 2. ★ 과목 데이터 (초성 분류용) ★
-        // category 필드는 이제 'ㄱ', 'ㄴ' 등으로 자동 매핑할 거라 비워둬도 됨
-        // 하지만 영어 과목은 'A-Z'로 분류함
+        // 2. 과목 데이터 (초성 분류용)
         const subjects = [
             // ㄱ
             { id: 'com_intro', name: '컴퓨터의이해', prof: '1학년' },
@@ -175,22 +185,17 @@
             { id: 'graphics', name: '컴퓨터그래픽스', prof: '4학년' },
             { id: 'compiler', name: '컴파일러구성', prof: '3학년' },
             { id: 'cloud', name: '클라우드컴퓨팅', prof: '4학년' },
-            
             // ㄷ
-            { id: 'data_st', name: '자료구조', prof: '2학년' }, // 'ㅈ'
+            { id: 'data_st', name: '자료구조', prof: '2학년' },
             { id: 'db', name: '데이터베이스시스템', prof: '3학년' },
             { id: 'logic', name: '디지털논리회로', prof: '2학년' },
-            
             // ㅁ
             { id: 'multi_intro', name: '멀티미디어개론', prof: '1학년' },
-            
             // ㅂ
             { id: 'bigdata', name: '빅데이터의이해', prof: '4학년' },
-
             // ㅅ
             { id: 'sw_eng', name: '소프트웨어공학', prof: '3학년' },
             { id: 'simulation', name: '시뮬레이션', prof: '4학년' },
-            
             // ㅇ
             { id: 'os', name: '운영체제', prof: '3학년' },
             { id: 'algo', name: '알고리즘', prof: '3학년' },
@@ -198,49 +203,36 @@
             { id: 'ubi_com', name: '유비쿼터스컴퓨팅개론', prof: '1학년' },
             { id: 'discrete', name: '이산수학', prof: '2학년' },
             { id: 'ai', name: '인공지능', prof: '4학년' },
-            { id: 'unix', name: 'UNIX시스템', prof: '3학년' }, // 영어지만 한글발음 '유'로 검색 많이 함 -> 편의상 'ㅇ' 또는 'A-Z'
-            
+            { id: 'unix', name: 'UNIX시스템', prof: '3학년' },
             // ㅈ
             { id: 'network', name: '정보통신망', prof: '4학년' },
-            { id: 'java', name: 'Java프로그래밍', prof: '2학년' }, // 'J' -> A-Z
-            
+            { id: 'java', name: 'Java프로그래밍', prof: '2학년' },
             // ㅍ
             { id: 'python', name: '파이썬프로그래밍', prof: '1학년' },
             { id: 'prog_lang', name: '프로그래밍언어론', prof: '2학년' },
-
-            // A-Z (영어 시작)
+            // A-Z
             { id: 'c_prog', name: 'C프로그래밍', prof: '1학년' },
             { id: 'html_css', name: 'HTML5', prof: '3학년' }, 
             { id: 'r_computing', name: 'R컴퓨팅', prof: '4학년' }
         ];
 
-        // 3. 한글 초성 추출 함수
+        // 3. 한글 초성 추출
         function getChosung(str) {
             const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
             const code = str.charCodeAt(0) - 44032;
-            
-            // 한글이 아닌 경우 (영어 등)
             if (code < 0 || code > 11171) {
-                // 영어 대소문자 확인
                 if (/[a-zA-Z]/.test(str[0])) return 'A-Z';
                 return '기타';
             }
             return chosung[Math.floor(code / 588)];
         }
 
-        // 4. 데이터에 카테고리(초성) 자동 할당
-        subjects.forEach(sub => {
-            // 영어 이름(C프로그래밍, Java)은 A-Z로, 한글은 초성으로
-            // UNIX는 'U'니까 A-Z로 분류 (사용자가 '유'로 찾을 수도 있지만 일단 알파벳으로)
-            sub.chosung = getChosung(sub.name);
-        });
+        // 데이터에 초성 추가
+        subjects.forEach(sub => { sub.chosung = getChosung(sub.name); });
 
-        // 5. 카테고리 탭 자동 생성
+        // 4. 카테고리 탭 생성
         const navContainer = document.getElementById('category-nav');
-        // 존재하는 초성만 중복 제거해서 가져오기 + 정렬
         const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
-        
-        // 'A-Z'가 맨 뒤로 가도록 정렬 조정
         if(activeCategories.includes('A-Z')) {
              activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
         }
@@ -253,15 +245,12 @@
             navContainer.appendChild(btn);
         });
 
-
         const listContainer = document.getElementById('review-list');
         let currentCategory = 'all';
 
-        // 6. 필터링 함수
+        // 5. 필터링 함수
         function filterCategory(cat) {
             currentCategory = cat;
-            
-            // 버튼 활성화 스타일
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) {
                     btn.classList.add('active');
@@ -269,11 +258,10 @@
                     btn.classList.remove('active');
                 }
             });
-
             renderCards();
         }
 
-        // 7. 렌더링 함수
+        // 6. 렌더링 함수
         function renderCards() {
             listContainer.innerHTML = '';
             
@@ -288,7 +276,7 @@
             filtered.forEach(sub => {
                 const myVote = JSON.parse(localStorage.getItem(`my_vote_${sub.id}`));
                 const isVoted = myVote ? 'voted' : '';
-                const btnText = myVote ? '수정하기 ✏️' : '평가 제출 🚀';
+                const btnText = myVote ? '수정하기 ✏️' : '제출하기 🎄';
                 const commentVal = myVote ? myVote.text : "";
                 
                 const card = document.createElement('div');
@@ -322,13 +310,13 @@
             });
         }
 
-        // 8. 제출 함수
+        // 7. 제출 함수
         function submitReview(id) {
             const radios = document.getElementsByName(`rate_${id}`);
             let score = 0;
             for (const radio of radios) { if (radio.checked) { score = parseInt(radio.value); break; } }
 
-            if (score === 0) { alert("별을 눌러 점수를 선택해주세요! ⭐"); return; }
+            if (score === 0) { alert("별을 눌러 점수를 주세요! ⭐"); return; }
 
             const commentInput = document.getElementById(`comment-${id}`);
             const commentText = commentInput.value.trim() || "";
@@ -340,10 +328,10 @@
             renderCards();
         }
 
-        // 9. 폭죽
+        // 8. 폭죽 (크리스마스 컬러)
         function launchConfetti() {
-            const colors = ['#FFD700', '#FF4500', '#00FF7F', '#FFFFFF'];
-            for(let i=0; i<40; i++) {
+            const colors = ['#d32f2f', '#388e3c', '#FFD700', '#ffffff']; // 빨강, 초록, 골드, 흰색
+            for(let i=0; i<50; i++) {
                 const p = document.createElement('div');
                 p.className = 'confetti';
                 p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
@@ -357,7 +345,7 @@
                 p.animate([
                     { transform: 'translate(0,0) scale(1)', opacity: 1 },
                     { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }
-                ], { duration: 800, easing: 'ease-out' }).onfinish = () => p.remove();
+                ], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
             }
         }
 
