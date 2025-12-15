@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🎄 2025 어워즈 결과 발표 🎅</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* 스타일은 투표 페이지와 통일 */
+        /* 스타일 (투표 페이지와 동일) */
         body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
@@ -66,7 +67,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩이 준 키로 업데이트 완료!
+        // ✅ 나쨩의 키가 여기에도 적용되어 있어! 수정 X
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -81,11 +82,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ==========================================
-        // ★ 투표 페이지와 똑같은 리스트를 넣으세요! ★
-        // ==========================================
+        // ==========================================================
+        // ★ 중요: vote.html과 똑같은 과목 리스트를 넣어야 함! ★
+        // ==========================================================
         const rawSubjects = [
-             { id: 'sub_1', name: '예시_과목명' },
+             { id: 'sub_1', name: '예시_과목명_지우고_쓰세요' },
+             { id: 'sub_2', name: '여기에_과목명_입력' },
              // ...
         ];
 
@@ -99,11 +101,15 @@
             }
             return chosung[Math.floor(code / 588)];
         }
+
         const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
         const navContainer = document.getElementById('category-nav');
         const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
-        if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+        if(activeCategories.includes('A-Z')) {
+             activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+        }
+
         activeCategories.forEach(cat => {
             const btn = document.createElement('button');
             btn.className = 'cat-btn';
@@ -115,24 +121,17 @@
         const listContainer = document.getElementById('review-list');
         let currentCategory = 'all';
         let myChart = null;
-        let dbData = {}; // DB 데이터 저장용
-
-        window.filterCategory = function(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-            render();
-        }
+        let dbData = {}; 
 
         function render() {
             listContainer.innerHTML = '';
             
-            // DB 데이터 + 과목 정보 합치기
             let allData = subjects.map(sub => {
                 let total = 0, count = 0;
-                if(dbData[sub.id]) { total = dbData[sub.id].total; count = dbData[sub.id].count; }
+                if(dbData[sub.id]) {
+                    total = dbData[sub.id].total;
+                    count = dbData[sub.id].count;
+                }
                 const avg = count === 0 ? 0 : (total / count).toFixed(2);
                 return { ...sub, avg: parseFloat(avg), count: count };
             });
@@ -144,11 +143,13 @@
 
             const filtered = allData.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory);
             
-            if(filtered.length === 0) { listContainer.innerHTML = '<div class="no-result">데이터가 없습니다.</div>'; } 
-            else {
+            if(filtered.length === 0) {
+                listContainer.innerHTML = '<div class="no-result">데이터가 없습니다.</div>';
+            } else {
                 filtered.forEach(sub => {
                     const rank = rankMap[sub.id];
                     let rankClass = '', badge = '';
+
                     if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
                     else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
                     else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
@@ -170,9 +171,18 @@
             updateChart(allData);
         }
 
+        window.filterCategory = function(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            render();
+        }
+
         function updateChart(allData) {
             const ctx = document.getElementById('rankingChart').getContext('2d');
-            const topData = allData.slice(0, 7);
+            const topData = allData.slice(0, 7); 
             const labels = topData.map(s => s.name);
             const dataPoints = topData.map(s => s.avg);
             const colors = ['#FFD700', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c'];
@@ -181,18 +191,16 @@
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: { labels: labels, datasets: [{ label: '평점', data: dataPoints, backgroundColor: colors, borderRadius: 8, barThickness: 15 }] },
-                options: { indexAxis: 'y', scales: { x: { beginAtZero: true, max: 5, ticks: { color: '#aaa', font: {size:10} }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#fff', font: { size: 11 }, autoSkip: false }, grid: { display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false, responsive: true }
+                options: { indexAxis: 'y', scales: { x: { beginAtZero: true, max: 5, ticks: { color: '#aaa', font: {size:10} }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#fff', font: { size: 11 }, autoSkip: false }, grid: { display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false, responsive: true, animation: { duration: 1000 } }
             });
         }
 
-        // 🔥 DB 실시간 감지
         const votesRef = ref(db, 'votes');
         onValue(votesRef, (snapshot) => {
             dbData = snapshot.val() || {};
-            render(); // 데이터 바뀌면 화면 갱신
+            render();
         });
 
-        // 비밀 버튼 (강제 수정)
         let clickCount = 0;
         document.getElementById('secret-btn').addEventListener('click', () => {
             clickCount++;
@@ -204,10 +212,9 @@
                 if(target) {
                     const newScore = prompt(`'${target.name}' 새 점수 (0~5)`);
                     if(newScore) {
-                        const scoreNum = parseFloat(newScore);
                         const scoreRef = ref(db, 'votes/' + target.id);
-                        runTransaction(scoreRef, () => { return { total: scoreNum * 10, count: 10 }; });
-                        alert("수정 완료! 🎄");
+                        runTransaction(scoreRef, () => { return { total: parseFloat(newScore) * 10, count: 10 }; });
+                        alert("반영 완료! 🎄");
                     }
                 }
             }
