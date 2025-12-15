@@ -4,101 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🎄 2025 어워즈 결과 발표 🎅</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* 🎨 배경 */
-        body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            margin: 0; padding: 20px 10px;
-            color: #fff;
-            font-family: 'Noto Sans KR', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
+        /* 스타일은 투표 페이지와 통일 */
+        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
-
         .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; padding-bottom: 60px; }
-
-        /* 🤫 비밀 버튼 타이틀 */
-        h1 {
-            font-family: 'Jua', sans-serif;
-            font-size: 1.8rem; margin: 20px 0 5px 0;
-            font-weight: 400; text-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            user-select: none;
-        }
-        h1 .red { color: #ff5252; }
-        h1 .green { color: #69f0ae; }
-        h1 .gold { color: #FFD700; cursor: pointer; } 
-        
+        h1 { font-family: 'Jua', sans-serif; font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; text-shadow: 0 4px 10px rgba(0,0,0,0.5); user-select: none; }
+        h1 .red { color: #ff5252; } h1 .green { color: #69f0ae; } h1 .gold { color: #FFD700; cursor: pointer; } 
         .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
-
-        .chart-box {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-            border-radius: 20px; padding: 15px; margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            height: 300px; position: relative;
-        }
-
-        .category-scroll-wrapper {
-            overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 10px;
-            -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        }
+        .chart-box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border-radius: 20px; padding: 15px; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.4); height: 300px; position: relative; }
+        .category-scroll-wrapper { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .category-scroll-wrapper::-webkit-scrollbar { display: none; }
-
         .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc; padding: 8px 14px; border-radius: 20px;
-            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-            font-family: 'Jua', sans-serif;
-        }
-        .cat-btn.active {
-            background: #d32f2f; color: #fff; border-color: #ff5252;
-            box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05);
-        }
-
+        .cat-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-family: 'Jua', sans-serif; }
+        .cat-btn.active { background: #d32f2f; color: #fff; border-color: #ff5252; box-shadow: 0 0 10px rgba(255, 82, 82, 0.5); transform: scale(1.05); }
         .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 200px; }
-
-        .review-card {
-            background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px 20px;
-            text-align: left; border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s; display: flex; justify-content: space-between; align-items: center;
-            animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden;
-        }
+        .review-card { background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.2s; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden; }
         .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 3px; background: linear-gradient(90deg, #d32f2f, #2e7d32); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .review-card.rank-1 { border: 2px solid #FFD700; background: rgba(255, 215, 0, 0.15); box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         .review-card.rank-2 { border: 1px solid #C0C0C0; background: rgba(192, 192, 192, 0.1); }
         .review-card.rank-3 { border: 1px solid #CD7F32; background: rgba(205, 127, 50, 0.1); }
-
         .card-info { flex: 1; }
-        .subject-tag { 
-            font-size: 0.7rem; color: #fff; background: #2e7d32; 
-            padding: 2px 6px; border-radius: 6px; margin-right: 5px; vertical-align: middle; 
-        }
+        .subject-tag { font-size: 0.7rem; color: #fff; background: #2e7d32; padding: 2px 6px; border-radius: 6px; margin-right: 5px; vertical-align: middle; }
         .subject-name { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2px; vertical-align: middle; }
-        
         .card-score { text-align: right; min-width: 80px; }
         .score-big { font-size: 1.4rem; font-weight: 900; color: #FFD700; display: block; }
         .score-sub { font-size: 0.75rem; color: #888; display: block; margin-top: 2px; }
-
-        .home-btn {
-            display: inline-block; margin-top: 50px; padding: 12px 30px;
-            border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
-            color: #ccc; text-decoration: none; transition: all 0.3s;
-        }
+        .home-btn { display: inline-block; margin-top: 50px; padding: 12px 30px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; color: #ccc; text-decoration: none; transition: all 0.3s; }
         .home-btn:hover { background: rgba(255,255,255,0.2); color: white; border-color: #fff; }
-        
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
-
     </style>
 </head>
 <body>
@@ -106,15 +46,10 @@
     <div id="snow-container"></div>
 
     <div class="container">
-        <h1>
-            <span class="red">The</span> <span class="gold" id="secret-btn">2025</span>
-            <span class="green">Awards</span> 🏆
-        </h1>
+        <h1><span class="red">The</span> <span class="gold" id="secret-btn">2025</span> <span class="green">Awards</span> 🏆</h1>
         <p class="subtitle">🎄 대망의 투표 결과를 공개합니다! 🎅</p>
 
-        <div class="chart-box">
-            <canvas id="rankingChart"></canvas>
-        </div>
+        <div class="chart-box"><canvas id="rankingChart"></canvas></div>
 
         <div class="category-scroll-wrapper">
             <div class="category-nav" id="category-nav">
@@ -127,7 +62,157 @@
         <a href="index.html" class="home-btn">🏠 메인으로</a>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // ✅ 나쨩이 준 키로 업데이트 완료!
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
+            authDomain: "review-class-28dda.firebaseapp.com",
+            databaseURL: "https://review-class-28dda-default-rtdb.firebaseio.com",
+            projectId: "review-class-28dda",
+            storageBucket: "review-class-28dda.firebasestorage.app",
+            messagingSenderId: "256031114562",
+            appId: "1:256031114562:web:f6d8a80f0aabd77cea34db",
+            measurementId: "G-L56ETZH2RE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ==========================================
+        // ★ 투표 페이지와 똑같은 리스트를 넣으세요! ★
+        // ==========================================
+        const rawSubjects = [
+             { id: 'sub_1', name: '예시_과목명' },
+             // ...
+        ];
+
+        // ... 이하 로직 ...
+        function getChosung(str) {
+            const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+            const code = str.charCodeAt(0) - 44032;
+            if (code < 0 || code > 11171) {
+                if (/[a-zA-Z]/.test(str[0])) return 'A-Z';
+                return '기타';
+            }
+            return chosung[Math.floor(code / 588)];
+        }
+        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
+
+        const navContainer = document.getElementById('category-nav');
+        const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
+        if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
+        activeCategories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'cat-btn';
+            btn.innerText = cat;
+            btn.onclick = () => filterCategory(cat);
+            navContainer.appendChild(btn);
+        });
+
+        const listContainer = document.getElementById('review-list');
+        let currentCategory = 'all';
+        let myChart = null;
+        let dbData = {}; // DB 데이터 저장용
+
+        window.filterCategory = function(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            render();
+        }
+
+        function render() {
+            listContainer.innerHTML = '';
+            
+            // DB 데이터 + 과목 정보 합치기
+            let allData = subjects.map(sub => {
+                let total = 0, count = 0;
+                if(dbData[sub.id]) { total = dbData[sub.id].total; count = dbData[sub.id].count; }
+                const avg = count === 0 ? 0 : (total / count).toFixed(2);
+                return { ...sub, avg: parseFloat(avg), count: count };
+            });
+
+            allData.sort((a, b) => b.avg - a.avg);
+
+            const rankMap = {};
+            allData.forEach((item, index) => { rankMap[item.id] = index + 1; });
+
+            const filtered = allData.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory);
+            
+            if(filtered.length === 0) { listContainer.innerHTML = '<div class="no-result">데이터가 없습니다.</div>'; } 
+            else {
+                filtered.forEach(sub => {
+                    const rank = rankMap[sub.id];
+                    let rankClass = '', badge = '';
+                    if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
+                    else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
+                    else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
+
+                    const card = document.createElement('div');
+                    card.className = `review-card ${rankClass}`;
+                    card.innerHTML = `
+                        <div class="card-info">
+                            <div><span class="subject-tag">${sub.chosung}</span><span class="subject-name">${badge} ${sub.name}</span></div>
+                        </div>
+                        <div class="card-score">
+                            <span class="score-big">⭐ ${sub.avg}</span>
+                            <span class="score-sub">(${sub.count}명)</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }
+            updateChart(allData);
+        }
+
+        function updateChart(allData) {
+            const ctx = document.getElementById('rankingChart').getContext('2d');
+            const topData = allData.slice(0, 7);
+            const labels = topData.map(s => s.name);
+            const dataPoints = topData.map(s => s.avg);
+            const colors = ['#FFD700', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c'];
+
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: '평점', data: dataPoints, backgroundColor: colors, borderRadius: 8, barThickness: 15 }] },
+                options: { indexAxis: 'y', scales: { x: { beginAtZero: true, max: 5, ticks: { color: '#aaa', font: {size:10} }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: '#fff', font: { size: 11 }, autoSkip: false }, grid: { display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false, responsive: true }
+            });
+        }
+
+        // 🔥 DB 실시간 감지
+        const votesRef = ref(db, 'votes');
+        onValue(votesRef, (snapshot) => {
+            dbData = snapshot.val() || {};
+            render(); // 데이터 바뀌면 화면 갱신
+        });
+
+        // 비밀 버튼 (강제 수정)
+        let clickCount = 0;
+        document.getElementById('secret-btn').addEventListener('click', () => {
+            clickCount++;
+            if (clickCount === 5) {
+                clickCount = 0;
+                const nameInput = prompt("🎅 관리자 모드: 과목명 일부 입력");
+                if(!nameInput) return;
+                const target = subjects.find(s => s.name.includes(nameInput));
+                if(target) {
+                    const newScore = prompt(`'${target.name}' 새 점수 (0~5)`);
+                    if(newScore) {
+                        const scoreNum = parseFloat(newScore);
+                        const scoreRef = ref(db, 'votes/' + target.id);
+                        runTransaction(scoreRef, () => { return { total: scoreNum * 10, count: 10 }; });
+                        alert("수정 완료! 🎄");
+                    }
+                }
+            }
+        });
+
         function createSnow() {
             const container = document.getElementById('snow-container');
             for(let i=0; i<40; i++){
@@ -142,194 +227,6 @@
             }
         }
         createSnow();
-
-        // ==========================================================
-        // ★ 방통대 컴과 전공 과목 리스트 (학년 정보 삭제됨) ★
-        // ==========================================================
-        const rawSubjects = [
-            { id: 'com_intro', name: '컴퓨터의이해' },
-            { id: 'c_prog', name: 'C프로그래밍' },
-            { id: 'ubi_com', name: '유비쿼터스컴퓨팅개론' },
-            { id: 'python', name: '파이썬프로그래밍' },
-            { id: 'multi_intro', name: '멀티미디어개론' },
-            { id: 'discrete', name: '이산수학' },
-            { id: 'java', name: 'Java프로그래밍' },
-            { id: 'data_st', name: '자료구조' },
-            { id: 'web_prog', name: '웹프로그래밍' },
-            { id: 'logic', name: '디지털논리회로' },
-            { id: 'prog_lang', name: '프로그래밍언어론' },
-            { id: 'db', name: '데이터베이스시스템' },
-            { id: 'os', name: '운영체제' },
-            { id: 'algo', name: '알고리즘' },
-            { id: 'sw_eng', name: '소프트웨어공학' },
-            { id: 'unix', name: 'UNIX시스템' },
-            { id: 'com_arch', name: '컴퓨터구조' },
-            { id: 'compiler', name: '컴파일러구성' },
-            { id: 'network', name: '정보통신망' },
-            { id: 'graphics', name: '컴퓨터그래픽스' },
-            { id: 'ai', name: '인공지능' },
-            { id: 'bigdata', name: '빅데이터의이해' },
-            { id: 'simulation', name: '시뮬레이션' },
-            { id: 'cloud', name: '클라우드컴퓨팅' },
-            { id: 'html_css', name: 'HTML5' }, 
-            { id: 'r_computing', name: 'R컴퓨팅' }
-        ];
-
-        function getChosung(str) {
-            const chosung = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
-            const code = str.charCodeAt(0) - 44032;
-            if (code < 0 || code > 11171) {
-                if (/[a-zA-Z]/.test(str[0])) return 'A-Z';
-                return '기타';
-            }
-            return chosung[Math.floor(code / 588)];
-        }
-
-        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
-
-        const navContainer = document.getElementById('category-nav');
-        const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
-        if(activeCategories.includes('A-Z')) {
-             activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
-        }
-
-        activeCategories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = 'cat-btn';
-            btn.innerText = cat;
-            btn.onclick = () => filterCategory(cat);
-            navContainer.appendChild(btn);
-        });
-
-        const listContainer = document.getElementById('review-list');
-        let currentCategory = 'all';
-        let myChart = null;
-
-        function render() {
-            listContainer.innerHTML = '';
-            
-            let allData = subjects.map(sub => {
-                const savedData = JSON.parse(localStorage.getItem(`review_${sub.id}`)) || { total: 0, count: 0 };
-                const avg = savedData.count === 0 ? 0 : (savedData.total / savedData.count).toFixed(2);
-                return { ...sub, avg: parseFloat(avg), count: savedData.count };
-            });
-
-            allData.sort((a, b) => b.avg - a.avg);
-
-            const rankMap = {};
-            allData.forEach((item, index) => {
-                rankMap[item.id] = index + 1;
-            });
-
-            const filtered = allData.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory);
-            
-            if(filtered.length === 0) {
-                listContainer.innerHTML = '<div class="no-result">데이터가 없습니다.</div>';
-            } else {
-                filtered.forEach(sub => {
-                    const rank = rankMap[sub.id];
-                    let rankClass = '';
-                    let badge = '';
-
-                    if(rank === 1) { rankClass = 'rank-1'; badge = '🥇 1위'; }
-                    else if(rank === 2) { rankClass = 'rank-2'; badge = '🥈 2위'; }
-                    else if(rank === 3) { rankClass = 'rank-3'; badge = '🥉 3위'; }
-
-                    const card = document.createElement('div');
-                    card.className = `review-card ${rankClass}`;
-                    card.innerHTML = `
-                        <div class="card-info">
-                            <div>
-                                <span class="subject-tag">${sub.chosung}</span>
-                                <span class="subject-name">${badge} ${sub.name}</span>
-                            </div>
-                        </div>
-                        <div class="card-score">
-                            <span class="score-big">⭐ ${sub.avg}</span>
-                            <span class="score-sub">(${sub.count}명)</span>
-                        </div>
-                    `;
-                    listContainer.appendChild(card);
-                });
-            }
-
-            updateChart(allData);
-        }
-
-        function filterCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                if((cat === 'all' && btn.innerText === '전체') || btn.innerText === cat) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            render();
-        }
-
-        function updateChart(allData) {
-            const ctx = document.getElementById('rankingChart').getContext('2d');
-            const topData = allData.slice(0, 7);
-            
-            const labels = topData.map(s => s.name);
-            const dataPoints = topData.map(s => s.avg);
-            const colors = ['#FFD700', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c', '#d32f2f', '#388e3c'];
-
-            if(myChart) myChart.destroy();
-
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '평점',
-                        data: dataPoints,
-                        backgroundColor: colors,
-                        borderColor: 'rgba(255,255,255,0.3)',
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        barThickness: 15
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    scales: {
-                        x: { beginAtZero: true, max: 5, ticks: { color: '#aaa', font: {size:10} }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        y: { ticks: { color: '#fff', font: { size: 11 }, autoSkip: false }, grid: { display: false } }
-                    },
-                    plugins: { legend: { display: false } },
-                    maintainAspectRatio: false,
-                    responsive: true
-                }
-            });
-        }
-
-        let clickCount = 0;
-        document.getElementById('secret-btn').addEventListener('click', () => {
-            clickCount++;
-            if (clickCount === 5) {
-                clickCount = 0;
-                const nameInput = prompt("🎅 관리자 모드: 수정할 과목명 일부를 입력하세요\n(예: 자료)");
-                if(!nameInput) return;
-
-                const target = subjects.find(s => s.name.includes(nameInput));
-                if(target) {
-                    const newScore = prompt(`'${target.name}'의 새 점수를 입력하세요 (0~5)`);
-                    if(newScore) {
-                        const scoreNum = parseFloat(newScore);
-                        const fakeData = { total: scoreNum * 10, count: 10, comments: [] };
-                        localStorage.setItem(`review_${target.id}`, JSON.stringify(fakeData));
-                        alert("수정 완료! 🎄");
-                        render();
-                    }
-                } else {
-                    alert("과목을 찾을 수 없습니다.");
-                }
-            }
-        });
-
-        render();
     </script>
 </body>
 </html>
