@@ -9,15 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
     <style>
-        /* 🎨 기존 스타일 유지 */
-        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; padding-bottom: 80px; /* 하단 버튼 공간 확보 */ }
+        /* 🎨 기본 스타일 유지 */
+        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; padding-bottom: 100px; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
         .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; }
         h1 { font-family: 'Jua', sans-serif; font-size: 1.8rem; margin: 20px 0 5px 0; font-weight: 400; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         h1 .red { color: #ff5252; } h1 .green { color: #69f0ae; } h1 .gold { color: #FFD700; }
         .subtitle { color: #ccc; font-size: 0.9rem; margin-bottom: 20px; font-weight: 300; }
-        .category-scroll-wrapper { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .category-scroll-wrapper { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .category-scroll-wrapper::-webkit-scrollbar { display: none; }
         .category-nav { display: inline-flex; gap: 8px; padding: 0 5px; }
         .cat-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-family: 'Jua', sans-serif; }
@@ -25,7 +25,6 @@
         .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 300px; }
         .review-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s; animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden; }
         .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .review-card.voted { border: 2px solid #69f0ae; background: rgba(46, 204, 113, 0.15); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .subject-tag { font-size: 0.8rem; color: #fff; background: #d32f2f; padding: 4px 8px; border-radius: 8px; margin-right: 8px; font-weight: bold; }
@@ -36,31 +35,24 @@
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
         .comment-input { width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 12px; box-sizing: border-box; outline: none; transition: all 0.3s; }
         .comment-input:focus { border-color: #FFD700; background: rgba(0,0,0,0.5); }
-        .comment-input::placeholder { color: #bbb; font-size: 0.9rem; }
         .submit-btn { width: 100%; padding: 14px; font-size: 1rem; border: none; border-radius: 12px; background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; font-weight: bold; font-family: 'Jua', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(27, 94, 32, 0.4); transition: active 0.1s; }
         .submit-btn:active { transform: scale(0.98); }
         .voted .submit-btn { background: #444; color: #FFD700; box-shadow: none; border: 1px solid #FFD700; }
         .footer-msg { margin-top: 40px; font-size: 0.8rem; color: #888; line-height: 1.6; padding: 20px; border-top: 1px dashed rgba(255,255,255,0.1); }
-        .confetti { position: absolute; width: 6px; height: 6px; z-index: 99; pointer-events: none; border-radius: 50%; }
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
 
-        /* 🔥 일괄 제출 버튼 (플로팅 버튼) */
-        .fab-container {
-            position: fixed; bottom: 20px; left: 0; right: 0; 
-            display: flex; justify-content: center; z-index: 100;
-        }
-        .batch-submit-btn {
-            background: linear-gradient(45deg, #FFD700, #FFC107);
-            color: #333; font-family: 'Jua', sans-serif;
-            font-size: 1.1rem; font-weight: bold;
-            padding: 15px 40px; border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
-            border: none; cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .fab-container { position: fixed; bottom: 40px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 9999; pointer-events: none; }
+        .batch-submit-btn { pointer-events: auto; background: linear-gradient(45deg, #FFD700, #FFC107); color: #333; font-family: 'Jua', sans-serif; font-size: 1.1rem; font-weight: bold; padding: 15px 40px; border-radius: 50px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); border: 2px solid #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; gap: 8px; }
         .batch-submit-btn:active { transform: scale(0.95); }
-        .batch-submit-btn:hover { box-shadow: 0 6px 25px rgba(255, 215, 0, 0.7); }
+
+        /* 🔥 과목 추가 버튼 스타일 */
+        .add-subject-btn {
+            display: block; width: 100%; margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.4);
+            color: #bbb; padding: 12px; border-radius: 12px;
+            font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
+        }
+        .add-subject-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; border-color: #fff; }
     </style>
 </head>
 <body>
@@ -72,13 +64,17 @@
             <span class="red">H</span><span class="green">a</span><span class="red">p</span><span class="green">p</span><span class="red">y</span>
             <span class="gold">Vote</span> 🗳️
         </h1>
-        <p class="subtitle">🎄 수정도 가능! 마지막에 일괄 제출도 가능! 🎅</p>
+        <p class="subtitle">🎄 수정도 가능! 교양 과목 추가도 가능! 🎅</p>
 
         <div class="category-scroll-wrapper">
             <div class="category-nav" id="category-nav">
                 <button class="cat-btn active" onclick="filterCategory('all')">전체</button>
             </div>
         </div>
+
+        <button class="add-subject-btn" onclick="addCustomSubject()">
+            ➕ 찾는 과목이 없나요? 직접 추가하기
+        </button>
 
         <div class="review-list" id="review-list"></div>
 
@@ -98,7 +94,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getDatabase, ref, runTransaction, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩 키 적용됨
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -113,14 +108,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 유저 고유 ID
         let userId = localStorage.getItem('my_user_id');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('my_user_id', userId);
         }
 
-        const rawSubjects = [
+        // 기본 과목 리스트
+        let subjects = [
              { id: 's1', name: '컴퓨터의이해' }, { id: 's2', name: '유비쿼터스컴퓨팅개론' }, { id: 's3', name: '파이썬프로그래밍기초' }, { id: 's4', name: '데이터정보처리입문' },
              { id: 's5', name: '이산수학' }, { id: 's6', name: 'Java프로그래밍' }, { id: 's7', name: 'HTML5웹프로그래밍' },
              { id: 's8', name: '그래픽커뮤니케이션' }, { id: 's9', name: '데이터베이스시스템' }, { id: 's10', name: '디지털논리회로' }, { id: 's11', name: '운영체제' }, { id: 's12', name: '인공지능' }, { id: 's13', name: '알고리즘' },
@@ -140,8 +135,17 @@
             }
             return chosung[Math.floor(code / 588)];
         }
-        const subjects = rawSubjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
+        // 초기화 시 초성 계산
+        subjects = subjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
+        // 저장된 커스텀 과목 불러오기 (새로고침해도 유지되게)
+        const customSubs = JSON.parse(localStorage.getItem('my_custom_subjects')) || [];
+        customSubs.forEach(sub => {
+            sub.chosung = getChosung(sub.name);
+            subjects.unshift(sub); // 맨 앞에 추가
+        });
+
+        // 카테고리 렌더링
         const navContainer = document.getElementById('category-nav');
         const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
         if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
@@ -165,9 +169,39 @@
             renderCards();
         }
 
+        // 🔥 과목 추가 함수
+        window.addCustomSubject = function() {
+            const name = prompt("추가할 과목명(교양/기타)을 입력해주세요! ✨");
+            if (!name) return;
+
+            // 중복 체크
+            if (subjects.find(s => s.name === name)) {
+                alert("이미 리스트에 있는 과목입니다!");
+                return;
+            }
+
+            const newId = 'custom_' + Date.now();
+            const newSubject = { id: newId, name: name };
+            
+            // 리스트에 추가
+            newSubject.chosung = getChosung(name);
+            subjects.unshift(newSubject); // 맨 앞에 추가
+            
+            // 로컬에 저장 (나한테만 보임)
+            const savedCustoms = JSON.parse(localStorage.getItem('my_custom_subjects')) || [];
+            savedCustoms.push(newSubject);
+            localStorage.setItem('my_custom_subjects', JSON.stringify(savedCustoms));
+
+            alert(`'${name}' 과목이 추가되었습니다! 맨 위에서 투표해주세요. 🗳️`);
+            filterCategory('all'); // 전체 보기로 이동해서 확인
+        }
+
         function renderCards() {
             listContainer.innerHTML = '';
-            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory).sort((a, b) => a.name.localeCompare(b.name));
+            const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory).sort((a, b) => {
+                // 커스텀 과목을 우선 보여주거나, 이름순 정렬
+                return a.name.localeCompare(b.name);
+            });
 
             if(filtered.length === 0) {
                 listContainer.innerHTML = '<div class="no-result">해당하는 과목이 없습니다.</div>';
@@ -185,7 +219,7 @@
                 
                 const card = document.createElement('div');
                 card.className = `review-card ${btnClass}`;
-                card.id = `card-${sub.id}`; // 카드 식별용 ID
+                card.id = `card-${sub.id}`; 
                 
                 let starHtml = '';
                 for(let i=5; i>=1; i--) {
@@ -201,32 +235,27 @@
                     
                     <input type="text" class="comment-input" id="comment-${sub.id}" placeholder="한 줄 평 (선택)" value="${savedComment}">
                     
-                    <button class="submit-btn" id="btn-${sub.id}" onclick="submitSingle('${sub.id}')">${btnText}</button>
+                    <button class="submit-btn" id="btn-${sub.id}" onclick="submitSingle('${sub.id}', '${sub.name}')">${btnText}</button>
                 `;
                 listContainer.appendChild(card);
             });
         }
 
-        // 🟢 개별 제출 함수 (전역)
-        window.submitSingle = function(id) {
-            processVote(id, false);
+        window.submitSingle = function(id, name) {
+            processVote(id, name, false);
         }
 
-        // 🟠 일괄 제출 함수 (전역)
         window.submitAllVotes = async function() {
             let submitCount = 0;
             const promises = [];
 
-            // 모든 과목을 돌면서 체크된 것이 있는지 확인
             for (const sub of subjects) {
                 const radios = document.getElementsByName(`rate_${sub.id}`);
                 let score = 0;
                 for (const r of radios) if (r.checked) score = parseInt(r.value);
 
-                // 점수가 체크되어 있다면 제출 프로세스 진행
                 if (score > 0) {
-                    // 개별 제출 함수 호출 (Promise 배열에 담기)
-                    promises.push(processVote(sub.id, true)); 
+                    promises.push(processVote(sub.id, sub.name, true)); 
                     submitCount++;
                 }
             }
@@ -236,14 +265,12 @@
                 return;
             }
 
-            // 모든 전송이 끝날 때까지 대기
             await Promise.all(promises);
             launchConfetti();
             alert(`총 ${submitCount}개 과목이 일괄 제출되었습니다! 🚀`);
         }
 
-        // ⚙️ 실제 투표 처리 로직 (공통 함수)
-        function processVote(id, isBatch) {
+        function processVote(id, name, isBatch) {
             return new Promise((resolve, reject) => {
                 const radios = document.getElementsByName(`rate_${id}`);
                 let score = 0;
@@ -251,7 +278,7 @@
 
                 if (score === 0) {
                     if (!isBatch) alert("별을 눌러 점수를 주세요! ⭐");
-                    resolve(); // 배치 처리 시 멈추지 않게 resolve
+                    resolve();
                     return;
                 }
 
@@ -263,15 +290,15 @@
 
                 const scoreRef = ref(db, 'votes/' + id);
                 
-                // 트랜잭션 실행
                 runTransaction(scoreRef, (currentData) => {
                     if (currentData === null) {
-                        return { total: score, count: 1 };
+                        // 🔥 새 과목일 경우 name도 같이 저장!
+                        return { total: score, count: 1, name: name };
                     } else {
                         if (oldData) {
-                            return { total: currentData.total - oldScore + score, count: currentData.count }; 
+                            return { total: currentData.total - oldScore + score, count: currentData.count, name: name }; 
                         } else {
-                            return { total: currentData.total + score, count: currentData.count + 1 };
+                            return { total: currentData.total + score, count: currentData.count + 1, name: name };
                         }
                     }
                 }).then(() => {
@@ -284,13 +311,11 @@
                     }
                     localStorage.setItem(`my_vote_${id}`, JSON.stringify({ score: score, text: commentText }));
                     
-                    // UI 업데이트
                     const btn = document.getElementById(`btn-${id}`);
                     const card = document.getElementById(`card-${id}`);
                     if(btn && card) {
                         btn.innerText = "수정하기 ✏️";
                         card.classList.add("voted");
-                        // 수정 모드 스타일 적용
                         btn.style.background = "#444";
                         btn.style.color = "#FFD700";
                         btn.style.border = "1px solid #FFD700";
