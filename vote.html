@@ -9,8 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
     <style>
-        /* 🎨 기본 스타일 유지 */
-        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; padding-bottom: 100px; }
+        /* 🎨 기본 스타일 */
+        body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; padding-bottom: 120px; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
         .container { max-width: 600px; margin: 0 auto; text-align: center; position: relative; z-index: 10; }
@@ -25,6 +25,7 @@
         .review-list { display: flex; flex-direction: column; gap: 15px; min-height: 300px; }
         .review-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s; animation: fadeIn 0.3s ease-out; position: relative; overflow: hidden; }
         .review-card::top { content: ''; position: absolute; top:0; left:0; width:100%; height: 4px; background: #FFD700; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .review-card.voted { border: 2px solid #69f0ae; background: rgba(46, 204, 113, 0.15); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .subject-tag { font-size: 0.8rem; color: #fff; background: #d32f2f; padding: 4px 8px; border-radius: 8px; margin-right: 8px; font-weight: bold; }
@@ -41,18 +42,36 @@
         .footer-msg { margin-top: 40px; font-size: 0.8rem; color: #888; line-height: 1.6; padding: 20px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
 
+        /* 🔥 일괄 제출 버튼 (고정) */
         .fab-container { position: fixed; bottom: 40px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 9999; pointer-events: none; }
         .batch-submit-btn { pointer-events: auto; background: linear-gradient(45deg, #FFD700, #FFC107); color: #333; font-family: 'Jua', sans-serif; font-size: 1.1rem; font-weight: bold; padding: 15px 40px; border-radius: 50px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); border: 2px solid #fff; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; gap: 8px; }
         .batch-submit-btn:active { transform: scale(0.95); }
 
-        /* 🔥 과목 추가 버튼 스타일 */
+        /* 🔥 [수정됨] 과목 추가 버튼: 엄청 눈에 띄게 변경! */
         .add-subject-btn {
-            display: block; width: 100%; margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(255, 255, 255, 0.4);
-            color: #bbb; padding: 12px; border-radius: 12px;
-            font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
+            display: block; 
+            width: 100%; 
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.15); /* 노란빛 배경 */
+            border: 2px dashed #FFD700; /* 진한 노란 점선 테두리 */
+            color: #FFD700; /* 노란 글씨 */
+            font-weight: bold;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.1rem;
+            border-radius: 15px;
+            cursor: pointer; 
+            transition: all 0.2s;
+            animation: pulse 2s infinite; /* 반짝반짝 효과 */
         }
-        .add-subject-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; border-color: #fff; }
+        .add-subject-btn:hover { background: rgba(255, 215, 0, 0.3); transform: scale(1.02); }
+        
+        /* 반짝이는 애니메이션 */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
     </style>
 </head>
 <body>
@@ -135,17 +154,17 @@
             }
             return chosung[Math.floor(code / 588)];
         }
-        // 초기화 시 초성 계산
+        
         subjects = subjects.map(sub => ({ ...sub, chosung: getChosung(sub.name) }));
 
-        // 저장된 커스텀 과목 불러오기 (새로고침해도 유지되게)
+        // 저장된 커스텀 과목 불러오기
         const customSubs = JSON.parse(localStorage.getItem('my_custom_subjects')) || [];
         customSubs.forEach(sub => {
             sub.chosung = getChosung(sub.name);
-            subjects.unshift(sub); // 맨 앞에 추가
+            subjects.unshift(sub);
         });
 
-        // 카테고리 렌더링
+        // 카테고리
         const navContainer = document.getElementById('category-nav');
         const activeCategories = [...new Set(subjects.map(s => s.chosung))].sort();
         if(activeCategories.includes('A-Z')) activeCategories.push(activeCategories.splice(activeCategories.indexOf('A-Z'), 1)[0]);
@@ -169,12 +188,11 @@
             renderCards();
         }
 
-        // 🔥 과목 추가 함수
+        // 🔥 과목 추가 함수 (전역)
         window.addCustomSubject = function() {
             const name = prompt("추가할 과목명(교양/기타)을 입력해주세요! ✨");
             if (!name) return;
 
-            // 중복 체크
             if (subjects.find(s => s.name === name)) {
                 alert("이미 리스트에 있는 과목입니다!");
                 return;
@@ -183,23 +201,20 @@
             const newId = 'custom_' + Date.now();
             const newSubject = { id: newId, name: name };
             
-            // 리스트에 추가
             newSubject.chosung = getChosung(name);
-            subjects.unshift(newSubject); // 맨 앞에 추가
+            subjects.unshift(newSubject);
             
-            // 로컬에 저장 (나한테만 보임)
             const savedCustoms = JSON.parse(localStorage.getItem('my_custom_subjects')) || [];
             savedCustoms.push(newSubject);
             localStorage.setItem('my_custom_subjects', JSON.stringify(savedCustoms));
 
             alert(`'${name}' 과목이 추가되었습니다! 맨 위에서 투표해주세요. 🗳️`);
-            filterCategory('all'); // 전체 보기로 이동해서 확인
+            filterCategory('all');
         }
 
         function renderCards() {
             listContainer.innerHTML = '';
             const filtered = subjects.filter(sub => currentCategory === 'all' || sub.chosung === currentCategory).sort((a, b) => {
-                // 커스텀 과목을 우선 보여주거나, 이름순 정렬
                 return a.name.localeCompare(b.name);
             });
 
@@ -292,7 +307,6 @@
                 
                 runTransaction(scoreRef, (currentData) => {
                     if (currentData === null) {
-                        // 🔥 새 과목일 경우 name도 같이 저장!
                         return { total: score, count: 1, name: name };
                     } else {
                         if (oldData) {
