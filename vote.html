@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 
     <style>
-        /* 🎨 스타일 (기존과 동일 + 입력창 스타일 추가) */
+        /* 🎨 스타일 (기존과 동일) */
         body { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); margin: 0; padding: 20px 10px; color: #fff; font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh); } }
@@ -34,20 +34,14 @@
         .star-rating input { display: none; }
         .star-rating label { font-size: 2rem; color: #555; cursor: pointer; transition: color 0.2s; }
         .star-rating input:checked ~ label, .star-rating label:hover, .star-rating label:hover ~ label { color: #FFD700; text-shadow: 0 0 15px #FFD700; }
-        
-        /* 💬 한줄평 입력창 스타일 (부활!) */
-        .comment-input {
-            width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3);
-            color: white; margin-bottom: 12px; box-sizing: border-box; outline: none;
-            transition: all 0.3s;
-        }
+        .comment-input { width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; margin-bottom: 12px; box-sizing: border-box; outline: none; transition: all 0.3s; }
         .comment-input:focus { border-color: #FFD700; background: rgba(0,0,0,0.5); }
         .comment-input::placeholder { color: #bbb; font-size: 0.9rem; }
-
         .submit-btn { width: 100%; padding: 14px; font-size: 1rem; border: none; border-radius: 12px; background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; font-weight: bold; font-family: 'Jua', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(27, 94, 32, 0.4); transition: active 0.1s; }
         .submit-btn:active { transform: scale(0.98); }
-        .voted .submit-btn { background: #546e7a; color: #cfd8dc; box-shadow: none; pointer-events: none; }
+        /* 수정 모드 버튼 스타일 */
+        .voted .submit-btn { background: #444; color: #FFD700; box-shadow: none; border: 1px solid #FFD700; }
+        
         .footer-msg { margin-top: 40px; font-size: 0.8rem; color: #888; line-height: 1.6; padding: 20px; border-top: 1px dashed rgba(255,255,255,0.1); }
         .confetti { position: absolute; width: 6px; height: 6px; z-index: 99; pointer-events: none; border-radius: 50%; }
         .no-result { color: #888; margin-top: 50px; font-size: 0.9rem; }
@@ -62,7 +56,7 @@
             <span class="red">H</span><span class="green">a</span><span class="red">p</span><span class="green">p</span><span class="red">y</span>
             <span class="gold">Vote</span> 🗳️
         </h1>
-        <p class="subtitle">🎄 과목을 선택해 투표해주세요! 🎅</p>
+        <p class="subtitle">🎄 수정도 가능하니 편하게 투표하세요! 🎅</p>
 
         <div class="category-scroll-wrapper">
             <div class="category-nav" id="category-nav">
@@ -80,9 +74,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+        import { getDatabase, ref, runTransaction, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-        // ✅ 나쨩 키 적용 완료
+        // ✅ 나쨩 키 적용됨
         const firebaseConfig = {
             apiKey: "AIzaSyA_Rs8og9eT47qbYZYqBcLv6VGh0nZxumw",
             authDomain: "review-class-28dda.firebaseapp.com",
@@ -97,9 +91,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ==========================================
-        // ★ 2025학년도 전공 과목 데이터 ★
-        // ==========================================
+        // 👤 유저 식별용 ID 생성 (수정 기능을 위해 필수!)
+        let userId = localStorage.getItem('my_user_id');
+        if (!userId) {
+            userId = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('my_user_id', userId);
+        }
+
         const rawSubjects = [
              { id: 's1', name: '컴퓨터의이해' }, { id: 's2', name: '유비쿼터스컴퓨팅개론' }, { id: 's3', name: '파이썬프로그래밍기초' }, { id: 's4', name: '데이터정보처리입문' },
              { id: 's5', name: '이산수학' }, { id: 's6', name: 'Java프로그래밍' }, { id: 's7', name: 'HTML5웹프로그래밍' },
@@ -156,19 +154,21 @@
             }
 
             filtered.forEach(sub => {
-                const isVoted = localStorage.getItem(`voted_${sub.id}`);
-                const myVoteData = JSON.parse(localStorage.getItem(`vote_data_${sub.id}`)) || {};
-                const btnText = isVoted ? '투표 완료 ✅' : '제출하기 🎄';
+                // 저장된 내 투표 정보 가져오기
+                const savedData = JSON.parse(localStorage.getItem(`my_vote_${sub.id}`));
+                const isVoted = !!savedData;
+                
+                const btnText = isVoted ? '수정하기 ✏️' : '제출하기 🎄';
                 const btnClass = isVoted ? 'voted' : '';
-                const savedComment = myVoteData.text || ""; // 저장된 한줄평 불러오기
+                const savedComment = savedData ? savedData.text : "";
+                const savedScore = savedData ? savedData.score : 0;
                 
                 const card = document.createElement('div');
                 card.className = `review-card ${btnClass}`;
                 
                 let starHtml = '';
                 for(let i=5; i>=1; i--) {
-                    // 내 투표 기록이 있으면 체크 표시
-                    const checked = (isVoted && myVoteData.score == i) ? 'checked' : '';
+                    const checked = (savedScore == i) ? 'checked' : '';
                     starHtml += `<input type="radio" name="rate_${sub.id}" id="rate_${sub.id}_${i}" value="${i}" ${checked}><label for="rate_${sub.id}_${i}">★</label>`;
                 }
 
@@ -178,48 +178,58 @@
                     </div>
                     <div class="star-rating">${starHtml}</div>
                     
-                    <input type="text" class="comment-input" id="comment-${sub.id}" placeholder="한 줄 평을 남겨주세요 (선택)" value="${savedComment}">
+                    <input type="text" class="comment-input" id="comment-${sub.id}" placeholder="한 줄 평 (선택)" value="${savedComment}">
                     
                     <button class="submit-btn" id="btn-${sub.id}">${btnText}</button>
                 `;
                 listContainer.appendChild(card);
 
                 card.querySelector(`#btn-${sub.id}`).addEventListener('click', () => {
-                    if(localStorage.getItem(`voted_${sub.id}`)) return;
-                    
                     const radios = document.getElementsByName(`rate_${sub.id}`);
                     let score = 0;
                     for (const r of radios) if (r.checked) score = parseInt(r.value);
 
-                    if (score === 0) { alert("별을 눌러주세요! ⭐"); return; }
+                    if (score === 0) { alert("별을 눌러 점수를 주세요! ⭐"); return; }
 
                     const commentInput = document.getElementById(`comment-${sub.id}`);
                     const commentText = commentInput.value.trim();
 
-                    // 🔥 DB 전송 1: 점수 집계 (기존과 동일)
+                    // 이전 점수 가져오기 (수정일 경우)
+                    const oldData = JSON.parse(localStorage.getItem(`my_vote_${sub.id}`));
+                    const oldScore = oldData ? oldData.score : 0;
+
+                    // 🔥 DB 업데이트 (트랜잭션: 점수 더하고 빼기)
                     const scoreRef = ref(db, 'votes/' + sub.id);
                     runTransaction(scoreRef, (currentData) => {
-                        if (currentData === null) return { total: score, count: 1 };
-                        return { total: currentData.total + score, count: currentData.count + 1 };
-                    });
+                        if (currentData === null) {
+                            return { total: score, count: 1 };
+                        } else {
+                            // 수정이면: 기존 점수 빼고 새 점수 더하기 (인원수는 그대로)
+                            // 신규면: 그냥 점수 더하고 인원수 +1
+                            if (oldData) {
+                                return { total: currentData.total - oldScore + score, count: currentData.count }; 
+                            } else {
+                                return { total: currentData.total + score, count: currentData.count + 1 };
+                            }
+                        }
+                    }).then(() => {
+                        // 🔥 한줄평 저장 (유저 ID를 키로 저장해서 덮어쓰기)
+                        if(commentText) {
+                            set(ref(db, `comments/${sub.id}/${userId}`), {
+                                text: commentText,
+                                score: score,
+                                timestamp: Date.now()
+                            });
+                        }
 
-                    // 🔥 DB 전송 2: 한줄평 저장 (추가됨!)
-                    if(commentText) {
-                        const newCommentRef = push(ref(db, 'comments/' + sub.id));
-                        set(newCommentRef, {
-                            text: commentText,
-                            score: score,
-                            timestamp: Date.now()
-                        });
-                    }
+                        // 내 폰에 저장
+                        localStorage.setItem(`my_vote_${sub.id}`, JSON.stringify({ score: score, text: commentText }));
+                        
+                        alert(oldData ? "투표가 수정되었습니다! ✏️" : "투표가 반영되었습니다! 🎄");
+                        if(score === 5) launchConfetti();
+                        renderCards(); // 화면 갱신 (버튼 상태 변경)
 
-                    // 내 폰에 저장 (새로고침해도 유지되게)
-                    localStorage.setItem(`voted_${sub.id}`, 'true');
-                    localStorage.setItem(`vote_data_${sub.id}`, JSON.stringify({ score: score, text: commentText }));
-
-                    alert("투표가 반영되었습니다! 🎄");
-                    if(score === 5) launchConfetti();
-                    renderCards();
+                    }).catch(err => { console.error(err); alert("오류가 발생했습니다!"); });
                 });
             });
         }
