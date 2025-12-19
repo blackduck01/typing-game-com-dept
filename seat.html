@@ -16,7 +16,7 @@
             min-height: 100vh;
             box-sizing: border-box;
             overflow-x: hidden;
-            cursor: pointer; /* 매직 완드 느낌 */
+            cursor: pointer;
         }
 
         .seat-container {
@@ -260,7 +260,6 @@
         document.addEventListener('mousemove', function(e) {
             const dust = document.createElement('div');
             dust.className = 'magic-dust';
-            // 색상을 랜덤하게 (금색, 흰색, 빨강)
             const colors = ['#FFD700', '#FFFFFF', '#FF0000', '#00FF00'];
             dust.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             
@@ -268,10 +267,7 @@
             dust.style.top = e.pageY + 'px';
             document.body.appendChild(dust);
             
-            // 1초 뒤에 메모리에서 삭제
-            setTimeout(() => {
-                dust.remove();
-            }, 1000);
+            setTimeout(() => { dust.remove(); }, 1000);
         });
 
         // ==========================================
@@ -293,12 +289,14 @@
         createSnowflakes();
 
         // ==========================================
-        // 🪑 3. 자리 배치 로직
+        // 🪑 3. 자리 배치 로직 (총 20명!)
         // ==========================================
         let people = [
+            // 스탭 3명
             { id: 1, name: "오리", role: "black", color: "bg-black", prev: 0 }, 
             { id: 2, name: "옴뇸뇸", role: "black", color: "bg-black", prev: 0 },
             { id: 3, name: "둘리", role: "black", color: "bg-black", prev: 0 },
+            // 참가자 17명 (색깔 순환 배치)
             { id: 4, name: "참가1", role: "blue", color: "bg-blue", prev: 0 },
             { id: 5, name: "참가2", role: "green", color: "bg-green", prev: 0 },
             { id: 6, name: "참가3", role: "orange", color: "bg-orange", prev: 0 },
@@ -314,30 +312,39 @@
             { id: 16, name: "참가13", role: "blue", color: "bg-blue", prev: 0 },
             { id: 17, name: "참가14", role: "green", color: "bg-green", prev: 0 }, 
             { id: 18, name: "참가15", role: "orange", color: "bg-orange", prev: 0 },
-            { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 } 
+            { id: 19, name: "참가16", role: "red", color: "bg-red", prev: 0 },
+            // 🔥 추가된 20번째 멤버 (순서상 Blue)
+            { id: 20, name: "참가17", role: "blue", color: "bg-blue", prev: 0 } 
         ];
 
+        // 1부 배치 (초기화)
         function setPhase1() {
             clearTables();
-            assignRender(people[0], 1, 4); assignRender(people[3], 1, 4); assignRender(people[4], 1, 4); assignRender(people[5], 1, 4);
-            assignRender(people[1], 2, 4); assignRender(people[6], 2, 4); assignRender(people[7], 2, 4); assignRender(people[8], 2, 4);
-            assignRender(people[2], 3, 4); assignRender(people[9], 3, 4); assignRender(people[10], 3, 4); assignRender(people[11], 3, 4);
-            assignRender(people[12], 4, 4); assignRender(people[13], 4, 4); assignRender(people[14], 4, 4); assignRender(people[15], 4, 4);
-            assignRender(people[16], 5, 3); assignRender(people[17], 5, 3); assignRender(people[18], 5, 3);
-            updateTableLabels(5);
+            // 각 테이블 4명씩 딱 떨어짐!
+            assignRender(people[0], 1); assignRender(people[3], 1); assignRender(people[4], 1); assignRender(people[5], 1);
+            assignRender(people[1], 2); assignRender(people[6], 2); assignRender(people[7], 2); assignRender(people[8], 2);
+            assignRender(people[2], 3); assignRender(people[9], 3); assignRender(people[10], 3); assignRender(people[11], 3);
+            assignRender(people[12], 4); assignRender(people[13], 4); assignRender(people[14], 4); assignRender(people[15], 4);
+            assignRender(people[16], 5); assignRender(people[17], 5); assignRender(people[18], 5); assignRender(people[19], 5);
+            
+            updateTableLabels(); // 텍스트 업데이트
         }
 
-        function assignRender(person, tableNum, maxSeats) {
+        function assignRender(person, tableNum) {
             const table = document.getElementById(`table-${tableNum}`);
             const el = document.createElement('div');
             el.className = `person ${person.color}`;
             el.innerHTML = `${person.name}`;
+            
             const currentCount = table.querySelectorAll('.person').length;
-            const displayMax = Math.max(currentCount + 1, maxSeats);
-            const angle = (360 / displayMax) * currentCount - 90; 
+            const maxSeats = 4; // 모든 테이블 4명 고정
+            
+            // 원형 배치 각도 계산
+            const angle = (360 / maxSeats) * currentCount - 90; 
             const radius = 95; 
             const x = Math.cos(angle * Math.PI / 180) * radius;
             const y = Math.sin(angle * Math.PI / 180) * radius;
+            
             el.style.transform = `translate(${x}px, ${y}px)`;
             table.appendChild(el);
         }
@@ -350,23 +357,22 @@
             });
         }
 
-        function updateTableLabels(smallTableNum) {
+        function updateTableLabels() {
+            // 모든 조가 4명이므로 심플하게 통일!
             for(let i=1; i<=5; i++) {
-                let count = (i === smallTableNum) ? 3 : 4;
-                document.querySelector(`#table-${i} .table-center`).innerText = `${i}조 (${count}명)`;
+                document.querySelector(`#table-${i} .table-center`).innerText = `${i}조 (4명)`;
             }
         }
 
         // ==========================================
-        // 🎰 4. 슬롯머신 스타일 셔플 효과 (업그레이드!)
+        // 🎰 4. 슬롯머신 스타일 셔플 (20명 버전)
         // ==========================================
         let isShuffling = false;
 
         async function shuffleSeats(mode) {
-            if (isShuffling) return; // 이미 섞는 중이면 클릭 방지
+            if (isShuffling) return; 
             isShuffling = true;
 
-            // 버튼 비활성화 (중복 클릭 방지)
             const btns = document.querySelectorAll('button');
             btns.forEach(b => b.disabled = true);
 
@@ -379,31 +385,28 @@
                 return;
             }
 
-            // 2. 두구두구 애니메이션 (2초 동안)
+            // 2. 애니메이션 (2초)
             const tables = document.querySelectorAll('.table-group');
-            tables.forEach(t => t.classList.add('shaking')); // 테이블 흔들기!
+            tables.forEach(t => t.classList.add('shaking'));
 
             let elapsed = 0;
-            const interval = 100; // 0.1초마다 바뀜
-            const duration = 2000; // 2초간 실행
+            const interval = 100; 
+            const duration = 2000; 
 
             const timer = setInterval(() => {
                 elapsed += interval;
                 
-                // 가짜 데이터로 막 섞어서 보여주기 (시각적 효과)
+                // 애니메이션 중 가짜 데이터 렌더링
                 clearTables();
-                const randomSmall = (Math.random() < 0.5) ? 1 : 5;
-                updateTableLabels(randomSmall);
+                updateTableLabels();
                 
-                // 사람들을 무작위 테이블에 그냥 막 뿌림 (규칙 무시하고 시각적 혼란)
                 let tempPeople = [...people].sort(() => Math.random() - 0.5);
                 let personIdx = 0;
                 
                 for(let t=1; t<=5; t++) {
-                    let limit = (t === randomSmall) ? 3 : 4;
-                    for(let k=0; k<limit; k++) {
+                    for(let k=0; k<4; k++) { // 모든 테이블 4명
                         if(personIdx < tempPeople.length) {
-                            assignRender(tempPeople[personIdx], t, limit);
+                            assignRender(tempPeople[personIdx], t);
                             personIdx++;
                         }
                     }
@@ -419,31 +422,29 @@
         function finishShuffle(result, btns) {
             // 3. 최종 결과 렌더링
             clearTables();
-            document.querySelectorAll('.table-group').forEach(t => t.classList.remove('shaking')); // 흔들림 멈춤
+            document.querySelectorAll('.table-group').forEach(t => t.classList.remove('shaking'));
             
-            updateTableLabels(result.chosenSmallTable);
+            updateTableLabels();
             result.finalPlan.forEach(item => {
                 item.person.prev = item.table; 
-                let maxSeats = (item.table === result.chosenSmallTable) ? 3 : 4;
-                assignRender(item.person, item.table, maxSeats);
+                assignRender(item.person, item.table);
             });
 
             isShuffling = false;
             btns.forEach(b => b.disabled = false);
         }
 
-        // 실제 계산 로직 (기존과 동일)
         function calculateShuffle(mode) {
             const MAX_RETRIES = 500;
             let success = false;
             let finalPlan = [];
-            let chosenSmallTable = 5;
 
             for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-                let smallTable = (Math.random() < 0.5) ? 1 : 5;
+                // 1~5번 테이블, 모두 최대 4명
                 let tempTables = { 1: {count:0,colors:[]}, 2: {count:0,colors:[]}, 3: {count:0,colors:[]}, 4: {count:0,colors:[]}, 5: {count:0,colors:[]} };
                 let tempPlan = []; 
                 
+                // 스탭 3명 랜덤 배치
                 let leaders = [people[0], people[1], people[2]].sort(() => Math.random() - 0.5);
                 let tableOptions = [1, 2, 3, 4, 5]; 
                 let leaderFail = false;
@@ -459,12 +460,12 @@
                 }
                 if (leaderFail) continue; 
 
+                // 나머지 참가자 17명 랜덤 배치
                 let users = people.slice(3).sort(() => Math.random() - 0.5); 
                 let userFail = false;
                 for (let user of users) {
                     let candidates = [1, 2, 3, 4, 5].filter(t => {
-                        let limit = (t === smallTable) ? 3 : 4; 
-                        let hasSpace = tempTables[t].count < limit;
+                        let hasSpace = tempTables[t].count < 4; // 4명 꽉 찼는지 확인
                         let colorOk = (mode === 'balanced') ? !tempTables[t].colors.includes(user.role) : true;
                         return hasSpace && colorOk;
                     });
@@ -477,10 +478,10 @@
                     tempPlan.push({ person: user, table: selectedTable });
                 }
                 if (!userFail) { 
-                    success = true; finalPlan = tempPlan; chosenSmallTable = smallTable; break; 
+                    success = true; finalPlan = tempPlan; break; 
                 }
             }
-            return { success, finalPlan, chosenSmallTable };
+            return { success, finalPlan };
         }
 
         setPhase1(); 
