@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎄 2025 컴과 어워즈 🎅</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🎨 전체 배경: 크리스마스 밤 */
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            margin: 0; padding: 20px;
+            color: #fff;
+            font-family: 'Noto Sans KR', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* ❄️ 눈송이 효과 */
+        .snowflake { position: fixed; top: -10px; color: rgba(255, 255, 255, 0.5); font-size: 1em; z-index: 0; pointer-events: none; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* 타이틀 */
+        h1 {
+            font-family: 'Jua', sans-serif;
+            font-size: 2.2rem; margin: 0 0 10px 0;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h1 .red { color: #ff5252; }
+        h1 .green { color: #69f0ae; }
+        h1 .gold { color: #FFD700; }
+
+        .subtitle { color: #ddd; margin-bottom: 40px; font-weight: 300; }
+
+        /* 메뉴 버튼들 */
+        .menu-btn {
+            display: block;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); }
+        .menu-btn:active { transform: scale(0.98); }
+
+        /* 버튼 내부 텍스트 */
+        .btn-title { display: block; font-family: 'Jua', sans-serif; font-size: 1.4rem; margin-bottom: 5px; }
+        .btn-desc { display: block; font-size: 0.9rem; color: #666; }
+
+        /* 투표 버튼 색상 (빨강 포인트) */
+        .vote-btn { border-left: 10px solid #ff5252; }
+        .vote-btn .btn-title { color: #d32f2f; }
+
+        /* 결과 버튼 색상 (초록 포인트) */
+        .result-btn { border-left: 10px solid #69f0ae; }
+        .result-btn .btn-title { color: #2e7d32; }
+
+        .footer { margin-top: 30px; font-size: 0.8rem; color: #aaa; }
+
+    </style>
+</head>
+<body>
+
+    <div id="snow-container"></div>
+
+    <div class="container">
+        <h1>
+            <span class="red">H</span><span class="green">a</span><span class="red">p</span><span class="green">p</span><span class="red">y</span><br>
+            <span class="gold">Party 2025</span> 🎄
+        </h1>
+        <p class="subtitle">방통대 컴퓨터과학과 연말 모임</p>
+
+        <a href="vote.html" class="menu-btn vote-btn">
+            <span class="btn-title">🗳️ 투표하러 가기</span>
+            <span class="btn-desc">올해 최고의 과목에 별점을 쏴주세요!</span>
+        </a>
+
+        <a href="review.html" class="menu-btn result-btn">
+            <span class="btn-title">📊 실시간 결과 보기</span>
+            <span class="btn-desc">지금 1등 과목은 무엇일까요?</span>
+        </a>
+
+        <div class="footer">
+            Designed for KNOU CS Dept. 🎅
+        </div>
+    </div>
+
+    <script>
+        // 눈송이 효과
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            for(let i=0; i<40; i++){
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = '❄';
+                snow.style.left = Math.random() * 100 + 'vw';
+                snow.style.animationDuration = Math.random() * 5 + 5 + 's'; 
+                snow.style.opacity = Math.random() * 0.5 + 0.3;
+                snow.style.fontSize = Math.random() * 10 + 5 + 'px';
+                container.appendChild(snow);
+            }
+        }
+        createSnow();
+    </script>
+</body>
+</html>
