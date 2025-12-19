@@ -73,8 +73,13 @@
         .btn-red { background: linear-gradient(145deg, #d32f2f, #b71c1c); border-color: #ff6659; }
         .btn-green { background: linear-gradient(145deg, #2e7d32, #1b5e20); border-color: #60ad5e; }
         
-        /* 🏆 어워즈 버튼 전용 스타일 (황금 테두리) */
-        .btn-gold-border { border: 2px solid #ffd700; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        /* 🏆 결과 버튼 (가장 강조됨) */
+        .btn-result-gold { 
+            background: linear-gradient(145deg, #2e7d32, #1b5e20); 
+            border: 3px solid #ffd700; 
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); 
+        }
+        .btn-result-gold span { color: #ffd700; font-weight: bold; }
 
         .confetti { position: absolute; width: 8px; height: 8px; pointer-events: none; z-index: 9999; }
     </style>
@@ -92,9 +97,9 @@
         
         <div class="menu-grid">
             
-            <a href="vote.html" class="menu-btn btn-green btn-gold-border">
-                🏆 2025 강의 평가 어워즈
-                <span>올해 최고의 꿀강/헬강 투표하기!</span>
+            <a href="review.html" class="menu-btn btn-result-gold">
+                🏆 2025 강의 평가 결과 발표
+                <span>(투표 종료) 대망의 1위 확인하기!</span>
             </a>
 
             <a href="typing-game.html" class="menu-btn btn-red">
