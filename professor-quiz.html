@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎅 인물 맞추기 퀴즈</title>
+    <title>🎅 교수님 인물 퀴즈</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -15,7 +15,7 @@
             min-height: 100vh;
             margin: 0;
             text-align: center;
-            overflow: hidden; /* 폭죽 스크롤 방지 */
+            overflow: hidden;
         }
 
         .quiz-container {
@@ -23,10 +23,18 @@
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 600px; /* 화면이 크니까 조금 더 넓게 */
+            max-width: 600px;
             width: 90%;
             border: 5px solid #ff69b4; 
             position: relative;
+        }
+
+        /* 진행 상황 표시 (1/6) */
+        .progress {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
 
         h1 {
@@ -53,14 +61,14 @@
 
         .image-box img {
             max-width: 100%;
-            max-height: 300px; /* 너무 커지지 않게 제한 */
+            max-height: 300px;
             border-radius: 10px;
             display: block;
+            margin: 0 auto;
         }
 
-        /* 정답 공개 버튼 */
-        .reveal-btn {
-            background: linear-gradient(145deg, #ff69b4, #c71585);
+        /* 공통 버튼 스타일 */
+        .btn-style {
             color: white;
             border: none;
             padding: 15px 40px;
@@ -68,32 +76,38 @@
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: transform 0.2s, box-shadow 0.2s;
-            animation: pulse 2s infinite; /* 버튼이 심장처럼 뜀 */
+            margin-top: 10px;
         }
 
-        .reveal-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
+        .btn-style:hover { transform: scale(1.05); }
+        .btn-style:active { transform: scale(0.95); }
+
+        /* 정답 공개 버튼 */
+        .reveal-btn {
+            background: linear-gradient(145deg, #ff69b4, #c71585);
+            animation: pulse 2s infinite;
         }
 
-        .reveal-btn:active {
-            transform: scale(0.95);
+        /* 다음 문제 버튼 (파란색 계열) */
+        .next-btn {
+            background: linear-gradient(145deg, #007bff, #0056b3);
+            display: none; /* 처음엔 숨김 */
         }
 
-        /* 정답 텍스트 영역 (처음엔 숨김) */
         #answer-area {
-            display: none; /* 숨김 */
+            display: none;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         .answer-text {
-            font-size: 3rem; /* 엄청 크게! */
+            font-size: 2.5rem;
             font-weight: 900;
             color: #28a745;
-            text-shadow: 2px 2px 0 #fff, 0 0 10px rgba(40, 167, 69, 0.5);
-            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 2px 2px 0 #fff;
+            animation: popUp 0.6s;
         }
 
         .answer-desc {
@@ -111,11 +125,10 @@
             border-radius: 10px;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
+            display: none; /* 마지막 문제 전까진 숨김 */
             font-size: 0.9rem;
         }
 
-        /* 애니메이션 정의 */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -126,87 +139,143 @@
             0% { opacity: 0; transform: scale(0.5) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
     </style>
 </head>
 <body>
 
     <div class="quiz-container">
+        <div class="progress" id="progress-text">1 / 6</div>
         <h1>🎅 이분은 누구실까요?</h1>
         <p class="sub-title">눈, 코, 입 퍼즐을 보고 맞춰보세요!</p>
         
         <div class="image-box">
-            <img src="quiz-image.png" alt="교수님 퀴즈 사진">
+            <img id="quiz-img" src="" alt="퀴즈 이미지">
         </div>
 
         <br>
 
-        <button id="reveal-btn" class="reveal-btn" onclick="revealAnswer()">
+        <button id="reveal-btn" class="btn-style reveal-btn" onclick="revealAnswer()">
             🥁 정답 공개!
         </button>
 
         <div id="answer-area">
-            <div class="answer-text">이광수 교수님</div>
-            <p class="answer-desc">"방통대 컴과의 빛!"</p>
+            <div id="answer-name" class="answer-text">교수님 이름</div>
+            <p id="answer-desc" class="answer-desc">설명</p>
         </div>
 
-        <br>
-        <a href="index.html" class="home-btn">🏠 메인으로</a>
+        <button id="next-btn" class="btn-style next-btn" onclick="nextQuiz()">
+            👉 다음 문제!
+        </button>
+
+        <a href="index.html" id="home-btn" class="home-btn">🏠 메인으로 돌아가기</a>
     </div>
 
     <script>
-        function revealAnswer() {
-            const btn = document.getElementById('reveal-btn');
-            const answerArea = document.getElementById('answer-area');
+        // 🔹🔹🔹 여기만 나짱이 수정하면 돼! 🔹🔹🔹
+        const quizData = [
+            {
+                img: "images/prof1.jpg",   // 첫 번째 교수님 사진 파일명
+                name: "이광수 교수님",      // 정답 이름
+                desc:   // 설명 (없으면 비워도 됨)
+            },
+            {
+                img: "images/prof2.jpg",
+                name: "김철수 교수님",
+                desc: 
+            },
+            {
+                img: "images/prof3.jpg",
+                name: "박영희 교수님",
+                desc: 
+            },
+            {
+                img: "images/prof4.jpg",
+                name: "최자바 교수님",
+                desc: 
+            },
+            {
+                img: "images/prof5.jpg",
+                name: "정리눅스 교수님",
+                desc: 
+            },
+            {
+                img: "images/prof6.jpg",
+                name: "홍길동 교수님",
+                desc: 
+            }
+        ];
+        // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
-            // 1. 버튼 숨기기
-            btn.style.display = 'none';
+        let currentIdx = 0; // 현재 몇 번째 문제인지 저장
 
-            // 2. 정답 보여주기
-            answerArea.style.display = 'block';
+        // 페이지 로드 시 첫 문제 세팅
+        window.onload = function() {
+            updateQuizDisplay();
+        };
 
-            // 3. 폭죽 효과 발사!
-            launchConfetti();
+        function updateQuizDisplay() {
+            const data = quizData[currentIdx];
+            
+            // 이미지와 진행상황 업데이트
+            document.getElementById('quiz-img').src = data.img;
+            document.getElementById('progress-text').innerText = (currentIdx + 1) + " / " + quizData.length;
+            
+            // 텍스트 내용은 미리 넣어두되, 숨김 상태 유지
+            document.getElementById('answer-name').innerText = data.name;
+            document.getElementById('answer-desc').innerText = data.desc;
+
+            // 버튼 상태 초기화
+            document.getElementById('reveal-btn').style.display = 'inline-block';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('answer-area').style.display = 'none';
         }
 
-        // 폭죽 효과 (파티 분위기!)
+        function revealAnswer() {
+            // 정답 보여주기
+            document.getElementById('reveal-btn').style.display = 'none';
+            document.getElementById('answer-area').style.display = 'block';
+            
+            // 폭죽 팡팡!
+            launchConfetti();
+
+            // 마지막 문제가 아니면 '다음 문제' 버튼 표시
+            if (currentIdx < quizData.length - 1) {
+                document.getElementById('next-btn').style.display = 'inline-block';
+            } else {
+                // 마지막 문제면 '메인으로' 버튼 표시
+                document.getElementById('home-btn').style.display = 'inline-block';
+            }
+        }
+
+        function nextQuiz() {
+            currentIdx++; // 다음 번호로 이동
+            updateQuizDisplay(); // 화면 갱신
+        }
+
+        // 폭죽 효과 함수 (그대로 유지)
         function launchConfetti() {
             const colors = ['#ff69b4', '#ffd700', '#007bff', '#28a745', '#ff4500'];
-            
-            for(let i=0; i<100; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'fixed';
-                
-                // 화면 중앙에서 시작
-                particle.style.left = '50%';
-                particle.style.top = '50%';
-                
-                particle.style.width = Math.random() * 10 + 5 + 'px';
-                particle.style.height = Math.random() * 10 + 5 + 'px';
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                
-                // 모양 랜덤 (원형 or 사각형)
-                if(Math.random() > 0.5) particle.style.borderRadius = '50%';
-                else particle.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+            for(let i=0; i<80; i++) {
+                const p = document.createElement('div');
+                p.style.position = 'fixed';
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.width = Math.random() * 8 + 4 + 'px';
+                p.style.height = Math.random() * 8 + 4 + 'px';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                if(Math.random() > 0.5) p.style.borderRadius = '50%';
+                p.style.zIndex = '9999';
+                document.body.appendChild(p);
 
-                particle.style.zIndex = '9999';
-                particle.style.pointerEvents = 'none'; // 클릭 방해 안 함
-                document.body.appendChild(particle);
-
-                // 사방으로 퍼지는 움직임 계산
-                const angle = Math.random() * Math.PI * 2; // 360도 랜덤
-                const velocity = Math.random() * 400 + 100; // 속도 랜덤
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 300 + 100;
                 const tx = Math.cos(angle) * velocity;
                 const ty = Math.sin(angle) * velocity;
 
-                // 애니메이션
-                particle.animate([
+                p.animate([
                     { transform: `translate(0, 0) scale(1)`, opacity: 1 },
                     { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
-                ], {
-                    duration: 1200,
-                    easing: 'cubic-bezier(0, .9, .57, 1)',
-                }).onfinish = () => particle.remove();
+                ], { duration: 1000, easing: 'cubic-bezier(0, .9, .57, 1)' }).onfinish = () => p.remove();
             }
         }
     </script>
